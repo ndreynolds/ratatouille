@@ -150,11 +150,7 @@ extb_poll_event_run(void *arg) {
   struct extb_poll_state *state = (struct extb_poll_state *) arg;
   struct tb_event *event = enif_alloc(sizeof(struct tb_event));
 
-  FILE *f = fopen("extb.log", "a");
-
-  fprintf(f, "Polling for event\n");
   int event_type = tb_poll_event(event);
-  fprintf(f, "Received event of type %d\n", event_type);
 
   ErlNifEnv *env = enif_alloc_env();
   ERL_NIF_TERM result = enif_make_tuple2(env,
@@ -172,12 +168,6 @@ extb_poll_event_run(void *arg) {
   );
 
   int sent = enif_send(NULL, &state->recipient_pid, env, result);
-  if (sent) {
-    fprintf(f, "Sent event to recipient\n");
-  } else {
-    fprintf(f, "Unable to send event to recipient\n");
-  }
-  fclose(f);
   enif_free_env(env);
   enif_free(event);
 };

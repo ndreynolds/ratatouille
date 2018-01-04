@@ -1,0 +1,3 @@
+[submodule "c_src/termbox"]
+	path = c_src/termbox
+	url = https://github.com/nsf/termbox
