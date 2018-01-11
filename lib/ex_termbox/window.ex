@@ -8,28 +8,25 @@ defmodule ExTermbox.Window do
   @name {:global, :extb_window_server}
 
   def start_link do
-    GenServer.start_link(__MODULE__, nil, [name: @name])
+    GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
   def open(view \\ View.default_view()),
     do: GenServer.call(@name, {:open, view})
 
-  def update(view),
-    do: GenServer.call(@name, {:update, view})
+  def update(view), do: GenServer.call(@name, {:update, view})
 
-  def close,
-    do: GenServer.stop(@name)
+  def close, do: GenServer.stop(@name)
 
-  def fetch(attr),
-    do: GenServer.call(@name, {:fetch, attr})
+  def fetch(attr), do: GenServer.call(@name, {:fetch, attr})
 
-  def init(_) do
+  def init(:ok) do
     Process.flag(:trap_exit, true)
+    :ok = Bindings.init()
     {:ok, {}}
   end
 
   def handle_call({:open, view}, _from, state) do
-    :ok = Bindings.init()
     {:reply, render_view(view), state}
   end
 
@@ -51,10 +48,10 @@ defmodule ExTermbox.Window do
 
   defp fetch_attr(attr) do
     case attr do
-      :width  -> {:ok, Bindings.width()}
+      :width -> {:ok, Bindings.width()}
       :height -> {:ok, Bindings.height()}
-      :box    -> {:ok, window_box()}
-      _       -> {:error, :unknown_attribute}
+      :box -> {:ok, window_box()}
+      _ -> {:error, :unknown_attribute}
     end
   end
 
@@ -63,6 +60,5 @@ defmodule ExTermbox.Window do
     :ok = Bindings.present()
   end
 
-  defp window_box,
-    do: Box.from_dimensions(Bindings.width(), Bindings.height())
+  defp window_box, do: Box.from_dimensions(Bindings.width(), Bindings.height())
 end

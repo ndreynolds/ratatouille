@@ -8,9 +8,8 @@ defmodule ExTermbox.Renderer.View do
     %View{root_element: child}
   end
 
-  def element(tag, attributes, children) when is_atom(tag)
-                                          and is_map(attributes)
-                                          and is_list(children) do
+  def element(tag, attributes, children)
+      when is_atom(tag) and is_map(attributes) and is_list(children) do
     %Element{tag: tag, attributes: attributes, children: children}
   end
 
@@ -21,8 +20,16 @@ defmodule ExTermbox.Renderer.View do
   def default_view do
     new(
       element(:column_layout, [
-        element(:panel, %{title: "Welcome to ExTermbox"}, []),
-        element(:panel, %{title: "Another Column"}, [])
+        element(:panel, %{title: "Welcome to ExTermbox"}, [
+          element(:panel, %{title: "Nested panel"}, [
+            element(:panel, %{title: "Nested panel"}, [])
+          ])
+        ]),
+        element(:panel, %{title: "Welcome to ExTermbox"}, [
+          element(:panel, %{title: "Nested panel"}, [
+            element(:panel, %{title: "Nested panel"}, [])
+          ])
+        ])
       ])
     )
   end

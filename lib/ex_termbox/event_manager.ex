@@ -36,37 +36,39 @@ defmodule ExTermbox.EventManager do
 
   use GenServer
 
+  @name {:global, :extb_event_manager}
+
   # Client API
 
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, :ok, opts)
+  def start_link do
+    GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
-  def subscribe(server_pid, subscriber_pid) do
-    GenServer.call(server_pid, {:subscribe, subscriber_pid})
+  def subscribe(subscriber_pid) do
+    GenServer.call(@name, {:subscribe, subscriber_pid})
   end
 
   # Server Callbacks
 
   def init(:ok) do
-    start_polling()
-    {:ok, MapSet.new()}
+    {:ok, {:ready, MapSet.new()}}
   end
 
-  def handle_call({:subscribe, pid}, _from, recipients) do
-    {:reply, :ok, MapSet.put(recipients, pid)}
+  def handle_call({:subscribe, pid}, _from, {status, recipients}) do
+    if status == :ready, do: start_polling()
+    {:reply, :ok, {:polling, MapSet.put(recipients, pid)}}
   end
 
-  def handle_info({:event, event_tuple}, recipients) do
+  def handle_info({:event, event_tuple}, {status, recipients}) do
     event = unpack_event(event_tuple)
     notify(recipients, event)
-    start_polling() # Start polling for the next event
-    {:noreply, recipients}
+    # Start polling for the next event
+    start_polling()
+    {:noreply, {status, recipients}}
   end
 
   def start_polling do
-    server_pid = self()
-    spawn(fn -> Bindings.poll_event_async(server_pid) end)
+    Bindings.poll_event(self())
   end
 
   defp notify(recipients, event) do

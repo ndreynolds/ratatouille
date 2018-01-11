@@ -1,32 +1,57 @@
 defmodule Mix.Tasks.ExTermbox.Demo do
   use Mix.Task
 
-  alias ExTermbox.{EventManager, Event, Window, Bindings}
-  alias ExTermbox.Renderer
+  alias ExTermbox.{EventManager, Event, Window}
   alias ExTermbox.Renderer.{View}
 
-  def run(_) do
-    {:ok, _pid} = Window.start_link()
-    :ok = Window.open()
-    {:ok, pid} = EventManager.start_link()
-    :ok = EventManager.subscribe(pid, self())
+  require Logger
 
+  def run(_) do
+    Logger.add_backend({LoggerFileBackend, :debug})
+
+    Logger.configure_backend(
+      {LoggerFileBackend, :debug},
+      path: "extb_debug.log"
+    )
+
+    Logger.configure_backend(:console, level: :error)
+
+    {:ok, _} = Window.start_link()
+    {:ok, _} = EventManager.start_link()
+    :ok = EventManager.subscribe(self())
+
+    spawn(&refresh_loop/0)
     event_loop()
+  end
+
+  def refresh_loop do
+    Window.update(view())
+    :timer.sleep(500)
+    refresh_loop()
   end
 
   def event_loop do
     receive do
       {:event, %Event{ch: ?q}} ->
         :ok = Window.close()
+        IO.puts("closed window")
+
       {:event, %Event{} = event} ->
-        view = View.new(
-          View.element(:column_layout, [
-            View.element(:panel, %{title: "Input Received"}, []),
-            View.element(:panel, %{title: "Received #{inspect(event)}"}, [])
-          ])
-        )
-        Window.update(view)
+        Logger.info("Received event: #{inspect(event)}")
         event_loop()
     end
+  end
+
+  def view do
+    View.new(
+      View.element(:column_layout, [
+        View.element(:panel, %{title: "Welcome to ExTermbox"}, [
+          View.element(:table, [
+            ["Current Time:", DateTime.utc_now() |> DateTime.to_string()]
+          ])
+        ]),
+        View.element(:panel, %{title: "Another Column"}, [])
+      ])
+    )
   end
 end

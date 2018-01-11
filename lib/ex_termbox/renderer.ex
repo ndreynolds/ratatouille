@@ -1,56 +1,61 @@
 defmodule ExTermbox.Renderer do
-  alias ExTermbox.{Bindings, Cell, Position}
-  alias ExTermbox.Renderer.{Element, Box, View}
+  alias ExTermbox.Position
+  alias ExTermbox.Renderer.{Element, Box, Table, View, Utils}
 
   def render(%Box{} = box, %View{root_element: el}) do
     render_tree(box, el)
   end
 
   def render_tree(%Box{}, []), do: []
-  def render_tree(%Box{} = box, [%Element{} = el | rest]),
-    do: [render_tree(box, el) | render_tree(box, rest)]
 
-  def render_tree(%Box{} = box,
-                   %Element{tag: tag, attributes: attrs, children: children}) do
+  def render_tree(%Box{} = box, [%Element{} = el | rest]) do
+    [render_tree(box, el) | render_tree(box, rest)]
+  end
+
+  def render_tree(%Box{} = box, %Element{
+        tag: tag,
+        attributes: attrs,
+        children: children
+      }) do
     case tag do
       :column_layout ->
-        num_columns = length(children)
-        column_width = Integer.floor_div(Box.width(box), num_columns)
         children
-        |> Enum.with_index()
-        |> Enum.map(
-             fn {el, idx} ->
-               render_tree(Box.translate(box, column_width * idx, 0), el)
-             end
-           )
+        |> Enum.zip(column_boxes(box, length(children)))
+        |> Enum.map(fn {el, box} -> render_tree(box, el) end)
+
       :panel ->
-        render_text(box.top_left, attrs.title)
+        outer_box = Box.padded(box, 1)
+        inner_box = Box.padded(outer_box, 1)
+
+        outer_box
+        |> Utils.render_border()
+
+        outer_box.top_left
+        |> Position.translate_x(2)
+        |> Utils.render_text(attrs.title)
+
+        inner_box
+        |> render_tree(children)
+
+      :table ->
+        box
+        |> Box.padded(1)
+        |> Table.render(children)
     end
   end
 
-  # defp render_tree(%Window{} = window, %Element{tag: :column_layout, children: children}),
-  #   do: render_tree(window, children)
+  defp column_boxes(outer_box, num_columns) do
+    col_width = Integer.floor_div(Box.width(outer_box), num_columns)
 
-  # defp render_tree(%Window{} = window, elements) when is_list(elements),
-  #   do: Enum.map(elements, &(render_tree(window, &1)))
-
-  # defp render_tree(:column_layout, attributes, children) do
-  # end
-
-  def render_text(%Position{} = position, text) do
-    chars = String.graphemes(text)
-
-    chars
-    |> Enum.with_index()
-    |> Enum.map(fn {char_str, idx} ->
-      pos = Position.translate(position, idx, 0)
-      <<char::utf8>> = char_str
-      %Cell{position: pos, char: char}
-    end)
-    |> Enum.each(&render_cell/1)
+    0..num_columns
+    |> Enum.map(&column_box(outer_box, col_width, &1))
   end
 
-  defp render_cell(%Cell{} = cell) do
-    Bindings.put_cell(cell)
+  defp column_box(outer_box, col_width, col_idx) do
+    Box.from_dimensions(
+      col_width,
+      Box.height(outer_box),
+      Position.translate_x(outer_box.top_left, col_width * col_idx)
+    )
   end
 end
