@@ -3,30 +3,39 @@ defmodule ExTermbox.Renderer.Table do
   @min_padding 2
 
   alias ExTermbox.Position
-  alias ExTermbox.Renderer.{Box, Utils}
+  alias ExTermbox.Renderer.{Box, Canvas, Utils}
 
-  def render(%Box{} = box, rows) do
+  def render(%Canvas{box: box, cells: cells} = canvas, rows) do
+    canvas
+    |> Canvas.padded(1)
+    |> render_table(rows)
+    |> Canvas.padded(-1)
+    |> Canvas.translate(0, 1)
+  end
+
+  defp render_table(%Canvas{box: box, cells: cells} = canvas, rows) do
     col_sizes = column_sizes(box, rows)
 
     rows
     |> Enum.map(&Enum.zip(&1, col_sizes))
-    |> Enum.reduce(box, fn row, box ->
-      render_table_row(box, row)
-      Box.translate(box, 0, 1)
-    end)
+    |> Enum.reduce(canvas, fn(row, canvas) ->
+         {new_canvas, _offset} = render_table_row(canvas, row)
+         %Canvas{new_canvas | box: Box.translate(canvas.box, 0, 1)}
+       end)
   end
 
-  defp render_table_row(box, row) do
-    row |> Enum.reduce(0, &render_table_cell(box, &1, &2))
+  defp render_table_row(%Canvas{} = canvas, row) do
+    row
+    |> Enum.reduce({canvas, 0}, &render_table_cell(&1, &2))
   end
 
-  defp render_table_cell(box, {text, size}, offset) do
-    Utils.render_text(
-      Position.translate_x(box.top_left, offset),
+  defp render_table_cell({text, size}, {canvas, offset}) do
+    canvas = Utils.render_text(
+      canvas,
+      Position.translate_x(canvas.box.top_left, offset),
       text
     )
-
-    offset + size
+    {canvas, offset + size}
   end
 
   defp column_sizes(%Box{} = box, rows) do
@@ -44,8 +53,8 @@ defmodule ExTermbox.Renderer.Table do
   defp min_column_sizes(columns) do
     Enum.map(columns, fn col ->
       col
-      |> Enum.max_by(&String.length/1)
-      |> String.length()
+      |> Enum.map(&String.length/1)
+      |> Enum.max()
       |> Kernel.+(@min_padding)
     end)
   end

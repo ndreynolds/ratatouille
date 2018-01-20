@@ -43,9 +43,12 @@ defmodule ExTermbox.Renderer.Box do
     do: y2 - y1
 
   def from_dimensions(width, height, origin \\ %Position{x: 0, y: 0}) do
+    dx = width - 1
+    dy = height - 1
+
     %Box{
       top_left: origin,
-      bottom_right: %Position{x: origin.x + width, y: origin.y + height}
+      bottom_right: %Position{x: origin.x + dx, y: origin.y + dy}
     }
   end
 end

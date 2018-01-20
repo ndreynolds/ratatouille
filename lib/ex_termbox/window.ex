@@ -3,7 +3,7 @@ defmodule ExTermbox.Window do
 
   alias ExTermbox.Bindings
   alias ExTermbox.Renderer
-  alias ExTermbox.Renderer.{Box, View}
+  alias ExTermbox.Renderer.{Canvas, View}
 
   @name {:global, :extb_window_server}
 
@@ -50,15 +50,22 @@ defmodule ExTermbox.Window do
     case attr do
       :width -> {:ok, Bindings.width()}
       :height -> {:ok, Bindings.height()}
-      :box -> {:ok, window_box()}
+      :box -> {:ok, canvas().box}
       _ -> {:error, :unknown_attribute}
     end
   end
 
   defp render_view(view) do
-    Renderer.render(window_box(), view)
+    canvas()
+    |> Renderer.render(view)
+    |> Canvas.render_to_termbox()
     :ok = Bindings.present()
   end
 
-  defp window_box, do: Box.from_dimensions(Bindings.width(), Bindings.height())
+  defp canvas do
+    Canvas.from_dimensions(
+      Bindings.width(),
+      Bindings.height()
+    )
+  end
 end

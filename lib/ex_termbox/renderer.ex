@@ -1,47 +1,50 @@
 defmodule ExTermbox.Renderer do
   alias ExTermbox.Position
-  alias ExTermbox.Renderer.{Element, Box, Table, View, Utils}
+  alias ExTermbox.Renderer.{
+    Element,
+    Box,
+    Canvas,
+    Panel,
+    Table,
+    View,
+    Utils
+  }
 
-  def render(%Box{} = box, %View{root_element: el}) do
-    render_tree(box, el)
+  def render(%Canvas{} = canvas, %View{root: el}),
+    do: render_tree(canvas, el)
+
+  defp render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
+    elements
+    |> Enum.reduce(canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
   end
 
-  def render_tree(%Box{}, []), do: []
-
-  def render_tree(%Box{} = box, [%Element{} = el | rest]) do
-    [render_tree(box, el) | render_tree(box, rest)]
-  end
-
-  def render_tree(%Box{} = box, %Element{
+  defp render_tree(%Canvas{box: box} = canvas, %Element{
         tag: tag,
         attributes: attrs,
         children: children
       }) do
     case tag do
-      :column_layout ->
-        children
-        |> Enum.zip(column_boxes(box, length(children)))
-        |> Enum.map(fn {el, box} -> render_tree(box, el) end)
+      :columned_layout ->
+        canvas
+        |> render_columns(children)
 
       :panel ->
-        outer_box = Box.padded(box, 1)
-        inner_box = Box.padded(outer_box, 1)
-
-        outer_box
-        |> Utils.render_border()
-
-        outer_box.top_left
-        |> Position.translate_x(2)
-        |> Utils.render_text(attrs.title)
-
-        inner_box
+        canvas
+        |> Panel.render(attrs.title)
         |> render_tree(children)
 
       :table ->
-        box
-        |> Box.padded(1)
+        canvas
         |> Table.render(children)
     end
+  end
+
+  defp render_columns(%Canvas{box: box} = canvas, children) do
+    children
+    |> Enum.zip(column_boxes(box, length(children)))
+    |> Enum.reduce(canvas, fn({el, box}, new_canvas) ->
+         render_tree(%Canvas{new_canvas | box: box}, el)
+       end)
   end
 
   defp column_boxes(outer_box, num_columns) do

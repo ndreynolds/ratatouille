@@ -44,13 +44,23 @@ defmodule Mix.Tasks.ExTermbox.Demo do
 
   def view do
     View.new(
-      View.element(:column_layout, [
+      View.element(:columned_layout, [
         View.element(:panel, %{title: "Welcome to ExTermbox"}, [
           View.element(:table, [
-            ["Current Time:", DateTime.utc_now() |> DateTime.to_string()]
+            ["Current Time:", DateTime.utc_now() |> DateTime.to_string()],
+            ["Current Time 2:", DateTime.utc_now() |> DateTime.to_string()]
+          ]),
+          View.element(:table, [
+            ["Current Time:", DateTime.utc_now() |> DateTime.to_string()],
+            ["Current Time 2:", DateTime.utc_now() |> DateTime.to_string()],
+            ["Current Time 3:", DateTime.utc_now() |> DateTime.to_string()],
+            ["Current Time 4:", DateTime.utc_now() |> DateTime.to_string()]
+          ]),
+          View.element(:table, [
+            ["Current Time:", DateTime.utc_now() |> DateTime.to_string()],
+            ["Current Time 2:", DateTime.utc_now() |> DateTime.to_string()]
           ])
-        ]),
-        View.element(:panel, %{title: "Another Column"}, [])
+        ])
       ])
     )
   end

@@ -1,11 +1,12 @@
 defmodule ExTermbox.Renderer.View do
   alias ExTermbox.Renderer.{Element, View}
 
-  @enforce_keys [:root_element]
-  defstruct [:root_element]
+  @enforce_keys [:root]
+  defstruct root: nil,
+            toolbar: nil
 
   def new(child) do
-    %View{root_element: child}
+    %View{root: child}
   end
 
   def element(tag, attributes, children)
@@ -19,7 +20,7 @@ defmodule ExTermbox.Renderer.View do
 
   def default_view do
     new(
-      element(:column_layout, [
+      element(:layout, %{type: :columned}, [
         element(:panel, %{title: "Welcome to ExTermbox"}, [
           element(:panel, %{title: "Nested panel"}, [
             element(:panel, %{title: "Nested panel"}, [])
