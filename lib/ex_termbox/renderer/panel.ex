@@ -1,8 +1,8 @@
 defmodule ExTermbox.Renderer.Panel do
   alias ExTermbox.Position
-  alias ExTermbox.Renderer.{Box, Canvas, Utils}
+  alias ExTermbox.Renderer.{Canvas, Utils}
 
-  def render(%Canvas{box: box, cells: cells} = canvas, title) do
+  def render(%Canvas{} = canvas, title) do
     canvas
     |> Canvas.padded(1)
     |> Utils.render_border()

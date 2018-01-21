@@ -5,7 +5,7 @@ defmodule ExTermbox.Renderer.Table do
   alias ExTermbox.Position
   alias ExTermbox.Renderer.{Box, Canvas, Utils}
 
-  def render(%Canvas{box: box, cells: cells} = canvas, rows) do
+  def render(%Canvas{} = canvas, rows) do
     canvas
     |> Canvas.padded(1)
     |> render_table(rows)
@@ -13,8 +13,8 @@ defmodule ExTermbox.Renderer.Table do
     |> Canvas.translate(0, 1)
   end
 
-  defp render_table(%Canvas{box: box, cells: cells} = canvas, rows) do
-    col_sizes = column_sizes(box, rows)
+  defp render_table(%Canvas{} = canvas, rows) do
+    col_sizes = column_sizes(canvas.box, rows)
 
     rows
     |> Enum.map(&Enum.zip(&1, col_sizes))

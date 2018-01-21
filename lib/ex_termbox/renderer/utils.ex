@@ -3,7 +3,7 @@ defmodule ExTermbox.Renderer.Utils do
   Primitives for rendering text, lines and borders
   """
 
-  alias ExTermbox.{Bindings, Cell, Position}
+  alias ExTermbox.{Cell, Position}
   alias ExTermbox.Renderer.{Box, Canvas}
 
   @borders %{

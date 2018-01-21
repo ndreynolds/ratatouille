@@ -1,11 +1,10 @@
 defmodule ExTermbox.Renderer.Sparkline do
-  alias ExTermbox.Position
-  alias ExTermbox.Renderer.{Box, Canvas, Utils}
+  alias ExTermbox.Renderer.{Canvas, Utils}
 
   @ticks ~w[▁ ▂ ▃ ▄ ▅ ▆ ▇ █]
   @range length(@ticks) - 1
 
-  def render(%Canvas{box: box, cells: cells} = canvas, values) do
+  def render(%Canvas{} = canvas, values) do
     text =
       values
       |> normalize()

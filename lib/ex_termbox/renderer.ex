@@ -7,8 +7,7 @@ defmodule ExTermbox.Renderer do
     Panel,
     Sparkline,
     Table,
-    View,
-    Utils
+    View
   }
 
   def render(%Canvas{} = canvas, %View{root: el}),
@@ -19,7 +18,7 @@ defmodule ExTermbox.Renderer do
     |> Enum.reduce(canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
   end
 
-  defp render_tree(%Canvas{box: box} = canvas, %Element{
+  defp render_tree(%Canvas{} = canvas, %Element{
         tag: tag,
         attributes: attrs,
         children: children
