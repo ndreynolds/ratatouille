@@ -5,6 +5,7 @@ defmodule ExTermbox.Renderer do
     Box,
     Canvas,
     Panel,
+    Sparkline,
     Table,
     View,
     Utils
@@ -36,6 +37,10 @@ defmodule ExTermbox.Renderer do
       :table ->
         canvas
         |> Table.render(children)
+
+      :sparkline ->
+        canvas
+        |> Sparkline.render(children)
     end
   end
 

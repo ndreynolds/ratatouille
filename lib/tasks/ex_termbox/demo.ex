@@ -59,7 +59,10 @@ defmodule Mix.Tasks.ExTermbox.Demo do
           View.element(:table, [
             ["Current Time:", DateTime.utc_now() |> DateTime.to_string()],
             ["Current Time 2:", DateTime.utc_now() |> DateTime.to_string()]
-          ])
+          ]),
+          View.element(:sparkline, Enum.shuffle([
+            0, 1, 2, 3, 4, 5, 6
+          ]))
         ])
       ])
     )
