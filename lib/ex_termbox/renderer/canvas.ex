@@ -1,4 +1,6 @@
 defmodule ExTermbox.Renderer.Canvas do
+  @moduledoc false
+
   alias ExTermbox.{Bindings, Cell, Position}
   alias ExTermbox.Renderer.Box
 
@@ -46,7 +48,7 @@ defmodule ExTermbox.Renderer.Canvas do
   end
 
   defp cell_to_string(%Cell{char: char}),
-    do: String.Chars.to_string([char])
+    do: to_string([char])
 
   defp row_idx(%Cell{position: %Position{y: y}}), do: y
 

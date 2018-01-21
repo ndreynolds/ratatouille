@@ -1,4 +1,6 @@
 defmodule ExTermbox.Renderer.Panel do
+  @moduledoc false
+
   alias ExTermbox.Position
   alias ExTermbox.Renderer.{Canvas, Utils}
 

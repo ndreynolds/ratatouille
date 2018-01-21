@@ -1,4 +1,6 @@
 defmodule ExTermbox.Renderer.Sparkline do
+  @moduledoc false
+
   alias ExTermbox.Renderer.{Canvas, Utils}
 
   @ticks ~w[▁ ▂ ▃ ▄ ▅ ▆ ▇ █]

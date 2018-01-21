@@ -1,4 +1,6 @@
 defmodule ExTermbox.Renderer.Table do
+  @moduledoc false
+
   # Minimum padding on the right of each column
   @min_padding 2
 

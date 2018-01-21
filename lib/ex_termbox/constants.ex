@@ -1,4 +1,9 @@
 defmodule ExTermbox.Constants do
+  @moduledoc """
+  Defines constants from the termbox library. These can be used e.g. to set a
+  formatting attributes or to identify keys passed in an event.
+  """
+
   @keys %{
     f1: 0xFFFF - 0,
     f2: 0xFFFF - 1,
@@ -116,9 +121,29 @@ defmodule ExTermbox.Constants do
     pipe_trap_error: -3
   }
 
+  @input_modes %{
+    current: 0,
+    esc: 1,
+    alt: 2,
+    mouse: 4
+  }
+
+  @output_modes %{
+    current: 0,
+    normal: 1,
+    term_256: 2,
+    term_216: 3,
+    grayscale: 4
+  }
+
+  @hide_cursor -1
+
   def keys, do: @keys
   def colors, do: @colors
   def attributes, do: @attributes
   def event_types, do: @event_types
   def error_codes, do: @error_codes
+  def input_modes, do: @input_modes
+  def output_modes, do: @output_modes
+  def hide_cursor, do: @hide_cursor
 end

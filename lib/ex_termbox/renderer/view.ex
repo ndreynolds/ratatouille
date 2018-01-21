@@ -1,4 +1,10 @@
 defmodule ExTermbox.Renderer.View do
+  @moduledoc """
+  Represents a renderable view of the terminal application.
+
+  This API is still under development.
+  """
+
   alias ExTermbox.Renderer.{Element, View}
 
   @enforce_keys [:root]

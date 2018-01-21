@@ -18,18 +18,19 @@ defmodule ExTermbox.EventManager do
 
   Example Usage:
 
-      alias ExTermbox.{EventManager, Event}
+      def event_loop do
+        receive do
+          {:event, %Event{ch: ?q} = event} ->
+            Window.close()
+          {:event, %Event{} = event} ->
+            # handle the event and wait for another...
+            event_loop()
+        end
+      end
 
       {:ok, pid} = EventManager.start_link()
       :ok = EventManager.subscribe(self())
-
-      receive do
-        {:event, %Event{ch: ?q} = event} ->
-          Window.close()
-        {:event, %Event{} = event} ->
-          # handle the event and wait for another...
-          event_loop()
-      end
+      event_loop()
   """
 
   alias ExTermbox.{Bindings, Event}
@@ -44,6 +45,9 @@ defmodule ExTermbox.EventManager do
     GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
+  @doc """
+  Subscribes the given pid to future event notifications.
+  """
   def subscribe(subscriber_pid) do
     GenServer.call(@name, {:subscribe, subscriber_pid})
   end
@@ -66,6 +70,8 @@ defmodule ExTermbox.EventManager do
     start_polling()
     {:noreply, {status, recipients}}
   end
+
+  # FIXME: add handle_info fallback
 
   def start_polling do
     Bindings.poll_event(self())

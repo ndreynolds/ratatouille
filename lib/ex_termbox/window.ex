@@ -1,4 +1,9 @@
 defmodule ExTermbox.Window do
+  @moduledoc """
+  A GenServer to manage the terminal window, along with a client API to perform
+  updates and retrieve window information.
+  """
+
   use GenServer
 
   alias ExTermbox.Bindings

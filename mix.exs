@@ -9,7 +9,15 @@ defmodule ExTermbox.Mixfile do
       start_permanent: Mix.env() == :prod,
       compilers: [:elixir_make | Mix.compilers()],
       make_clean: ["clean"],
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ExTermbox",
+      source_url: "https://github.com/ndreynolds/ex_termbox",
+      docs: [
+        main: "ExTermbox",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -24,6 +32,8 @@ defmodule ExTermbox.Mixfile do
   defp deps do
     [
       {:elixir_make, "~> 0.4", runtime: false},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
       {:logger_file_backend, "~> 0.0.10", only: [:dev, :test]}
     ]
   end

@@ -35,21 +35,24 @@ defmodule ExTermbox.Renderer.Utils do
   end
 
   def render_horizontal_line(canvas, %Position{} = position, ch, length) do
-    Stream.cycle([ch])
+    [ch]
+    |> Stream.cycle()
     |> Enum.zip(0..(length - 1))
     |> Enum.map(cell_generator(position, :horizontal))
     |> render_cells(canvas)
   end
 
   def render_vertical_line(canvas, %Position{} = position, ch, length) do
-    Stream.cycle([ch])
+    [ch]
+    |> Stream.cycle()
     |> Enum.zip(0..(length - 1))
     |> Enum.map(cell_generator(position, :vertical))
     |> render_cells(canvas)
   end
 
   def render_text(canvas, %Position{} = position, text) when is_binary(text) do
-    String.graphemes(text)
+    text
+    |> String.graphemes()
     |> Enum.with_index()
     |> Enum.map(cell_generator(position, :horizontal))
     |> render_cells(canvas)

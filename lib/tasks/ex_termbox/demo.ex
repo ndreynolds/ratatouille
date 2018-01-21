@@ -1,4 +1,8 @@
 defmodule Mix.Tasks.ExTermbox.Demo do
+  @moduledoc """
+  A demo of the library's functionality
+  """
+
   use Mix.Task
 
   alias ExTermbox.{EventManager, Event, Window}

@@ -1,4 +1,10 @@
 defmodule ExTermbox.Renderer do
+  @moduledoc """
+  Logic to render a view tree.
+
+  This API is still under development.
+  """
+
   alias ExTermbox.Position
   alias ExTermbox.Renderer.{
     Element,
