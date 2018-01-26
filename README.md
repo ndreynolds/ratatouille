@@ -1,5 +1,8 @@
 # ExTermbox
 
+[![Hex.pm](https://img.shields.io/hexpm/v/ex_termbox.svg)](https://hex.pm/packages/ex_termbox)
+[![Hexdocs.pm](https://img.shields.io/badge/api-hexdocs-brightgreen.svg)](https://hexdocs.pm/ex_termbox)
+
 Low-level [termbox](https://github.com/nsf/termbox) bindings and a high-level,
 functional terminal UI kit for Elixir.
 
