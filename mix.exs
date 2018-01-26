@@ -43,7 +43,7 @@ defmodule ExTermbox.Mixfile do
 
   defp package do
     [
-      files: ~w(lib priv mix.exs README.md LICENSE),
+      files: ~w(c_src lib priv Makefile mix.exs README.md LICENSE),
       maintainers: ["Nick Reynolds"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/ndreynolds/ex_termbox"}
