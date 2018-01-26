@@ -1,6 +1,10 @@
 # ExTermbox
 
-**TODO: Add description**
+Low-level [termbox](https://github.com/nsf/termbox) bindings and a high-level,
+functional terminal UI kit for Elixir.
+
+The low-level bindings can already be used; the high-level APIs are still under
+active development and subject to change.
 
 ## Installation
 
@@ -18,4 +22,3 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/ex_termbox](https://hexdocs.pm/ex_termbox).
-
