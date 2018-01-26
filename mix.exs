@@ -17,7 +17,6 @@ defmodule ExTermbox.Mixfile do
       name: "ExTermbox",
       source_url: "https://github.com/ndreynolds/ex_termbox",
       docs: [
-        main: "ExTermbox",
         extras: ["README.md"]
       ]
     ]
