@@ -64,6 +64,7 @@ defmodule ExTermbox.Window do
     canvas()
     |> Renderer.render(view)
     |> Canvas.render_to_termbox()
+
     :ok = Bindings.present()
   end
 

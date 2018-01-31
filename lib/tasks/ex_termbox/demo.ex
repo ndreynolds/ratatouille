@@ -11,15 +11,6 @@ defmodule Mix.Tasks.ExTermbox.Demo do
   require Logger
 
   def run(_) do
-    Logger.add_backend({LoggerFileBackend, :debug})
-
-    Logger.configure_backend(
-      {LoggerFileBackend, :debug},
-      path: "extb_debug.log"
-    )
-
-    Logger.configure_backend(:console, level: :error)
-
     {:ok, _} = Window.start_link()
     {:ok, _} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
@@ -30,7 +21,7 @@ defmodule Mix.Tasks.ExTermbox.Demo do
 
   def refresh_loop do
     Window.update(view())
-    :timer.sleep(500)
+    :timer.sleep(10)
     refresh_loop()
   end
 
@@ -64,9 +55,18 @@ defmodule Mix.Tasks.ExTermbox.Demo do
             ["Current Time:", DateTime.utc_now() |> DateTime.to_string()],
             ["Current Time 2:", DateTime.utc_now() |> DateTime.to_string()]
           ]),
-          View.element(:sparkline, Enum.shuffle([
-            0, 1, 2, 3, 4, 5, 6
-          ]))
+          View.element(
+            :sparkline,
+            Enum.shuffle([
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ])
+          )
         ])
       ])
     )

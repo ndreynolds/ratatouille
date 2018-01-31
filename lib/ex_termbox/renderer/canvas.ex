@@ -26,8 +26,12 @@ defmodule ExTermbox.Renderer.Canvas do
     ys = 0..Box.height(box)
     xs = 0..Box.width(box)
 
-    empty_cells = for y <- ys, x <- xs, do: empty_cell(x, y)
-    filled_cells = Enum.map(empty_cells, &(fetch_cell(cells_map, &1)))
+    empty_cells =
+      for y <- ys,
+          x <- xs,
+          do: empty_cell(x, y)
+
+    filled_cells = Enum.map(empty_cells, &fetch_cell(cells_map, &1))
 
     filled_cells
     |> Enum.chunk_by(&row_idx/1)
@@ -47,14 +51,12 @@ defmodule ExTermbox.Renderer.Canvas do
     |> Enum.each(fn {_pos, cell} -> Bindings.put_cell(cell) end)
   end
 
-  defp cell_to_string(%Cell{char: char}),
-    do: to_string([char])
+  defp cell_to_string(%Cell{char: char}), do: to_string([char])
 
   defp row_idx(%Cell{position: %Position{y: y}}), do: y
 
   defp fetch_cell(cells, empty_cell),
     do: Map.get(cells, empty_cell.position, empty_cell)
 
-  defp empty_cell(x, y),
-    do: %Cell{position: %Position{x: x, y: y}, char: ' '}
+  defp empty_cell(x, y), do: %Cell{position: %Position{x: x, y: y}, char: ' '}
 end

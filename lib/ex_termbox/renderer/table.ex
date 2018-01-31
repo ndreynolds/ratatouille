@@ -20,10 +20,10 @@ defmodule ExTermbox.Renderer.Table do
 
     rows
     |> Enum.map(&Enum.zip(&1, col_sizes))
-    |> Enum.reduce(canvas, fn(row, canvas) ->
-         {new_canvas, _offset} = render_table_row(canvas, row)
-         %Canvas{new_canvas | box: Box.translate(canvas.box, 0, 1)}
-       end)
+    |> Enum.reduce(canvas, fn row, canvas ->
+      {new_canvas, _offset} = render_table_row(canvas, row)
+      %Canvas{new_canvas | box: Box.translate(canvas.box, 0, 1)}
+    end)
   end
 
   defp render_table_row(%Canvas{} = canvas, row) do
@@ -32,11 +32,13 @@ defmodule ExTermbox.Renderer.Table do
   end
 
   defp render_table_cell({text, size}, {canvas, offset}) do
-    canvas = Utils.render_text(
-      canvas,
-      Position.translate_x(canvas.box.top_left, offset),
-      text
-    )
+    canvas =
+      Utils.render_text(
+        canvas,
+        Position.translate_x(canvas.box.top_left, offset),
+        text
+      )
+
     {canvas, offset + size}
   end
 

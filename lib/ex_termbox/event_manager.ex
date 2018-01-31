@@ -71,9 +71,11 @@ defmodule ExTermbox.EventManager do
     {:noreply, {status, recipients}}
   end
 
-  # FIXME: add handle_info fallback
+  def handle_info(_, state) do
+    {:noreply, state}
+  end
 
-  def start_polling do
+  defp start_polling do
     Bindings.poll_event(self())
   end
 

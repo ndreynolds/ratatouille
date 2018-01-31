@@ -6,6 +6,7 @@ defmodule ExTermbox.Renderer do
   """
 
   alias ExTermbox.Position
+
   alias ExTermbox.Renderer.{
     Element,
     Box,
@@ -16,8 +17,7 @@ defmodule ExTermbox.Renderer do
     View
   }
 
-  def render(%Canvas{} = canvas, %View{root: el}),
-    do: render_tree(canvas, el)
+  def render(%Canvas{} = canvas, %View{root: el}), do: render_tree(canvas, el)
 
   defp render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
     elements
@@ -25,10 +25,10 @@ defmodule ExTermbox.Renderer do
   end
 
   defp render_tree(%Canvas{} = canvas, %Element{
-        tag: tag,
-        attributes: attrs,
-        children: children
-      }) do
+         tag: tag,
+         attributes: attrs,
+         children: children
+       }) do
     case tag do
       :columned_layout ->
         canvas
@@ -52,9 +52,9 @@ defmodule ExTermbox.Renderer do
   defp render_columns(%Canvas{box: box} = canvas, children) do
     children
     |> Enum.zip(column_boxes(box, length(children)))
-    |> Enum.reduce(canvas, fn({el, box}, new_canvas) ->
-         render_tree(%Canvas{new_canvas | box: box}, el)
-       end)
+    |> Enum.reduce(canvas, fn {el, box}, new_canvas ->
+      render_tree(%Canvas{new_canvas | box: box}, el)
+    end)
   end
 
   defp column_boxes(outer_box, num_columns) do

@@ -22,7 +22,7 @@ defmodule ExTermbox.Renderer.Sparkline do
     max = Enum.max(values)
 
     values
-    |> Enum.map(&(normalize({min, max}, &1)))
+    |> Enum.map(&normalize({min, max}, &1))
   end
 
   defp normalize({min, max}, value) do

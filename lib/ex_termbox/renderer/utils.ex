@@ -24,10 +24,8 @@ defmodule ExTermbox.Renderer.Utils do
     canvas
     |> render_horizontal_line(Box.top_left(box), @borders.top, width)
     |> render_horizontal_line(Box.bottom_left(box), @borders.bottom, width)
-
     |> render_vertical_line(Box.top_left(box), @borders.left, height)
     |> render_vertical_line(Box.top_right(box), @borders.right, height)
-
     |> render_text(Box.top_left(box), @borders.top_left)
     |> render_text(Box.top_right(box), @borders.top_right)
     |> render_text(Box.bottom_left(box), @borders.bottom_left)
