@@ -3,6 +3,13 @@ defmodule ExTermbox.Event do
   Represents a termbox event. This can be a key press, click, or window resize.
   """
 
-  @enforce_keys [:type, :mod, :key, :ch, :w, :h, :x, :y]
-  defstruct [:type, :mod, :key, :ch, :w, :h, :x, :y]
+  @enforce_keys [:type]
+  defstruct type: nil,
+            mod: 0,
+            key: 0,
+            ch: 0,
+            w: 0,
+            h: 0,
+            x: 0,
+            y: 0
 end

@@ -8,16 +8,14 @@ defmodule ExTermbox.Window do
 
   alias ExTermbox.Bindings
   alias ExTermbox.Renderer
-  alias ExTermbox.Renderer.{Canvas, View}
-
+  alias ExTermbox.Renderer.Canvas
   @name {:global, :extb_window_server}
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
-  def open(view \\ View.default_view()),
-    do: GenServer.call(@name, {:open, view})
+  def open(view), do: GenServer.call(@name, {:open, view})
 
   def update(view), do: GenServer.call(@name, {:update, view})
 

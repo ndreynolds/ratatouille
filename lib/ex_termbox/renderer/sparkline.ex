@@ -1,7 +1,7 @@
 defmodule ExTermbox.Renderer.Sparkline do
   @moduledoc false
 
-  alias ExTermbox.Renderer.{Canvas, Utils}
+  alias ExTermbox.Renderer.{Canvas, Text}
 
   @ticks ~w[▁ ▂ ▃ ▄ ▅ ▆ ▇ █]
   @range length(@ticks) - 1
@@ -14,7 +14,7 @@ defmodule ExTermbox.Renderer.Sparkline do
       |> Enum.join()
 
     canvas
-    |> Utils.render_text(canvas.box.top_left, text)
+    |> Text.render(canvas.box.top_left, text)
   end
 
   defp normalize(values) do

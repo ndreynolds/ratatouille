@@ -14,17 +14,19 @@ defmodule ExTermbox.Renderer do
     Panel,
     Sparkline,
     Table,
-    View
+    Text
   }
 
-  def render(%Canvas{} = canvas, %View{root: el}), do: render_tree(canvas, el)
+  def render(%Canvas{} = canvas, %Element{tag: :view, children: children}) do
+    render_tree(canvas, children)
+  end
 
   defp render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
     elements
     |> Enum.reduce(canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
   end
 
-  defp render_tree(%Canvas{} = canvas, %Element{
+  defp render_tree(%Canvas{box: box} = canvas, %Element{
          tag: tag,
          attributes: attrs,
          children: children
@@ -36,8 +38,9 @@ defmodule ExTermbox.Renderer do
 
       :panel ->
         canvas
-        |> Panel.render(attrs.title)
-        |> render_tree(children)
+        |> Panel.render(attrs.title, fn canvas ->
+          render_tree(canvas, children)
+        end)
 
       :table ->
         canvas
@@ -46,6 +49,23 @@ defmodule ExTermbox.Renderer do
       :sparkline ->
         canvas
         |> Sparkline.render(children)
+
+      :status_bar ->
+        new_box = %Box{
+          box
+          | top_left: %Position{box.top_left | y: box.bottom_right.y}
+        }
+
+        %Canvas{canvas | box: new_box}
+        |> render_tree(children)
+
+      :text ->
+        canvas
+        |> Text.render(canvas.box.top_left, Enum.at(children, 0), attrs)
+
+      :text_group ->
+        canvas
+        |> Text.render_group(children)
     end
   end
 

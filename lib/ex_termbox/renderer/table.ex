@@ -5,7 +5,7 @@ defmodule ExTermbox.Renderer.Table do
   @min_padding 2
 
   alias ExTermbox.Position
-  alias ExTermbox.Renderer.{Box, Canvas, Utils}
+  alias ExTermbox.Renderer.{Box, Canvas, Text}
 
   def render(%Canvas{} = canvas, rows) do
     canvas
@@ -17,8 +17,11 @@ defmodule ExTermbox.Renderer.Table do
 
   defp render_table(%Canvas{} = canvas, rows) do
     col_sizes = column_sizes(canvas.box, rows)
+    # TODO: scrollable?
+    max_rows = Box.height(canvas.box)
 
     rows
+    |> Enum.take(max_rows)
     |> Enum.map(&Enum.zip(&1, col_sizes))
     |> Enum.reduce(canvas, fn row, canvas ->
       {new_canvas, _offset} = render_table_row(canvas, row)
@@ -33,7 +36,7 @@ defmodule ExTermbox.Renderer.Table do
 
   defp render_table_cell({text, size}, {canvas, offset}) do
     canvas =
-      Utils.render_text(
+      Text.render(
         canvas,
         Position.translate_x(canvas.box.top_left, offset),
         text

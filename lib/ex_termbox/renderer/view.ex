@@ -5,14 +5,10 @@ defmodule ExTermbox.Renderer.View do
   This API is still under development.
   """
 
-  alias ExTermbox.Renderer.{Element, View}
+  alias ExTermbox.Renderer.Element
 
-  @enforce_keys [:root]
-  defstruct root: nil,
-            toolbar: nil
-
-  def new(child) do
-    %View{root: child}
+  def view(children) do
+    element(:view, children)
   end
 
   def element(tag, attributes, children)
@@ -22,22 +18,5 @@ defmodule ExTermbox.Renderer.View do
 
   def element(tag, children) when is_atom(tag) and is_list(children) do
     %Element{tag: tag, children: children}
-  end
-
-  def default_view do
-    new(
-      element(:layout, %{type: :columned}, [
-        element(:panel, %{title: "Welcome to ExTermbox"}, [
-          element(:panel, %{title: "Nested panel"}, [
-            element(:panel, %{title: "Nested panel"}, [])
-          ])
-        ]),
-        element(:panel, %{title: "Welcome to ExTermbox"}, [
-          element(:panel, %{title: "Nested panel"}, [
-            element(:panel, %{title: "Nested panel"}, [])
-          ])
-        ])
-      ])
-    )
   end
 end

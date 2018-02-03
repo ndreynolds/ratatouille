@@ -8,7 +8,7 @@ defmodule ExTermbox.Renderer.TableTest do
   describe "render/2" do
     test "returns the table" do
       canvas =
-        Canvas.from_dimensions(15, 4)
+        Canvas.from_dimensions(15, 5)
         |> render([
           ["a", "b", "c"],
           ["d", "e", "f"]
@@ -18,13 +18,14 @@ defmodule ExTermbox.Renderer.TableTest do
                "               ",
                " a   b   c     ",
                " d   e   f     ",
+               "               ",
                "               "
              ]
     end
 
     test "aligns columns with content of differing lengths" do
       canvas =
-        Canvas.from_dimensions(25, 4)
+        Canvas.from_dimensions(25, 5)
         |> render([
           ["very-very-long", "foo"],
           ["short", "bar"]
@@ -34,13 +35,14 @@ defmodule ExTermbox.Renderer.TableTest do
                "                         ",
                " very-very-long  foo     ",
                " short           bar     ",
+               "                         ",
                "                         "
              ]
     end
 
     test "only displays columns that fit in the passed box" do
       canvas =
-        Canvas.from_dimensions(10, 3)
+        Canvas.from_dimensions(10, 4)
         |> render([
           ["first-column", "this-is-way-too-long"]
         ])
@@ -48,6 +50,7 @@ defmodule ExTermbox.Renderer.TableTest do
       assert Canvas.render_to_strings(canvas) === [
                "          ",
                " first-col",
+               "          ",
                "          "
              ]
     end

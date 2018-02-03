@@ -139,11 +139,25 @@ defmodule ExTermbox.Constants do
   @hide_cursor -1
 
   def keys, do: @keys
+  def key(k), do: Map.fetch!(@keys, k)
+
   def colors, do: @colors
+  def color(k), do: Map.fetch!(@colors, k)
+
   def attributes, do: @attributes
+  def attribute(k), do: Map.fetch!(@attributes, k)
+
   def event_types, do: @event_types
+  def event_type(k), do: Map.fetch!(@event_types, k)
+
   def error_codes, do: @error_codes
+  def error_code(k), do: Map.fetch!(@error_codes, k)
+
   def input_modes, do: @input_modes
+  def input_mode(k), do: Map.fetch!(@input_modes, k)
+
   def output_modes, do: @output_modes
+  def output_mode(k), do: Map.fetch!(@output_modes, k)
+
   def hide_cursor, do: @hide_cursor
 end

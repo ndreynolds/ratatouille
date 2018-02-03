@@ -4,6 +4,7 @@ defmodule ExTermbox.Cell do
   background and foreground colors.
   """
 
+  alias __MODULE__, as: Cell
   alias ExTermbox.Constants
 
   @enforce_keys [:position, :char]
@@ -11,4 +12,8 @@ defmodule ExTermbox.Cell do
             char: nil,
             bg: Constants.colors().default,
             fg: Constants.colors().white
+
+  def empty do
+    %Cell{position: nil, char: nil}
+  end
 end
