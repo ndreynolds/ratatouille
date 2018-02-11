@@ -11,11 +11,14 @@ defmodule ExTermbox.Renderer do
     Element,
     Box,
     Canvas,
+    ColumnedLayout,
     Panel,
     Sparkline,
     Table,
     Text
   }
+
+  require Logger
 
   def render(%Canvas{} = canvas, %Element{tag: :view, children: children}) do
     render_tree(canvas, children)
@@ -31,16 +34,18 @@ defmodule ExTermbox.Renderer do
          attributes: attrs,
          children: children
        }) do
+    Logger.debug(fn ->
+      "***#{tag}*** #{inspect(box)}"
+    end)
+
     case tag do
       :columned_layout ->
         canvas
-        |> render_columns(children)
+        |> ColumnedLayout.render(children, &render_tree/2)
 
       :panel ->
         canvas
-        |> Panel.render(attrs.title, fn canvas ->
-          render_tree(canvas, children)
-        end)
+        |> Panel.render(attrs, &render_tree(&1, children))
 
       :table ->
         canvas
@@ -67,28 +72,5 @@ defmodule ExTermbox.Renderer do
         canvas
         |> Text.render_group(children)
     end
-  end
-
-  defp render_columns(%Canvas{box: box} = canvas, children) do
-    children
-    |> Enum.zip(column_boxes(box, length(children)))
-    |> Enum.reduce(canvas, fn {el, box}, new_canvas ->
-      render_tree(%Canvas{new_canvas | box: box}, el)
-    end)
-  end
-
-  defp column_boxes(outer_box, num_columns) do
-    col_width = Integer.floor_div(Box.width(outer_box), num_columns)
-
-    0..num_columns
-    |> Enum.map(&column_box(outer_box, col_width, &1))
-  end
-
-  defp column_box(outer_box, col_width, col_idx) do
-    Box.from_dimensions(
-      col_width,
-      Box.height(outer_box),
-      Position.translate_x(outer_box.top_left, col_width * col_idx)
-    )
   end
 end

@@ -18,17 +18,22 @@ defmodule ExTermbox.Renderer.Canvas do
     %Canvas{canvas | box: Box.padded(box, size)}
   end
 
+  def consume(%Canvas{box: box} = canvas, dx, dy) do
+    %Canvas{canvas | box: Box.consume(box, dx, dy)}
+  end
+
   def translate(%Canvas{box: box} = canvas, dx, dy) do
     %Canvas{canvas | box: Box.translate(box, dx, dy)}
   end
 
-  def render_to_strings(%Canvas{box: box, cells: cells_map}) do
-    ys = 0..Box.height(box)
-    xs = 0..Box.width(box)
+  def render_to_strings(%Canvas{cells: cells_map}) do
+    positions = Map.keys(cells_map)
+    max_y = positions |> Enum.map(fn %Position{y: y} -> y end) |> Enum.max()
+    max_x = positions |> Enum.map(fn %Position{x: x} -> x end) |> Enum.max()
 
     empty_cells =
-      for y <- ys,
-          x <- xs,
+      for y <- 0..max_y,
+          x <- 0..max_x,
           do: empty_cell(x, y)
 
     filled_cells = Enum.map(empty_cells, &fetch_cell(cells_map, &1))

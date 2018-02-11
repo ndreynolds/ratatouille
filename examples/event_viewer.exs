@@ -41,21 +41,21 @@ defmodule EventViewer do
 
     layout([
       element(:table, [
-        ["Type", inspect(type), inspect(type_name)],
-        ["Mod", inspect(mod), ""],
-        ["Key", inspect(key), inspect(key_name)],
-        ["Char", inspect(ch), <<ch::utf8>>],
-        ["Width", inspect(w), ""],
-        ["Height", inspect(h), ""],
-        ["X", inspect(x), ""],
-        ["Y", inspect(y), ""]
+        element(:table_row, ["Type", inspect(type), inspect(type_name)]),
+        element(:table_row, ["Mod", inspect(mod), ""]),
+        element(:table_row, ["Key", inspect(key), inspect(key_name)]),
+        element(:table_row, ["Char", inspect(ch), <<ch::utf8>>]),
+        element(:table_row, ["Width", inspect(w), ""]),
+        element(:table_row, ["Height", inspect(h), ""]),
+        element(:table_row, ["X", inspect(x), ""]),
+        element(:table_row, ["Y", inspect(y), ""])
       ])
     ])
   end
 
   def layout(children \\ []) do
     title = "Event Viewer (click, resize, or press a key - 'q' to quit)"
-    view([element(:panel, %{title: title}, children)])
+    view([element(:panel, %{title: title, height: :fill}, children)])
   end
 
   def reverse_lookup(map, val) do

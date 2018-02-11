@@ -21,6 +21,17 @@ defmodule ExTermbox.Renderer.Box do
     }
   end
 
+  def consume(
+        %Box{top_left: %Position{x: x1, y: y1}} = box,
+        dx,
+        dy
+      ) do
+    %Box{
+      box
+      | top_left: %Position{x: x1 + dx, y: y1 + dy}
+    }
+  end
+
   def padded(%Box{top_left: top_left, bottom_right: bottom_right}, size) do
     %Box{
       top_left: top_left |> Position.translate(size, size),
@@ -43,6 +54,16 @@ defmodule ExTermbox.Renderer.Box do
 
   def height(%Box{top_left: %Position{y: y1}, bottom_right: %Position{y: y2}}),
     do: y2 - y1
+
+  def contains?(
+        %Box{
+          top_left: %Position{x: x1, y: y1},
+          bottom_right: %Position{x: x2, y: y2}
+        },
+        %Position{x: x, y: y}
+      ) do
+    x in x1..x2 && y in y1..y2
+  end
 
   def from_dimensions(width, height, origin \\ %Position{x: 0, y: 0}) do
     dx = width - 1

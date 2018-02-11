@@ -5,47 +5,43 @@ defmodule ExTermbox.Renderer.Table do
   @min_padding 2
 
   alias ExTermbox.Position
-  alias ExTermbox.Renderer.{Box, Canvas, Text}
+  alias ExTermbox.Renderer.{Box, Canvas, Element, Text}
 
   def render(%Canvas{} = canvas, rows) do
     canvas
     |> Canvas.padded(1)
     |> render_table(rows)
     |> Canvas.padded(-1)
-    |> Canvas.translate(0, 1)
+    |> Canvas.consume(0, 1)
   end
 
   defp render_table(%Canvas{} = canvas, rows) do
     col_sizes = column_sizes(canvas.box, rows)
-    # TODO: scrollable?
     max_rows = Box.height(canvas.box)
 
     rows
     |> Enum.take(max_rows)
-    |> Enum.map(&Enum.zip(&1, col_sizes))
     |> Enum.reduce(canvas, fn row, canvas ->
-      {new_canvas, _offset} = render_table_row(canvas, row)
-      %Canvas{new_canvas | box: Box.translate(canvas.box, 0, 1)}
+      {new_canvas, _offset} = render_table_row(canvas, col_sizes, row)
+      Canvas.consume(new_canvas, 0, 1)
     end)
   end
 
-  defp render_table_row(%Canvas{} = canvas, row) do
-    row
-    |> Enum.reduce({canvas, 0}, &render_table_cell(&1, &2))
+  defp render_table_row(%Canvas{} = canvas, col_sizes, row) do
+    row.children
+    |> Enum.zip(col_sizes)
+    |> Enum.reduce({canvas, 0}, &render_table_cell(&1, &2, row.attributes))
   end
 
-  defp render_table_cell({text, size}, {canvas, offset}) do
-    canvas =
-      Text.render(
-        canvas,
-        Position.translate_x(canvas.box.top_left, offset),
-        text
-      )
+  defp render_table_cell({text, col_size}, {canvas, offset}, attrs) do
+    pos = Position.translate_x(canvas.box.top_left, offset)
+    canvas = Text.render(canvas, pos, text, attrs)
 
-    {canvas, offset + size}
+    {canvas, offset + col_size}
   end
 
   defp column_sizes(%Box{} = box, rows) do
+    rows = Enum.map(rows, fn %Element{children: children} -> children end)
     check_row_uniformity!(rows)
 
     max_width = Box.width(box)
@@ -83,7 +79,7 @@ defmodule ExTermbox.Renderer.Table do
       else: displayable_columns
   end
 
-  def padded_columns(column_sizes, max_size) do
+  defp padded_columns(column_sizes, max_size) do
     rem_space = max_size - Enum.sum(column_sizes)
     per_column_padding = Integer.floor_div(rem_space, length(column_sizes))
     Enum.map(column_sizes, &(&1 + per_column_padding))

@@ -4,10 +4,15 @@ defmodule ExTermbox.Renderer.Utils do
   """
 
   alias ExTermbox.{Cell, Position}
-  alias ExTermbox.Renderer.Canvas
+  alias ExTermbox.Renderer.{Box, Canvas}
 
-  def render_cells(cells, %Canvas{cells: canvas_cells} = canvas) do
-    new_cells = for c <- cells, do: {c.position, c}, into: %{}
+  def render_cells(cells, %Canvas{box: box, cells: canvas_cells} = canvas) do
+    new_cells =
+      for c <- cells,
+          Box.contains?(box, c.position),
+          do: {c.position, c},
+          into: %{}
+
     %Canvas{canvas | cells: Map.merge(canvas_cells, new_cells)}
   end
 

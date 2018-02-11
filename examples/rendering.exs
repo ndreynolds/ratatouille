@@ -24,24 +24,67 @@ defmodule RenderingDemo do
 
   def demo_view do
     view([
-      element(:panel, %{title: "Rendering Demo"}, [
+      element(:panel, %{title: "Rendering Demo", height: :fill}, [
         element(:columned_layout, [
-          element(:panel, %{title: "Column 1"}, [
+          element(:panel, %{title: "Column 1 Row 1", height: :fill}, [
             element(:table, [
-              ["Current Time:", DateTime.utc_now() |> DateTime.to_string()],
+              element(:table_row, ["Current Time:", DateTime.utc_now() |> DateTime.to_string()]),
             ]),
             element(:table, [
-              ["Column 1", "Column 2", "Column 3"],
-              ["a", "b", "c"],
-              ["d", "e", "f"],
+              element(:table_row, ["Column 1", "Column 2", "Column 3"]),
+              element(:table_row, ["a", "b", "c"]),
+              element(:table_row, ["d", "e", "f"]),
             ]),
             element(:table, [
-              ["Random Number:", inspect(:rand.uniform())],
-              ["Hello:", String.duplicate("World", Enum.random(1..3))]
+              element(:table_row, ["Random Number:", inspect(:rand.uniform())]),
+              element(:table_row, ["Hello:", String.duplicate("World", Enum.random(1..3))])
             ])
           ]),
-          element(:panel, %{title: "Column 2"}, [
-            element(:sparkline, Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
+          element(:panel, %{title: "Column 2 Row 1"}, [
+            element(:sparkline, Enum.shuffle([0, 1, 2, 3, 4, 5, 6])),
+            element(:table, [
+                  element(:table_row, ["Current Time:", DateTime.utc_now() |> DateTime.to_string()]),
+                ]),
+            element(:table, [
+                  element(:table_row, ["Column 1", "Column 2", "Column 3"]),
+                  element(:table_row, ["a", "b", "c"]),
+                  element(:table_row, ["d", "e", "f"]),
+                ]),
+            element(:table, [
+                  element(:table_row, ["Random Number:", inspect(:rand.uniform())]),
+                  element(:table_row, ["Hello:", String.duplicate("World", Enum.random(1..3))])
+                ])
+          ])
+        ]),
+        element(:columned_layout, [
+          element(:panel, %{title: "Column 1 Row 2"}, [
+            element(:table, [
+              element(:table_row, ["Current Time:", DateTime.utc_now() |> DateTime.to_string()]),
+            ]),
+            element(:table, [
+              element(:table_row, ["Column 1", "Column 2", "Column 3"]),
+              element(:table_row, ["a", "b", "c"]),
+              element(:table_row, ["d", "e", "f"]),
+            ]),
+            element(:table, [
+              element(:table_row, ["Random Number:", inspect(:rand.uniform())]),
+              element(:table_row, ["Hello:", String.duplicate("World", Enum.random(1..3))])
+            ])
+          ]),
+          element(:panel, %{title: "Column 2 Row 2"}, [
+            element(:sparkline, Enum.shuffle([0, 1, 2, 3, 4, 5, 6])),
+            element(:table, [
+                  element(:table_row, ["Current Time:", DateTime.utc_now() |> DateTime.to_string()]),
+                ]),
+            element(:table, [
+                  element(:table_row, ["Column 1", "Column 2", "Column 3"]),
+                  element(:table_row, ["a", "b", "c"]),
+                  element(:table_row, ["d", "e", "f"]),
+                ]),
+            element(:table, [
+                  element(:table_row, ["Random Number:", inspect(:rand.uniform())]),
+                  element(:table_row, ["Hello:", String.duplicate("World", Enum.random(1..3))])
+                ])
           ])
         ])
       ])
