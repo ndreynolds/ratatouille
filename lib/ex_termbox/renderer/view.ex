@@ -7,9 +7,24 @@ defmodule ExTermbox.Renderer.View do
 
   alias ExTermbox.Renderer.Element
 
-  def view(children) do
-    element(:view, children)
+  defmacro table(attributes \\ %{}, do: block),
+    do: macro_element(:table, attributes, block)
+
+  defmacro panel(attributes \\ %{}, do: block),
+    do: macro_element(:panel, attributes, block)
+
+  defmacro columned_layout(attributes \\ %{}, do: block),
+    do: macro_element(:columned_layout, attributes, block)
+
+  defmacro view(attributes \\ %{}, do: block),
+    do: macro_element(:view, attributes, block)
+
+  def table_row(attributes \\ %{}, values) do
+    element(:table_row, attributes, values)
   end
+
+  def element(tag, attributes, children) when is_list(attributes),
+    do: element(tag, Enum.into(attributes, %{}), children)
 
   def element(tag, attributes, children)
       when is_atom(tag) and is_map(attributes) and is_list(children) do
@@ -19,4 +34,18 @@ defmodule ExTermbox.Renderer.View do
   def element(tag, children) when is_atom(tag) and is_list(children) do
     %Element{tag: tag, children: children}
   end
+
+  defp macro_element(tag, %{}, block),
+    do: macro_element(tag, Macro.escape(%{}), block)
+
+  defp macro_element(tag, attributes, block) do
+    elements = extract_children(block)
+
+    quote do
+      element(unquote(tag), unquote(attributes), unquote(elements))
+    end
+  end
+
+  defp extract_children({:__block__, _meta, elements}), do: elements
+  defp extract_children(element), do: [element]
 end
