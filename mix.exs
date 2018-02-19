@@ -32,6 +32,7 @@ defmodule ExTermbox.Mixfile do
     [
       {:elixir_make, "~> 0.4", runtime: false},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:dialyze, "~> 0.2.0", only: :dev},
       {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false}
     ]
   end

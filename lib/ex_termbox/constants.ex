@@ -91,6 +91,7 @@ defmodule ExTermbox.Constants do
     ctrl_8: 0x7F
   }
 
+  @type color :: 0..8
   @colors %{
     default: 0x00,
     black: 0x01,
@@ -121,6 +122,7 @@ defmodule ExTermbox.Constants do
     pipe_trap_error: -3
   }
 
+  @type input_mode :: 0 | 1 | 2 | 4
   @input_modes %{
     current: 0,
     esc: 1,
@@ -128,6 +130,7 @@ defmodule ExTermbox.Constants do
     mouse: 4
   }
 
+  @type output_mode :: 0..4
   @output_modes %{
     current: 0,
     normal: 1,

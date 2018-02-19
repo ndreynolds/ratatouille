@@ -6,10 +6,12 @@ defmodule ExTermbox.Position do
   respectively.
   """
 
-  alias ExTermbox.Position
+  alias __MODULE__, as: Position
 
   @enforce_keys [:x, :y]
   defstruct [:x, :y]
+
+  @type t :: %__MODULE__{x: non_neg_integer, y: non_neg_integer}
 
   @doc """
   Translates (moves) a position by some delta x and y.
@@ -22,16 +24,19 @@ defmodule ExTermbox.Position do
       %Position{x: 1, y: 2}
 
   """
+  @spec translate(t, integer, integer) :: t
   def translate(%Position{x: x, y: y}, dx, dy),
     do: %Position{x: x + dx, y: y + dy}
 
   @doc """
   Translate a position by a delta x.
   """
+  @spec translate_x(t, integer) :: t
   def translate_x(%Position{} = pos, dx), do: translate(pos, dx, 0)
 
   @doc """
   Translate a position by a delta y.
   """
+  @spec translate_y(t, integer) :: t
   def translate_y(%Position{} = pos, dy), do: translate(pos, 0, dy)
 end

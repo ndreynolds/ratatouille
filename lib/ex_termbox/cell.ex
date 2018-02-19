@@ -5,7 +5,12 @@ defmodule ExTermbox.Cell do
   """
 
   alias __MODULE__, as: Cell
-  alias ExTermbox.Constants
+  alias ExTermbox.{Constants, Position}
+
+  @type t :: %__MODULE__{
+          position: Position.t(),
+          char: non_neg_integer()
+        }
 
   @enforce_keys [:position, :char]
   defstruct position: nil,
