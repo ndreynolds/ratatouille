@@ -29,28 +29,28 @@ defmodule ToolbarDemo do
   end
 
   def view_1 do
-    element(:view, [
-      element(:panel, %{title: "View 1"}, []),
-      status_bar("View 1")
-    ])
+    view do
+      element(:panel, %{title: "View 1", height: :fill}, [])
+      status_bar_for("View 1")
+    end
   end
 
   def view_2 do
-    element(:view, [
-      element(:panel, %{title: "View 2"}, []),
-      status_bar("View 2")
-    ])
+    view do
+      element(:panel, %{title: "View 2", height: :fill}, [])
+      status_bar_for("View 2")
+    end
   end
 
   def view_3 do
-    element(:view, [
-      element(:panel, %{title: "View 3"}, []),
-      status_bar("View 3")
-    ])
+    view do
+      element(:panel, %{title: "View 3", height: :fill}, [])
+      status_bar_for("View 3")
+    end
   end
 
-  def status_bar(selected) do
-    element(:status_bar, [
+  def status_bar_for(selected) do
+    status_bar do
       element(
         :text_group,
         ["View 1", "View 2", "View 3"]
@@ -61,7 +61,7 @@ defmodule ToolbarDemo do
         end)
         |> Enum.intersperse(element(:text, [" "]))
       )
-    ])
+    end
   end
 
   def highlighted do

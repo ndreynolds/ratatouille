@@ -13,6 +13,9 @@ defmodule ExTermbox.Renderer.View do
   defmacro panel(attributes \\ %{}, do: block),
     do: macro_element(:panel, attributes, block)
 
+  defmacro status_bar(attributes \\ %{}, do: block),
+    do: macro_element(:status_bar, attributes, block)
+
   defmacro columned_layout(attributes \\ %{}, do: block),
     do: macro_element(:columned_layout, attributes, block)
 

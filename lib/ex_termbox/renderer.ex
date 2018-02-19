@@ -5,15 +5,13 @@ defmodule ExTermbox.Renderer do
   This API is still under development.
   """
 
-  alias ExTermbox.Position
-
   alias ExTermbox.Renderer.{
     Element,
-    Box,
     Canvas,
     ColumnedLayout,
     Panel,
     Sparkline,
+    StatusBar,
     Table,
     Text
   }
@@ -34,6 +32,7 @@ defmodule ExTermbox.Renderer do
          attributes: attrs,
          children: children
        }) do
+
     Logger.debug(fn ->
       "***#{tag}*** #{inspect(box)}"
     end)
@@ -56,13 +55,8 @@ defmodule ExTermbox.Renderer do
         |> Sparkline.render(children)
 
       :status_bar ->
-        new_box = %Box{
-          box
-          | top_left: %Position{box.top_left | y: box.bottom_right.y}
-        }
-
-        %Canvas{canvas | box: new_box}
-        |> render_tree(children)
+        canvas
+        |> StatusBar.render(&render_tree(&1, children))
 
       :text ->
         canvas
