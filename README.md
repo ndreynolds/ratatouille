@@ -17,9 +17,6 @@ TODO - Add examples & screenshots here.
 
 ## Installation
 
-During development, it's recommended to try building from source, as the Hex
-package tends to lag behind.
-
 ### From Hex
 
 Add ExTermbox as a dependency in your project's `mix.exs`:
