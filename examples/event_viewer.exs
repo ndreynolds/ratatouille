@@ -32,8 +32,8 @@ defmodule EventViewer do
         x: x,
         y: y
       }) do
-
     type_name = reverse_lookup(Constants.event_types(), type)
+
     key_name =
       if key != 0,
         do: reverse_lookup(Constants.keys(), key),
@@ -55,9 +55,10 @@ defmodule EventViewer do
 
   def layout(children \\ []) do
     title = "Event Viewer (click, resize, or press a key - 'q' to quit)"
+
     view do
-      panel(title: title, height: :fill) do 
-        children 
+      panel title: title, height: :fill do
+        children
       end
     end
   end

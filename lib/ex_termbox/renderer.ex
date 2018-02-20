@@ -32,7 +32,6 @@ defmodule ExTermbox.Renderer do
          attributes: attrs,
          children: children
        }) do
-
     Logger.debug(fn ->
       "***#{tag}*** #{inspect(box)}"
     end)
