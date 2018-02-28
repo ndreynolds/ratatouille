@@ -1,4 +1,6 @@
 defmodule ExTermbox.Renderer.StatusBar do
+  @moduledoc false
+
   alias ExTermbox.Position
   alias ExTermbox.Renderer.{Box, Canvas}
 

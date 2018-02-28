@@ -18,6 +18,32 @@ defmodule ExTermbox.Renderer do
 
   require Logger
 
+  @type root_element :: %Element{
+          tag: :view,
+          children: list(child_element())
+        }
+
+  @type child_tag ::
+          :columned_layout
+          | :panel
+          | :table
+          | :sparkline
+          | :status_bar
+          | :text
+          | :text_group
+
+  @type child_element :: %Element{tag: child_tag()}
+
+  @doc """
+  Renders a view tree to canvas, given a canvas and a root element (an element
+  with the `:view` tag).
+
+  The tree is rendered by recursively rendering each element in the hierarchy.
+  The canvas serves as both the accumulator for rendered cells at each stage and
+  as the box representing available space for rendering, which shrinks as this
+  space is consumed.
+  """
+  @spec render(Canvas.t(), root_element) :: Canvas.t()
   def render(%Canvas{} = canvas, %Element{tag: :view, children: children}) do
     render_tree(canvas, children)
   end
@@ -27,15 +53,11 @@ defmodule ExTermbox.Renderer do
     |> Enum.reduce(canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
   end
 
-  defp render_tree(%Canvas{box: box} = canvas, %Element{
+  defp render_tree(%Canvas{} = canvas, %Element{
          tag: tag,
          attributes: attrs,
          children: children
        }) do
-    Logger.debug(fn ->
-      "***#{tag}*** #{inspect(box)}"
-    end)
-
     case tag do
       :columned_layout ->
         canvas

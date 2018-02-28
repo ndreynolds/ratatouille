@@ -1,31 +1,72 @@
 defmodule ExTermbox.Renderer.Canvas do
-  @moduledoc false
+  @moduledoc """
+  A canvas represents a terminal window (or a subdivision of it) and a sparse
+  mapping of positions to cells.
+
+  A `%Canvas{}` struct can be rendered to different output formats. This includes
+  the primary use-case of rendering to the termbox-managed window, but also
+  rendering to strings, which is useful for testing.
+  """
 
   alias ExTermbox.{Bindings, Cell, Position}
   alias ExTermbox.Renderer.Box
 
   alias __MODULE__, as: Canvas
 
+  @type t :: %Canvas{box: Box.t(), cells: map()}
+
   @enforce_keys [:box]
   defstruct box: nil,
             cells: %{}
 
+  @doc """
+  Creates an empty canvas with the given dimensions.
+
+  ## Examples
+
+      iex> Canvas.from_dimensions(10, 20)
+      %Canvas{
+        box: %ExTermbox.Renderer.Box{
+          top_left: %ExTermbox.Position{x: 0, y: 0},
+          bottom_right: %ExTermbox.Position{x: 9, y: 19}
+        },
+        cells: %{}
+      }
+
+  """
+  @spec from_dimensions(non_neg_integer(), non_neg_integer()) :: Canvas.t()
   def from_dimensions(x, y) do
     %Canvas{box: Box.from_dimensions(x, y)}
   end
 
+  @doc """
+  Copies the canvas to a new one with the box padded on each side (top, left,
+  bottom, right) by `size`. Pass a negative size to remove padding.
+  """
+  @spec padded(Canvas.t(), integer()) :: Canvas.t()
   def padded(%Canvas{box: box} = canvas, size) do
     %Canvas{canvas | box: Box.padded(box, size)}
   end
 
+  @doc """
+  Copies the canvas to a new one with the box consumed by the given `dx` and
+  `dy`.
+
+  The box is used to indicate the empty, renderable space on the canvas,
+  so this might be called with a `dy` of 1 after rendering a line of text. The
+  box is consumed left-to-right and top-to-bottom.
+  """
+  @spec consume(Canvas.t(), integer(), integer()) :: Canvas.t()
   def consume(%Canvas{box: box} = canvas, dx, dy) do
     %Canvas{canvas | box: Box.consume(box, dx, dy)}
   end
 
+  @spec translate(Canvas.t(), integer(), integer()) :: Canvas.t()
   def translate(%Canvas{box: box} = canvas, dx, dy) do
     %Canvas{canvas | box: Box.translate(box, dx, dy)}
   end
 
+  @spec render_to_strings(Canvas.t()) :: list(String.t())
   def render_to_strings(%Canvas{cells: cells_map}) do
     positions = Map.keys(cells_map)
     max_y = positions |> Enum.map(fn %Position{y: y} -> y end) |> Enum.max()
@@ -47,6 +88,7 @@ defmodule ExTermbox.Renderer.Canvas do
     end)
   end
 
+  @spec render_to_string(Canvas.t()) :: String.t()
   def render_to_string(%Canvas{} = canvas),
     do: canvas |> render_to_strings() |> Enum.join("\n")
 

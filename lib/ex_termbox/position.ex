@@ -22,6 +22,8 @@ defmodule ExTermbox.Position do
 
       iex> translate(%Position{x: 0, y: 0}, 1, 2)
       %Position{x: 1, y: 2}
+      iex> translate(%Position{x: 10, y: 0}, -1, 0)
+      %Position{x: 9, y: 0}
 
   """
   @spec translate(t, integer, integer) :: t

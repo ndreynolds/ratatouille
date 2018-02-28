@@ -8,29 +8,49 @@ defmodule ExTermbox.Window do
 
   alias ExTermbox.Bindings
   alias ExTermbox.Renderer
-  alias ExTermbox.Renderer.Canvas
+  alias ExTermbox.Renderer.{Canvas, Element}
+
   @name {:global, :extb_window_server}
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
-  def open(view), do: GenServer.call(@name, {:open, view})
-
+  @doc """
+  Updates the window by rendering the given view to the termbox buffer and
+  presenting it.
+  """
+  @spec update(Element.t()) :: :ok
   def update(view), do: GenServer.call(@name, {:update, view})
 
+  @doc """
+  Closes the window by stopping the GenServer. Prior to this, termbox is
+  de-initialized so that the terminal is restored to its previous state.
+  """
+  @spec close :: :ok
   def close, do: GenServer.stop(@name)
 
+  @doc """
+  Fetches an attribute for the window. This is currently limited to the window
+  dimensions, which can be useful when laying out content.
+
+  ## Examples
+
+      iex> Window.fetch(:height)
+      {:ok, 124}
+      iex> Window.fetch(:width)
+      {:ok, 50}
+      iex> Window.fetch(:foo)
+      {:error, :unknown_attribute}
+
+  """
+  @spec fetch(atom()) :: any()
   def fetch(attr), do: GenServer.call(@name, {:fetch, attr})
 
   def init(:ok) do
     Process.flag(:trap_exit, true)
     :ok = Bindings.init()
     {:ok, {}}
-  end
-
-  def handle_call({:open, view}, _from, state) do
-    {:reply, render_view(view), state}
   end
 
   def handle_call({:update, view}, _from, state) do
