@@ -16,8 +16,7 @@ defmodule ExTermbox.Cell do
   defstruct position: nil,
             char: nil,
             bg: Constants.colors().default,
-            # FIXME: support light colorschemes by default
-            fg: Constants.colors().white
+            fg: Constants.colors().default
 
   def empty do
     %Cell{position: nil, char: nil}

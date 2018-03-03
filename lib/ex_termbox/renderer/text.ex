@@ -47,8 +47,7 @@ defmodule ExTermbox.Renderer.Text do
   end
 
   defp foreground(attrs) do
-    # FIXME: support light colorschemes, fetch "default" foreground here.
-    base = attrs[:color] || Constants.colors().white
+    base = attrs[:color] || Constants.colors().default
     flags = attrs[:attributes] || []
     Enum.reduce(flags, base, fn flag, acc -> acc ||| flag end)
   end

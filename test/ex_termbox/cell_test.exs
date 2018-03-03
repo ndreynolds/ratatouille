@@ -15,7 +15,7 @@ defmodule ExTermbox.CellTest do
     assert %Cell{
              cell
              | bg: Constants.colors().default,
-               fg: Constants.colors().white
+               fg: Constants.colors().default
            } == cell
   end
 
