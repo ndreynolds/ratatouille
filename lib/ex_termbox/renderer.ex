@@ -8,8 +8,8 @@ defmodule ExTermbox.Renderer do
   alias ExTermbox.Renderer.{
     Element,
     Canvas,
-    ColumnedLayout,
     Panel,
+    Row,
     Sparkline,
     StatusBar,
     Table,
@@ -43,49 +43,82 @@ defmodule ExTermbox.Renderer do
   as the box representing available space for rendering, which shrinks as this
   space is consumed.
   """
-  @spec render(Canvas.t(), root_element) :: Canvas.t()
+  @spec render(Canvas.t(), root_element) :: {:ok, Canvas.t()} | {:error, term()}
   def render(%Canvas{} = canvas, %Element{tag: :view, children: children}) do
-    render_tree(canvas, children)
+    with :ok <- validate_tree(:view, children) do
+      {:ok, render_tree(canvas, children)}
+    end
   end
 
-  defp render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
+  def render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
     elements
     |> Enum.reduce(canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
   end
 
-  defp render_tree(%Canvas{} = canvas, %Element{
-         tag: tag,
-         attributes: attrs,
-         children: children
-       }) do
+  def render_tree(%Canvas{} = canvas, %Element{
+        tag: tag,
+        attributes: attrs,
+        children: children
+      }) do
     case tag do
-      :columned_layout ->
-        canvas
-        |> ColumnedLayout.render(children, &render_tree/2)
+      :row ->
+        Row.render(canvas, children, &render_tree/2)
+
+      :column ->
+        render_tree(canvas, children)
 
       :panel ->
-        canvas
-        |> Panel.render(attrs, &render_tree(&1, children))
+        Panel.render(canvas, attrs, &render_tree(&1, children))
 
       :table ->
-        canvas
-        |> Table.render(children)
+        Table.render(canvas, children)
 
       :sparkline ->
-        canvas
-        |> Sparkline.render(children)
+        Sparkline.render(canvas, children)
 
       :status_bar ->
-        canvas
-        |> StatusBar.render(&render_tree(&1, children))
+        StatusBar.render(canvas, &render_tree(&1, children))
 
       :text ->
-        canvas
-        |> Text.render(canvas.box.top_left, Enum.at(children, 0), attrs)
+        [content] = children
+        Text.render(canvas, canvas.box.top_left, content, attrs)
 
       :text_group ->
-        canvas
-        |> Text.render_group(children)
+        Text.render_group(canvas, children)
+    end
+  end
+
+  def validate_tree(parent, [%Element{tag: tag, children: children} | rest]) do
+    with :ok <- validate_child(parent, tag),
+         :ok <- validate_tree(tag, children),
+         :ok <- validate_tree(parent, rest),
+         do: :ok
+  end
+
+  def validate_tree(_parent, _x), do: :ok
+
+  defp validate_child(parent, child) do
+    case {parent, child} do
+      {:view, child} when child in [:row, :status_bar, :panel] ->
+        :ok
+
+      {:row, :column} ->
+        :ok
+
+      {:column, child}
+      when child in [:panel, :table, :row, :text, :text_group, :sparkline] ->
+        :ok
+
+      {:panel, child}
+      when child in [:table, :row, :text, :text_group, :sparkline] ->
+        :ok
+
+      {:table, :table_row} ->
+        :ok
+
+      {_, _} ->
+        {:error,
+         "Invalid view hierarchy: '#{child}' cannot be a child of '#{parent}'"}
     end
   end
 end

@@ -96,6 +96,8 @@ defmodule ExTermbox.Renderer.Canvas do
     # TODO: only attempt to render cells in the canvas box
     cells
     |> Enum.each(fn {_pos, cell} -> Bindings.put_cell(cell) end)
+
+    :ok
   end
 
   defp cell_to_string(%Cell{char: char}), do: to_string([char])

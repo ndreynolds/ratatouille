@@ -79,11 +79,11 @@ defmodule ExTermbox.Window do
   end
 
   defp render_view(view) do
-    canvas()
-    |> Renderer.render(view)
-    |> Canvas.render_to_termbox()
-
-    :ok = Bindings.present()
+    with empty_canvas <- canvas(),
+         {:ok, filled_canvas} <- Renderer.render(empty_canvas, view),
+         :ok <- Canvas.render_to_termbox(filled_canvas) do
+      Bindings.present()
+    end
   end
 
   defp canvas do
