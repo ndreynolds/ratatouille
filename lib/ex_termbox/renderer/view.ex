@@ -5,25 +5,38 @@ defmodule ExTermbox.Renderer.View do
   This API is still under development.
   """
 
-  alias ExTermbox.Renderer.Element
+  alias ExTermbox.Renderer.{Box, Canvas, Element, StatusBar}
 
-  defmacro table(attributes \\ %{}, do: block),
-    do: macro_element(:table, attributes, block)
+  ### View Rendering
 
-  defmacro panel(attributes \\ %{}, do: block),
-    do: macro_element(:panel, attributes, block)
+  def render(canvas, attrs, children, render_fn) do
+    canvas
+    |> render_top_bar(attrs[:top_bar], render_fn)
+    |> render_bottom_bar(attrs[:bottom_bar], render_fn)
+    |> render_fn.(children)
+  end
 
-  defmacro status_bar(attributes \\ %{}, do: block),
-    do: macro_element(:status_bar, attributes, block)
+  defp render_top_bar(canvas, nil, _render_fn), do: canvas
 
-  defmacro row(attributes \\ %{}, do: block),
-    do: macro_element(:row, attributes, block)
+  defp render_top_bar(%Canvas{box: box} = canvas, bar, render_fn) do
+    canvas
+    |> Canvas.put_box(Box.head(box, 1))
+    |> render_fn.(bar)
+    |> Canvas.put_box(box)
+    |> Canvas.consume_rows(1)
+  end
 
-  defmacro column(attributes \\ %{}, do: block),
-    do: macro_element(:column, attributes, block)
+  defp render_bottom_bar(canvas, nil, _render_fn), do: canvas
 
-  defmacro view(attributes \\ %{}, do: block),
-    do: macro_element(:view, attributes, block)
+  defp render_bottom_bar(%Canvas{box: box} = canvas, bar, render_fn) do
+    canvas
+    |> Canvas.put_box(Box.tail(box, 1))
+    |> render_fn.(bar)
+    |> Canvas.put_box(box)
+    |> Canvas.consume_rows(1)
+  end
+
+  ### Element Definition
 
   def table_row(attributes \\ %{}, values) do
     element(:table_row, attributes, values)
@@ -40,6 +53,26 @@ defmodule ExTermbox.Renderer.View do
   def element(tag, children) when is_atom(tag) and is_list(children) do
     %Element{tag: tag, children: children}
   end
+
+  ### Element Definition Macros
+
+  defmacro table(attributes \\ %{}, do: block),
+    do: macro_element(:table, attributes, block)
+
+  defmacro panel(attributes \\ %{}, do: block),
+    do: macro_element(:panel, attributes, block)
+
+  defmacro bar(attributes \\ %{}, do: block),
+    do: macro_element(:bar, attributes, block)
+
+  defmacro row(attributes \\ %{}, do: block),
+    do: macro_element(:row, attributes, block)
+
+  defmacro column(attributes \\ %{}, do: block),
+    do: macro_element(:column, attributes, block)
+
+  defmacro view(attributes \\ %{}, do: block),
+    do: macro_element(:view, attributes, block)
 
   defp macro_element(tag, %{}, block),
     do: macro_element(tag, Macro.escape(%{}), block)

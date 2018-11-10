@@ -16,7 +16,8 @@ defmodule RenderingDemo do
   def loop do
     with :ok <- Window.update(demo_view()) do
       receive do
-        {:event, %Event{ch: ?q}} -> :ok = Window.close()
+        {:event, %Event{ch: ?q}} ->
+          :ok = Window.close()
       after
         @refresh_interval ->
           loop()
@@ -29,7 +30,17 @@ defmodule RenderingDemo do
   end
 
   def demo_view do
-    view do
+    top_bar =
+      bar do
+        element(:text, ["A top bar for the view"])
+      end
+
+    bottom_bar =
+      bar do
+        element(:text, ["A bottom bar for the view"])
+      end
+
+    view(top_bar: top_bar, bottom_bar: bottom_bar) do
       panel title: "Rendering Demo", height: :fill do
         row do
           column(size: 6) do

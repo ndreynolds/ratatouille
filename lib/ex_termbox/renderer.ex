@@ -6,17 +6,16 @@ defmodule ExTermbox.Renderer do
   """
 
   alias ExTermbox.Renderer.{
-    Element,
     Canvas,
+    Element,
     Panel,
     Row,
     Sparkline,
     StatusBar,
     Table,
-    Text
+    Text,
+    View
   }
-
-  require Logger
 
   @type root_element :: %Element{
           tag: :view,
@@ -44,15 +43,14 @@ defmodule ExTermbox.Renderer do
   space is consumed.
   """
   @spec render(Canvas.t(), root_element) :: {:ok, Canvas.t()} | {:error, term()}
-  def render(%Canvas{} = canvas, %Element{tag: :view, children: children}) do
-    with :ok <- validate_tree(:view, children) do
-      {:ok, render_tree(canvas, children)}
+  def render(%Canvas{} = canvas, %Element{tag: tag, children: children} = root) do
+    with :ok <- validate_tree(tag, children) do
+      {:ok, render_tree(canvas, root)}
     end
   end
 
   def render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
-    elements
-    |> Enum.reduce(canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
+    Enum.reduce(elements, canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
   end
 
   def render_tree(%Canvas{} = canvas, %Element{
@@ -61,6 +59,9 @@ defmodule ExTermbox.Renderer do
         children: children
       }) do
     case tag do
+      :view ->
+        View.render(canvas, attrs, children, &render_tree/2)
+
       :row ->
         Row.render(canvas, children, &render_tree/2)
 
@@ -76,8 +77,8 @@ defmodule ExTermbox.Renderer do
       :sparkline ->
         Sparkline.render(canvas, children)
 
-      :status_bar ->
-        StatusBar.render(canvas, &render_tree(&1, children))
+      :bar ->
+        render_tree(canvas, children)
 
       :text ->
         [content] = children
@@ -88,37 +89,47 @@ defmodule ExTermbox.Renderer do
     end
   end
 
-  def validate_tree(parent, [%Element{tag: tag, children: children} | rest]) do
+  ### View Tree Validation
+
+  @valid_relationships %{
+    view: [:row, :panel],
+    row: [:column],
+    column: [:panel, :table, :row, :text, :text_group, :sparkline],
+    panel: [:table, :row, :text, :text_group, :sparkline],
+    table: [:table_row]
+  }
+
+  @doc """
+  Validates the hierarchy of a view tree given the root element's tag and its
+  children.
+
+  Used by the render/2 function to prevent strange errors that may otherwise
+  occur when processing invalid view trees.
+  """
+  def validate_tree(:view, children) do
+    validate_subtree(:view, children)
+  end
+
+  def validate_tree(root_tag, _children) do
+    {:error, "Invalid view hierarchy: Root element must have tag 'view', but found '#{root_tag}'"}
+  end
+
+  defp validate_subtree(parent, [%Element{tag: tag, children: children} | rest]) do
     with :ok <- validate_child(parent, tag),
-         :ok <- validate_tree(tag, children),
-         :ok <- validate_tree(parent, rest),
+         :ok <- validate_subtree(tag, children),
+         :ok <- validate_subtree(parent, rest),
          do: :ok
   end
 
-  def validate_tree(_parent, _x), do: :ok
+  defp validate_subtree(_parent, _other) do
+    :ok
+  end
 
-  defp validate_child(parent, child) do
-    case {parent, child} do
-      {:view, child} when child in [:row, :status_bar, :panel] ->
-        :ok
-
-      {:row, :column} ->
-        :ok
-
-      {:column, child}
-      when child in [:panel, :table, :row, :text, :text_group, :sparkline] ->
-        :ok
-
-      {:panel, child}
-      when child in [:table, :row, :text, :text_group, :sparkline] ->
-        :ok
-
-      {:table, :table_row} ->
-        :ok
-
-      {_, _} ->
-        {:error,
-         "Invalid view hierarchy: '#{child}' cannot be a child of '#{parent}'"}
+  defp validate_child(parent_tag, child_tag) do
+    if child_tag in Map.get(@valid_relationships, parent_tag, []) do
+      :ok
+    else
+      {:error, "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{parent_tag}'"}
     end
   end
 end

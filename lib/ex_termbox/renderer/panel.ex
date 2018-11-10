@@ -8,11 +8,11 @@ defmodule ExTermbox.Renderer.Panel do
   @title_offset_x 2
 
   def render(%Canvas{box: box} = canvas, %{height: :fill} = attrs, inner_fn) do
-    merged_attrs = attrs |> Map.merge(%{height: Box.height(box)})
+    merged_attrs = Map.merge(attrs, %{height: Box.height(box)})
     render(canvas, merged_attrs, inner_fn)
   end
 
-  def render(%Canvas{box: box} = canvas, attrs, render_fn) do
+  def render(%Canvas{box: box} = canvas, attrs, inner_fn) do
     fill_empty? = !is_nil(attrs[:height])
 
     constrained_canvas =
@@ -21,7 +21,7 @@ defmodule ExTermbox.Renderer.Panel do
 
     rendered_canvas =
       constrained_canvas
-      |> render_children(render_fn)
+      |> render_children(inner_fn)
 
     consume_y = rendered_canvas.box.top_left.y - box.top_left.y + @padding
 
@@ -46,8 +46,7 @@ defmodule ExTermbox.Renderer.Panel do
   defp render_title(canvas, nil), do: canvas
 
   defp render_title(%Canvas{box: box} = canvas, title) do
-    canvas
-    |> Text.render(title_position(box), title)
+    Text.render(canvas, title_position(box), title)
   end
 
   defp title_position(box),

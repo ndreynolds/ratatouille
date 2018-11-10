@@ -39,6 +39,11 @@ defmodule ExTermbox.Renderer.Canvas do
     %Canvas{box: Box.from_dimensions(x, y)}
   end
 
+  @spec put_box(Canvas.t(), Box.t()) :: Canvas.t()
+  def put_box(%Canvas{} = canvas, box) do
+    %Canvas{canvas | box: box}
+  end
+
   @doc """
   Copies the canvas to a new one with the box padded on each side (top, left,
   bottom, right) by `size`. Pass a negative size to remove padding.
@@ -60,6 +65,18 @@ defmodule ExTermbox.Renderer.Canvas do
   def consume(%Canvas{box: box} = canvas, dx, dy) do
     %Canvas{canvas | box: Box.consume(box, dx, dy)}
   end
+
+  @doc """
+  Creates a new canvas with `n` rows (from the top) consumed.
+  """
+  @spec consume_rows(Canvas.t(), integer()) :: Canvas.t()
+  def consume_rows(canvas, n), do: consume(canvas, 0, n)
+
+  @doc """
+  Creates a new canvas with `n` columns (from the left) consumed.
+  """
+  @spec consume_columns(Canvas.t(), integer()) :: Canvas.t()
+  def consume_columns(canvas, n), do: consume(canvas, n, 0)
 
   @spec translate(Canvas.t(), integer(), integer()) :: Canvas.t()
   def translate(%Canvas{box: box} = canvas, dx, dy) do
@@ -94,8 +111,9 @@ defmodule ExTermbox.Renderer.Canvas do
 
   def render_to_termbox(%Canvas{cells: cells}) do
     # TODO: only attempt to render cells in the canvas box
-    cells
-    |> Enum.each(fn {_pos, cell} -> Bindings.put_cell(cell) end)
+    for {_pos, cell} <- cells do
+      :ok = Bindings.put_cell(cell)
+    end
 
     :ok
   end
