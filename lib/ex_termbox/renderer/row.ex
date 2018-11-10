@@ -38,11 +38,11 @@ defmodule ExTermbox.Renderer.Row do
   end
 
   defp column_boxes(outer_box, col_sizes) do
-    unit_width = Integer.floor_div(Box.width(outer_box), @grid_size)
+    unit_width = Box.width(outer_box) / @grid_size
 
     {boxes, _remaining_box} =
       Enum.map_reduce(col_sizes, outer_box, fn size, remaining_box ->
-        col_width = size * unit_width
+        col_width = trunc(size * unit_width)
         col_box = column_box(remaining_box, col_width)
         remaining_box = Box.translate(col_box, col_width, 0)
         {col_box, remaining_box}
