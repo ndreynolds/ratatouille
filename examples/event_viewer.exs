@@ -1,6 +1,13 @@
 defmodule EventViewer do
+  @moduledoc """
+  A sample application that shows debug information about terminal events. These
+  can be click, resize or key press events.
+  """
+
   alias ExTermbox.{Constants, EventManager, Event, Window}
   import ExTermbox.Renderer.View
+
+  @title "Event Viewer (click, resize, or press a key - 'q' to quit)"
 
   def run do
     {:ok, _pid} = Window.start_link()
@@ -39,26 +46,18 @@ defmodule EventViewer do
         do: reverse_lookup(Constants.keys(), key),
         else: :none
 
-    layout([
-      table do
-        table_row(["Type", inspect(type), inspect(type_name)])
-        table_row(["Mod", inspect(mod), ""])
-        table_row(["Key", inspect(key), inspect(key_name)])
-        table_row(["Char", inspect(ch), <<ch::utf8>>])
-        table_row(["Width", inspect(w), ""])
-        table_row(["Height", inspect(h), ""])
-        table_row(["X", inspect(x), ""])
-        table_row(["Y", inspect(y), ""])
-      end
-    ])
-  end
-
-  def layout(children \\ []) do
-    title = "Event Viewer (click, resize, or press a key - 'q' to quit)"
-
     view do
-      panel title: title, height: :fill do
-        children
+      panel title: @title, height: :fill do
+        table do
+          table_row(["Type", inspect(type), inspect(type_name)])
+          table_row(["Mod", inspect(mod), ""])
+          table_row(["Key", inspect(key), inspect(key_name)])
+          table_row(["Char", inspect(ch), <<ch::utf8>>])
+          table_row(["Width", inspect(w), ""])
+          table_row(["Height", inspect(h), ""])
+          table_row(["X", inspect(x), ""])
+          table_row(["Y", inspect(y), ""])
+        end
       end
     end
   end

@@ -1,6 +1,12 @@
-defmodule ToolbarDemo do
+defmodule MultipleViewsDemo do
+  @moduledoc """
+  An example of how to implement navigation between multiple views.
+  """
+
   alias ExTermbox.{Constants, EventManager, Event, Window}
   import ExTermbox.Renderer.View
+
+  @title "Multiple Views Demo (Press 1, 2 or 3, or q to quit)"
 
   def run do
     {:ok, _pid} = Window.start_link()
@@ -29,28 +35,31 @@ defmodule ToolbarDemo do
   end
 
   def view_1 do
-    view do
+    view(top_bar: title_bar(), bottom_bar: status_bar_for("View 1")) do
       element(:panel, %{title: "View 1", height: :fill}, [])
-      status_bar_for("View 1")
     end
   end
 
   def view_2 do
-    view do
+    view(top_bar: title_bar(), bottom_bar: status_bar_for("View 2")) do
       element(:panel, %{title: "View 2", height: :fill}, [])
-      status_bar_for("View 2")
     end
   end
 
   def view_3 do
-    view do
+    view(top_bar: title_bar(), bottom_bar: status_bar_for("View 3")) do
       element(:panel, %{title: "View 3", height: :fill}, [])
-      status_bar_for("View 3")
+    end
+  end
+
+  def title_bar do
+    bar do
+      element(:text, [@title])
     end
   end
 
   def status_bar_for(selected) do
-    status_bar do
+    bar do
       element(
         :text_group,
         ["View 1", "View 2", "View 3"]
@@ -72,4 +81,4 @@ defmodule ToolbarDemo do
   end
 end
 
-ToolbarDemo.run()
+MultipleViewsDemo.run()

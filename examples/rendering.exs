@@ -1,7 +1,11 @@
 defmodule RenderingDemo do
+  @moduledoc """
+  This is a kitchen sink example intended to show off most of the
+  declarative-style rendering functionality provided by `ExTermbox`.
+  """
+
   alias ExTermbox.{EventManager, Event, Window}
   import ExTermbox.Renderer.View
-  require Logger
 
   @refresh_interval 500
 
@@ -25,7 +29,7 @@ defmodule RenderingDemo do
     else
       err ->
         Window.close()
-        Logger.error("Render error occurred: " <> inspect(err))
+        IO.write(:stderr, "Render error occurred: " <> inspect(err))
     end
   end
 
