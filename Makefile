@@ -13,6 +13,7 @@ ifeq ($(shell uname),Darwin)
 endif
 
 all: priv/termbox_bindings.so
+	@:
 
 $(TERMBOX_BUILD)/libtermbox.%:
 	cd $(TERMBOX_PATH) && CFLAGS=-fPIC ./waf configure --prefix=. && ./waf
