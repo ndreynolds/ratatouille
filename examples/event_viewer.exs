@@ -46,18 +46,24 @@ defmodule EventViewer do
         do: reverse_lookup(Constants.keys(), key),
         else: :none
 
+    layout([
+      table do
+        table_row(["Type", inspect(type), inspect(type_name)])
+        table_row(["Mod", inspect(mod), ""])
+        table_row(["Key", inspect(key), inspect(key_name)])
+        table_row(["Char", inspect(ch), <<ch::utf8>>])
+        table_row(["Width", inspect(w), ""])
+        table_row(["Height", inspect(h), ""])
+        table_row(["X", inspect(x), ""])
+        table_row(["Y", inspect(y), ""])
+      end
+    ])
+  end
+
+  def layout(children \\ []) do
     view do
       panel title: @title, height: :fill do
-        table do
-          table_row(["Type", inspect(type), inspect(type_name)])
-          table_row(["Mod", inspect(mod), ""])
-          table_row(["Key", inspect(key), inspect(key_name)])
-          table_row(["Char", inspect(ch), <<ch::utf8>>])
-          table_row(["Width", inspect(w), ""])
-          table_row(["Height", inspect(h), ""])
-          table_row(["X", inspect(x), ""])
-          table_row(["Y", inspect(y), ""])
-        end
+        children
       end
     end
   end
