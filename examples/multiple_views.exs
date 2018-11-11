@@ -3,10 +3,10 @@ defmodule MultipleViewsDemo do
   An example of how to implement navigation between multiple views.
   """
 
-  alias ExTermbox.{Constants, EventManager, Event, Window}
-  import ExTermbox.Renderer.View
+  alias ExTermbox.{EventManager, Event, Window}
 
-  @title "Multiple Views Demo (Press 1, 2 or 3, or q to quit)"
+  import ExTermbox.Constants, only: [color: 1]
+  import ExTermbox.Renderer.View
 
   def run do
     {:ok, _pid} = Window.start_link()
@@ -54,30 +54,25 @@ defmodule MultipleViewsDemo do
 
   def title_bar do
     bar do
-      element(:text, [@title])
+      label("Multiple Views Demo (Press 1, 2 or 3, or q to quit)")
     end
   end
+
+  @style_highlighted [
+    background: color(:white),
+    color: color(:black)
+  ]
 
   def status_bar_for(selected) do
-    bar do
-      element(
-        :text_group,
-        ["View 1", "View 2", "View 3"]
-        |> Enum.map(fn opt ->
-          element(:text, if(opt == selected, do: highlighted(), else: %{}), [
-            opt
-          ])
-        end)
-        |> Enum.intersperse(element(:text, [" "]))
-      )
-    end
-  end
+    options =
+      for item <- Enum.intersperse(["View 1", "View 2", "View 3"], " ") do
+        attrs = if(item == selected, do: @style_highlighted, else: [])
+        text(attrs, item)
+      end
 
-  def highlighted do
-    %{
-      background: Constants.color(:white),
-      color: Constants.color(:black)
-    }
+    bar do
+      element(:label, [], options)
+    end
   end
 end
 

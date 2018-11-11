@@ -8,7 +8,7 @@ defmodule ExTermbox.Renderer.SparklineTest do
       canvas =
         Sparkline.render(
           Canvas.from_dimensions(6, 1),
-          [1, 40, 18, 5, 7, 50]
+          %{values: [1, 40, 18, 5, 7, 50]}
         )
 
       assert Canvas.render_to_strings(canvas) === ["▁▇▃▂▂█"]

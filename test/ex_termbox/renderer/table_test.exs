@@ -1,7 +1,9 @@
 defmodule ExTermbox.Renderer.TableTest do
   use ExUnit.Case
 
-  alias ExTermbox.Renderer.{Canvas, Table, View}
+  alias ExTermbox.Renderer.{Canvas, Table}
+
+  import ExTermbox.Renderer.View
 
   describe "render/2" do
     test "returns the table" do
@@ -9,8 +11,8 @@ defmodule ExTermbox.Renderer.TableTest do
         Table.render(
           Canvas.from_dimensions(15, 5),
           [
-            View.element(:table_row, ["a", "b", "c"]),
-            View.element(:table_row, ["d", "e", "f"])
+            element(:table_row, %{values: ["a", "b", "c"]}, []),
+            element(:table_row, %{values: ["d", "e", "f"]}, [])
           ]
         )
 
@@ -26,8 +28,8 @@ defmodule ExTermbox.Renderer.TableTest do
         Table.render(
           Canvas.from_dimensions(25, 5),
           [
-            View.element(:table_row, ["very-very-long", "foo"]),
-            View.element(:table_row, ["short", "bar"])
+            element(:table_row, %{values: ["very-very-long", "foo"]}, []),
+            element(:table_row, %{values: ["short", "bar"]}, [])
           ]
         )
 
@@ -43,7 +45,7 @@ defmodule ExTermbox.Renderer.TableTest do
         Table.render(
           Canvas.from_dimensions(11, 4),
           [
-            View.element(:table_row, ["first-column", "this-is-way-too-long"])
+            element(:table_row, %{values: ["first-column", "this-is-way-too-long"]}, [])
           ]
         )
 

@@ -38,50 +38,67 @@ defmodule ExTermbox.Renderer.View do
 
   ### Element Definition
 
-  def table_row(attributes \\ %{}, values) do
-    element(:table_row, attributes, values)
+  def text(attributes \\ %{}, content) when is_binary(content) do
+    element(:text, Enum.into(attributes, %{content: content}), [])
   end
 
-  def element(tag, attributes, children) when is_list(attributes),
-    do: element(tag, Enum.into(attributes, %{}), children)
+  def table_row(attributes \\ %{}, values) do
+    element(:table_row, Enum.into(attributes, %{values: values}), [])
+  end
+
+  def sparkline(attributes \\ %{}, values) do
+    element(:sparkline, Enum.into(attributes, %{values: values}), [])
+  end
+
+  def element(tag, children), do: element(tag, %{}, children)
 
   def element(tag, attributes, children)
       when is_atom(tag) and is_map(attributes) and is_list(children) do
     %Element{tag: tag, attributes: attributes, children: children}
   end
 
-  def element(tag, children) when is_atom(tag) and is_list(children) do
-    %Element{tag: tag, children: children}
+  def element(tag, attributes, children) when is_list(attributes) do
+    element(tag, Enum.into(attributes, %{}), children)
   end
 
   ### Element Definition Macros
 
-  defmacro table(attributes \\ %{}, do: block),
+  defmacro table(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:table, attributes, block)
 
-  defmacro panel(attributes \\ %{}, do: block),
+  defmacro panel(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:panel, attributes, block)
 
-  defmacro bar(attributes \\ %{}, do: block),
+  defmacro bar(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:bar, attributes, block)
 
-  defmacro row(attributes \\ %{}, do: block),
+  defmacro row(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:row, attributes, block)
 
-  defmacro column(attributes \\ %{}, do: block),
+  defmacro column(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:column, attributes, block)
 
-  defmacro view(attributes \\ %{}, do: block),
+  defmacro label(attributes \\ Macro.escape(%{}), text_or_block)
+
+  defmacro label(attributes, do: block),
+    do: macro_element(:label, attributes, block)
+
+  defmacro label(attributes, text_content) when is_binary(text_content) do
+    quote do
+      element(:label, unquote(attributes), [
+        text(unquote(text_content))
+      ])
+    end
+  end
+
+  defmacro view(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:view, attributes, block)
 
-  defp macro_element(tag, %{}, block),
-    do: macro_element(tag, Macro.escape(%{}), block)
-
   defp macro_element(tag, attributes, block) do
-    elements = extract_children(block)
+    child_elements = extract_children(block)
 
     quote do
-      element(unquote(tag), unquote(attributes), unquote(elements))
+      element(unquote(tag), unquote(attributes), List.flatten(unquote(child_elements)))
     end
   end
 

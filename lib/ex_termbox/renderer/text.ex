@@ -25,13 +25,15 @@ defmodule ExTermbox.Renderer.Text do
       Enum.reduce(text_elements, canvas, &render_group_member/2)
       | box: canvas.box
     }
-    |> Canvas.translate(0, 1)
+    |> Canvas.consume_rows(1)
   end
 
   defp render_group_member(
-         %Element{tag: :text, attributes: attrs, children: [text]},
+         %Element{tag: :text, attributes: attrs, children: []},
          canvas
        ) do
+    text = attrs[:content] || ""
+
     canvas
     |> render(canvas.box.top_left, text, attrs)
     |> Canvas.translate(String.length(text), 0)

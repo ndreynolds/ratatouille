@@ -5,7 +5,9 @@ defmodule RenderingDemo do
   """
 
   alias ExTermbox.{EventManager, Event, Window}
+
   import ExTermbox.Renderer.View
+  import ExTermbox.Constants, only: [color: 1, attribute: 1]
 
   @refresh_interval 500
 
@@ -33,15 +35,22 @@ defmodule RenderingDemo do
     end
   end
 
+  @style_red [color: color(:red)]
+
+  @style_blue_bold_underlined [
+    color: color(:blue),
+    attributes: [attribute(:bold), attribute(:underline)]
+  ]
+
   def demo_view do
     top_bar =
       bar do
-        element(:text, ["A top bar for the view"])
+        label("A top bar for the view")
       end
 
     bottom_bar =
       bar do
-        element(:text, ["A bottom bar for the view"])
+        label("A bottom bar for the view")
       end
 
     view(top_bar: top_bar, bottom_bar: bottom_bar) do
@@ -49,6 +58,12 @@ defmodule RenderingDemo do
         row do
           column(size: 6) do
             panel title: "Column 1 Row 1" do
+              label do
+                text(@style_red, "Red text")
+                text(" ")
+                text(@style_blue_bold_underlined, "Blue, bold underlined text")
+              end
+
               table do
                 table_row([
                   "Current Time:",
@@ -75,7 +90,7 @@ defmodule RenderingDemo do
 
           column(size: 6) do
             panel title: "Column 2 Row 1" do
-              element(:sparkline, Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
+              sparkline(Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
 
               table do
                 table_row([
@@ -131,7 +146,7 @@ defmodule RenderingDemo do
 
           column(size: 9) do
             panel title: "Column 2 Row 2" do
-              element(:sparkline, Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
+              sparkline(Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
 
               table do
                 table_row([

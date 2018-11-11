@@ -22,7 +22,7 @@ import ExTermbox.Renderer.View
 hello_world_view =
   view do
     panel title: "Hello, World!", height: :fill do
-      element(:text, ["Press 'q' to quit."])
+      label("Press 'q' to quit.")
     end
   end
 

@@ -29,7 +29,7 @@ defmodule ExTermbox.Renderer do
           | :bar
           | :row
           | :text
-          | :text_group
+          | :label
 
   @type child_element :: %Element{tag: child_tag()}
 
@@ -50,7 +50,9 @@ defmodule ExTermbox.Renderer do
   end
 
   def render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
-    Enum.reduce(elements, canvas, fn el, new_canvas -> render_tree(new_canvas, el) end)
+    Enum.reduce(elements, canvas, fn el, new_canvas ->
+      render_tree(new_canvas, el)
+    end)
   end
 
   def render_tree(%Canvas{} = canvas, %Element{
@@ -75,16 +77,12 @@ defmodule ExTermbox.Renderer do
         Table.render(canvas, children)
 
       :sparkline ->
-        Sparkline.render(canvas, children)
+        Sparkline.render(canvas, attrs)
 
       :bar ->
         render_tree(canvas, children)
 
-      :text ->
-        [content] = children
-        Text.render(canvas, canvas.box.top_left, content, attrs)
-
-      :text_group ->
+      :label ->
         Text.render_group(canvas, children)
     end
   end
@@ -94,8 +92,10 @@ defmodule ExTermbox.Renderer do
   @valid_relationships %{
     view: [:row, :panel],
     row: [:column],
-    column: [:panel, :table, :row, :text, :text_group, :sparkline],
-    panel: [:table, :row, :text, :text_group, :sparkline],
+    column: [:panel, :table, :row, :label, :sparkline],
+    panel: [:table, :row, :label, :sparkline],
+    label: [:text],
+    bar: [:label],
     table: [:table_row]
   }
 
@@ -111,7 +111,10 @@ defmodule ExTermbox.Renderer do
   end
 
   def validate_tree(root_tag, _children) do
-    {:error, "Invalid view hierarchy: Root element must have tag 'view', but found '#{root_tag}'"}
+    {:error,
+     "Invalid view hierarchy: Root element must have tag 'view', but found '#{
+       root_tag
+     }'"}
   end
 
   defp validate_subtree(parent, [%Element{tag: tag, children: children} | rest]) do
@@ -121,7 +124,7 @@ defmodule ExTermbox.Renderer do
          do: :ok
   end
 
-  defp validate_subtree(_parent, _other) do
+  defp validate_subtree(_parent, []) do
     :ok
   end
 
@@ -129,7 +132,10 @@ defmodule ExTermbox.Renderer do
     if child_tag in Map.get(@valid_relationships, parent_tag, []) do
       :ok
     else
-      {:error, "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{parent_tag}'"}
+      {:error,
+       "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{
+         parent_tag
+       }'"}
     end
   end
 end

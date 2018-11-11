@@ -14,7 +14,6 @@ defmodule ExTermbox.Renderer.Box do
       v
       y
 
-
   A `Box` struct stores the coordinates for two corners of the box---the
   top-left and bottom-right corners--from which the remaining attributes
   (height, width, other corners) can be computed.

@@ -15,12 +15,22 @@ defmodule ExTermbox.Renderer.RowTest do
             %Element{
               tag: :column,
               attributes: %{size: 6},
-              children: %Element{tag: :text, children: ["Col1"]}
+              children: %Element{
+                tag: :label,
+                children: [
+                  %Element{tag: :text, attributes: %{content: "Col1"}}
+                ]
+              }
             },
             %Element{
               tag: :column,
               attributes: %{size: 6},
-              children: %Element{tag: :text, children: ["Col2"]}
+              children: %Element{
+                tag: :label,
+                children: [
+                  %Element{tag: :text, attributes: %{content: "Col2"}}
+                ]
+              }
             }
           ],
           &Renderer.render_tree/2

@@ -28,7 +28,9 @@ defmodule ExTermbox.Renderer.Table do
   end
 
   defp render_table_row(%Canvas{} = canvas, col_sizes, row) do
-    row.children
+    cells = row.attributes[:values] || []
+
+    cells
     |> Enum.zip(col_sizes)
     |> Enum.reduce({canvas, 0}, &render_table_cell(&1, &2, row.attributes))
   end
@@ -41,7 +43,7 @@ defmodule ExTermbox.Renderer.Table do
   end
 
   defp column_sizes(%Box{} = box, rows) do
-    rows = Enum.map(rows, fn %Element{children: children} -> children end)
+    rows = for %Element{attributes: %{values: values}} <- rows, do: values
     check_row_uniformity!(rows)
 
     max_width = Box.width(box)
@@ -81,7 +83,13 @@ defmodule ExTermbox.Renderer.Table do
 
   defp padded_columns(column_sizes, max_size) do
     rem_space = max_size - Enum.sum(column_sizes)
-    per_column_padding = Integer.floor_div(rem_space, length(column_sizes))
+
+    per_column_padding =
+      case length(column_sizes) do
+        0 -> 0
+        n -> Integer.floor_div(rem_space, n)
+      end
+
     Enum.map(column_sizes, &(&1 + per_column_padding))
   end
 

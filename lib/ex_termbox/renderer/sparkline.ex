@@ -6,16 +6,17 @@ defmodule ExTermbox.Renderer.Sparkline do
   @ticks ~w[▁ ▂ ▃ ▄ ▅ ▆ ▇ █]
   @range length(@ticks) - 1
 
-  def render(%Canvas{} = canvas, values) do
+  def render(%Canvas{} = canvas, %{values: values}) do
     text =
       values
       |> normalize()
       |> Enum.map(fn idx -> Enum.at(@ticks, idx) end)
       |> Enum.join()
 
-    canvas
-    |> Text.render(canvas.box.top_left, text)
+    Text.render(canvas, canvas.box.top_left, text)
   end
+
+  def render(%Canvas{} = canvas, _other), do: canvas
 
   defp normalize(values) do
     min = Enum.min(values)
