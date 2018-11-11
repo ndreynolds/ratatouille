@@ -11,7 +11,6 @@ defmodule ExTermbox.Renderer do
     Panel,
     Row,
     Sparkline,
-    StatusBar,
     Table,
     Text,
     View
@@ -23,11 +22,12 @@ defmodule ExTermbox.Renderer do
         }
 
   @type child_tag ::
-          :columned_layout
+          :column
           | :panel
           | :table
           | :sparkline
-          | :status_bar
+          | :bar
+          | :row
           | :text
           | :text_group
 

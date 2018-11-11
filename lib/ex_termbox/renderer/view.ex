@@ -5,7 +5,7 @@ defmodule ExTermbox.Renderer.View do
   This API is still under development.
   """
 
-  alias ExTermbox.Renderer.{Box, Canvas, Element, StatusBar}
+  alias ExTermbox.Renderer.{Box, Canvas, Element}
 
   ### View Rendering
 
