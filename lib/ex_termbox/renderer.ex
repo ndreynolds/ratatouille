@@ -43,8 +43,8 @@ defmodule ExTermbox.Renderer do
   space is consumed.
   """
   @spec render(Canvas.t(), root_element) :: {:ok, Canvas.t()} | {:error, term()}
-  def render(%Canvas{} = canvas, %Element{tag: tag, children: children} = root) do
-    with :ok <- validate_tree(tag, children) do
+  def render(%Canvas{} = canvas, %Element{} = root) do
+    with :ok <- validate_tree(root) do
       {:ok, render_tree(canvas, root)}
     end
   end
@@ -100,21 +100,17 @@ defmodule ExTermbox.Renderer do
   }
 
   @doc """
-  Validates the hierarchy of a view tree given the root element's tag and its
-  children.
+  Validates the hierarchy of a view tree given the root element.
 
   Used by the render/2 function to prevent strange errors that may otherwise
   occur when processing invalid view trees.
   """
-  def validate_tree(:view, children) do
+  def validate_tree(%Element{tag: :view, children: children}) do
     validate_subtree(:view, children)
   end
 
-  def validate_tree(root_tag, _children) do
-    {:error,
-     "Invalid view hierarchy: Root element must have tag 'view', but found '#{
-       root_tag
-     }'"}
+  def validate_tree(%Element{tag: tag}) do
+    {:error, "Invalid view hierarchy: Root element must have tag 'view', but found '#{tag}'"}
   end
 
   defp validate_subtree(parent, [%Element{tag: tag, children: children} | rest]) do
@@ -132,10 +128,7 @@ defmodule ExTermbox.Renderer do
     if child_tag in Map.get(@valid_relationships, parent_tag, []) do
       :ok
     else
-      {:error,
-       "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{
-         parent_tag
-       }'"}
+      {:error, "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{parent_tag}'"}
     end
   end
 end
