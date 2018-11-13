@@ -1,10 +1,8 @@
 defmodule ExTermbox.Renderer.LineTest do
-  use ExUnit.Case
-
-  import ExTermbox.Renderer.Line
+  use ExUnit.Case, async: true
 
   alias ExTermbox.{Cell, Position}
-  alias ExTermbox.Renderer.Canvas
+  alias ExTermbox.Renderer.{Canvas, Line}
 
   describe "render_vertical/4" do
     test "returns a map with the rendered cells" do
@@ -16,7 +14,7 @@ defmodule ExTermbox.Renderer.LineTest do
                  %Position{x: 0, y: 1} => %Cell{char: ?|},
                  %Position{x: 0, y: 2} => %Cell{char: ?|}
                }
-             } = render_vertical(empty_canvas, %Position{x: 0, y: 0}, "|", 3)
+             } = Line.render_vertical(empty_canvas, %Position{x: 0, y: 0}, "|", 3)
     end
   end
 
@@ -30,13 +28,7 @@ defmodule ExTermbox.Renderer.LineTest do
                  %Position{x: 1, y: 0} => %Cell{char: ?-},
                  %Position{x: 2, y: 0} => %Cell{char: ?-}
                }
-             } =
-               render_horizontal(
-                 empty_canvas,
-                 %Position{x: 0, y: 0},
-                 "-",
-                 3
-               )
+             } = Line.render_horizontal(empty_canvas, %Position{x: 0, y: 0}, "-", 3)
     end
   end
 end

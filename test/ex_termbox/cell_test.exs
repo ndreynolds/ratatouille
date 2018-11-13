@@ -1,5 +1,5 @@
 defmodule ExTermbox.CellTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias ExTermbox.{Cell, Constants, Position}
 

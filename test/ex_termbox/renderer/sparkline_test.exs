@@ -1,5 +1,5 @@
 defmodule ExTermbox.Renderer.SparklineTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias ExTermbox.Renderer.{Canvas, Sparkline}
 

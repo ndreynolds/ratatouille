@@ -1,5 +1,5 @@
 defmodule ExTermbox.Renderer.RowTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias ExTermbox.Renderer
   alias ExTermbox.Renderer.{Canvas, Element, Row}
