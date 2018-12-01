@@ -44,7 +44,7 @@ defmodule ExTermbox.Renderer.Table do
 
   defp column_sizes(%Box{} = box, rows) do
     rows = for %Element{attributes: %{values: values}} <- rows, do: values
-    check_row_uniformity!(rows)
+    :ok = check_row_uniformity(rows)
 
     max_width = Box.width(box)
     columns = transpose(rows)
@@ -99,10 +99,17 @@ defmodule ExTermbox.Renderer.Table do
     |> Enum.map(&Tuple.to_list/1)
   end
 
-  defp check_row_uniformity!(rows) do
+  defp check_row_uniformity([]) do
+    :ok
+  end
+
+  defp check_row_uniformity(rows) do
     num_columns = length(hd(rows))
 
-    unless Enum.all?(rows, &(length(&1) == num_columns)),
-      do: raise("All rows must have the same number of columns")
+    if Enum.all?(rows, &(length(&1) == num_columns)) do
+      :ok
+    else
+      {:error, "All rows must have the same number of columns"}
+    end
   end
 end
