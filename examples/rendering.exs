@@ -118,7 +118,7 @@ defmodule RenderingDemo do
         end
 
         row do
-          column(size: 3) do
+          column(size: 4) do
             panel title: "Column 1 Row 2" do
               table do
                 table_row([
@@ -144,7 +144,7 @@ defmodule RenderingDemo do
             end
           end
 
-          column(size: 9) do
+          column(size: 8) do
             panel title: "Column 2 Row 2" do
               sparkline(Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
 
