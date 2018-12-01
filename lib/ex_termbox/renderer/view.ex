@@ -83,7 +83,7 @@ defmodule ExTermbox.Renderer.View do
   defmacro label(attributes, do: block),
     do: macro_element(:label, attributes, block)
 
-  defmacro label(attributes, text_content) when is_binary(text_content) do
+  defmacro label(attributes, text_content) do
     quote do
       element(:label, unquote(attributes), [
         text(unquote(text_content))
