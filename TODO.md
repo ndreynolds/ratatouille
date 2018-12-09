@@ -31,6 +31,16 @@ architecture, similar to nested React components. Components could receive
 props, bind to a subset of events, manage internal state, and render their own
 view.
 
+## More Responsive Layouts
+
+ExTermbox already supports resizing elements such as columns when the window
+dimensions change.
+
+Web frameworks like Bootstrap allow a column layout to collapse when its columns
+would be too narrow to display their content properly (e.g., on a mobile
+device). ExTermbox could provide similar functionality by providing a way to
+specify the column size at different screen widths.
+
 ## Table Elements
 
 Table components should all be separate elements to support fine-grained
