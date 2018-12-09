@@ -37,7 +37,8 @@ defmodule ExTermbox.Renderer.Table do
 
   defp render_table_cell({text, col_size}, {canvas, offset}, attrs) do
     pos = Position.translate_x(canvas.box.top_left, offset)
-    canvas = Text.render(canvas, pos, text, attrs)
+    padded_text = String.pad_trailing(text, col_size, " ")
+    canvas = Text.render(canvas, pos, padded_text, attrs)
 
     {canvas, offset + col_size}
   end

@@ -17,9 +17,9 @@ defmodule ExTermbox.Renderer.TableTest do
         )
 
       assert Canvas.render_to_strings(canvas) === [
-               "          ",
-               " a   b   c",
-               " d   e   f"
+               "             ",
+               " a   b   c   ",
+               " d   e   f   "
              ]
     end
 
@@ -34,9 +34,9 @@ defmodule ExTermbox.Renderer.TableTest do
         )
 
       assert Canvas.render_to_strings(canvas) === [
-               "                    ",
-               " very-very-long  foo",
-               " short           bar"
+               "                      ",
+               " very-very-long  foo  ",
+               " short           bar  "
              ]
     end
 
