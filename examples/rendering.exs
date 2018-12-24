@@ -120,26 +120,19 @@ defmodule RenderingDemo do
         row do
           column(size: 4) do
             panel title: "Column 1 Row 2" do
-              table do
-                table_row([
-                  "Current Time:",
-                  DateTime.utc_now() |> DateTime.to_string()
-                ])
-              end
+              tree do
+                tree_node content: "Eukarya" do
+                  tree_node content: "Animalia" do
+                    tree_node(content: "Chordata") do
+                      tree_node(content: "Mammalia")
+                      tree_node(content: "Amphibia")
+                      tree_node(content: "Reptilia")
+                    end
 
-              table do
-                table_row(["Column 1", "Column 2", "Column 3"])
-                table_row(["a", "b", "c"])
-                table_row(["d", "e", "f"])
-              end
-
-              table do
-                table_row(["Random Number:", inspect(:rand.uniform())])
-
-                table_row([
-                  "Hello:",
-                  String.duplicate("World", Enum.random(1..3))
-                ])
+                    tree_node(content: "Arthropoda")
+                    tree_node(content: "Annelida")
+                  end
+                end
               end
             end
           end

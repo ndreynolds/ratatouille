@@ -46,6 +46,10 @@ defmodule ExTermbox.Renderer.View do
     element(:table_row, Enum.into(attributes, %{values: values}), [])
   end
 
+  def tree_node(attributes \\ %{}) do
+    element(:tree_node, attributes, [])
+  end
+
   def sparkline(attributes \\ %{}, values) do
     element(:sparkline, Enum.into(attributes, %{values: values}), [])
   end
@@ -90,6 +94,12 @@ defmodule ExTermbox.Renderer.View do
       ])
     end
   end
+
+  defmacro tree(attributes \\ Macro.escape(%{}), do: block),
+    do: macro_element(:tree, attributes, block)
+
+  defmacro tree_node(attributes, do: block),
+    do: macro_element(:tree_node, attributes, block)
 
   defmacro view(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:view, attributes, block)

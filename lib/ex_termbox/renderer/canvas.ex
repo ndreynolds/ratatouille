@@ -86,12 +86,16 @@ defmodule ExTermbox.Renderer.Canvas do
   @spec render_to_strings(Canvas.t()) :: list(String.t())
   def render_to_strings(%Canvas{cells: cells_map}) do
     positions = Map.keys(cells_map)
-    max_y = positions |> Enum.map(fn %Position{y: y} -> y end) |> Enum.max()
-    max_x = positions |> Enum.map(fn %Position{x: x} -> x end) |> Enum.max()
+
+    ys = for %Position{y: y} <- positions, do: y
+    xs = for %Position{x: x} <- positions, do: x
+
+    y_max = Enum.max(ys, fn -> 0 end)
+    x_max = Enum.max(xs, fn -> 0 end)
 
     empty_cells =
-      for y <- 0..max_y,
-          x <- 0..max_x,
+      for y <- 0..y_max,
+          x <- 0..x_max,
           do: empty_cell(x, y)
 
     filled_cells = Enum.map(empty_cells, &fetch_cell(cells_map, &1))

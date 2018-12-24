@@ -13,6 +13,7 @@ defmodule ExTermbox.Renderer do
     Sparkline,
     Table,
     Text,
+    Tree,
     View
   }
 
@@ -22,14 +23,15 @@ defmodule ExTermbox.Renderer do
         }
 
   @type child_tag ::
-          :column
-          | :panel
-          | :table
-          | :sparkline
-          | :bar
-          | :row
-          | :text
+          :bar
+          | :column
           | :label
+          | :panel
+          | :row
+          | :sparkline
+          | :table
+          | :text
+          | :tree
 
   @type child_element :: %Element{tag: child_tag()}
 
@@ -84,6 +86,9 @@ defmodule ExTermbox.Renderer do
 
       :label ->
         Text.render_group(canvas, children)
+
+      :tree ->
+        Tree.render(canvas, children)
     end
   end
 
@@ -92,11 +97,13 @@ defmodule ExTermbox.Renderer do
   @valid_relationships %{
     view: [:row, :panel],
     row: [:column],
-    column: [:panel, :table, :row, :label, :sparkline],
-    panel: [:table, :row, :label, :sparkline],
+    column: [:panel, :table, :row, :label, :sparkline, :tree],
+    panel: [:table, :row, :label, :sparkline, :tree],
     label: [:text],
     bar: [:label],
-    table: [:table_row]
+    table: [:table_row],
+    tree: [:tree_node],
+    tree_node: [:tree_node]
   }
 
   @doc """
