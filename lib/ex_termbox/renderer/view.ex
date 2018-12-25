@@ -70,8 +70,14 @@ defmodule ExTermbox.Renderer.View do
   defmacro table(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:table, attributes, block)
 
-  defmacro panel(attributes \\ Macro.escape(%{}), do: block),
+  defmacro panel(attributes, do: block),
     do: macro_element(:panel, attributes, block)
+
+  defmacro panel(do: block),
+    do: macro_element(:panel, Macro.escape(%{}), block)
+
+  defmacro panel(attributes),
+    do: macro_element(:panel, attributes, Macro.escape([]))
 
   defmacro bar(attributes \\ Macro.escape(%{}), do: block),
     do: macro_element(:bar, attributes, block)

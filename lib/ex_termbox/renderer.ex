@@ -98,7 +98,7 @@ defmodule ExTermbox.Renderer do
     view: [:row, :panel],
     row: [:column],
     column: [:panel, :table, :row, :label, :sparkline, :tree],
-    panel: [:table, :row, :label, :sparkline, :tree],
+    panel: [:table, :row, :label, :panel, :sparkline, :tree],
     label: [:text],
     bar: [:label],
     table: [:table_row],
