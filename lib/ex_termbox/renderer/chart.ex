@@ -7,13 +7,13 @@ defmodule ExTermbox.Renderer.Chart do
   def render(%Canvas{box: box} = canvas, %{type: :line, series: series} = attrs) do
     chart_opts = Map.take(attrs, [:height, :offset, :padding])
 
-    case Asciichart.plot(series, chart_opts) do
+    case plot(series, chart_opts) do
       {:ok, chart} ->
         render_chart(canvas, chart)
 
       {:error, error} ->
         canvas
-        |> Text.render(box.top_left, "Chart render error")
+        |> Text.render(box.top_left, "Chart render error: " <> inspect(error))
         |> Canvas.consume_rows(1)
     end
   end
@@ -25,8 +25,19 @@ defmodule ExTermbox.Renderer.Chart do
     |> Enum.with_index()
     |> Enum.reduce(canvas, fn {line, idx}, acc ->
       position = Position.translate_y(box.top_left, idx)
-      Text.render(acc, position, line)
+
+      acc
+      |> Text.render(position, line)
+      |> Canvas.consume_rows(1)
     end)
-    |> Canvas.consume_rows(length(lines))
+  end
+
+  defp plot(series, opts) do
+    try do
+      Asciichart.plot(series, opts)
+    rescue
+      e ->
+        {:error, :plot_error}
+    end
   end
 end
