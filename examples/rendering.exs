@@ -20,7 +20,13 @@ defmodule RenderingDemo do
   end
 
   def loop do
-    with :ok <- Window.update(demo_view()) do
+    state = %{
+      current_time: DateTime.utc_now(),
+      series_1: for(_ <- 0..50, do: :rand.uniform() * 1000),
+      series_2: Enum.shuffle([0, 1, 2, 3, 4, 5, 6])
+    }
+
+    with :ok <- Window.update(demo_view(state)) do
       receive do
         {:event, %Event{ch: ?q}} ->
           :ok = Window.close()
@@ -42,7 +48,7 @@ defmodule RenderingDemo do
     attributes: [attribute(:bold), attribute(:underline)]
   ]
 
-  def demo_view do
+  def demo_view(state) do
     top_bar =
       bar do
         label do
@@ -60,70 +66,26 @@ defmodule RenderingDemo do
     view(top_bar: top_bar, bottom_bar: bottom_bar) do
       panel title: "Rendering Demo", height: :fill do
         row do
-          column(size: 6) do
-            panel title: "Column 1 Row 1" do
+          column(size: 4) do
+            panel title: "Columns" do
               label do
-                text(@style_red ++ [content: "Red text"])
-                text(content: " ")
-                text(@style_blue_bold_underlined ++ [content: "Blue, bold underlined text"])
-              end
-
-              table do
-                table_row(
-                  values: [
-                    "Current Time:",
-                    DateTime.utc_now() |> DateTime.to_string()
-                  ]
-                )
-              end
-
-              table do
-                table_row(values: ["Column 1", "Column 2", "Column 3"])
-                table_row(values: ["a", "b", "c"])
-                table_row(values: ["d", "e", "f"])
-              end
-
-              table do
-                table_row(values: ["Random Number:", inspect(:rand.uniform())])
-
-                table_row(
-                  values: [
-                    "Hello:",
-                    String.duplicate("World", Enum.random(1..3))
-                  ]
-                )
+                text(content: "4/12")
               end
             end
           end
 
-          column(size: 6) do
-            panel title: "Column 2 Row 1" do
-              sparkline(values: Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
-
-              table do
-                table_row(
-                  values: [
-                    "Current Time:",
-                    DateTime.utc_now() |> DateTime.to_string()
-                  ]
-                )
+          column(size: 3) do
+            panel do
+              label do
+                text(content: "3/12")
               end
+            end
+          end
 
-              table do
-                table_row(values: ["Column 1", "Column 2", "Column 3"])
-                table_row(values: ["a", "b", "c"])
-                table_row(values: ["d", "e", "f"])
-              end
-
-              table do
-                table_row(values: ["Random Number:", inspect(:rand.uniform())])
-
-                table_row(
-                  values: [
-                    "Hello:",
-                    String.duplicate("World", Enum.random(1..3))
-                  ]
-                )
+          column(size: 5) do
+            panel do
+              label do
+                text(content: "5/12")
               end
             end
           end
@@ -131,7 +93,39 @@ defmodule RenderingDemo do
 
         row do
           column(size: 4) do
-            panel title: "Column 1 Row 2" do
+            panel title: "Text & Labels" do
+              label do
+                text(@style_red ++ [content: "Red text"])
+                text(content: " ")
+                text(@style_blue_bold_underlined ++ [content: "Blue, bold underlined text"])
+              end
+
+              label do
+                text(content: "Current Time: " <> DateTime.to_string(state.current_time))
+              end
+            end
+          end
+
+          column(size: 8) do
+            panel title: "Tables" do
+              table do
+                table_row(values: ["Column 1", "Column 2", "Column 3"])
+                table_row(values: ["a", "b", "c"])
+                table_row(values: ["d", "e", "f"])
+              end
+
+              table do
+                table_row(values: ["Column 1", "Column 2", "Column 3", "Column 4"])
+                table_row(values: ["g", "h", "i", "j"])
+                table_row(values: ["k", "l", "m", "n"])
+              end
+            end
+          end
+        end
+
+        row do
+          column(size: 4) do
+            panel title: "Trees" do
               tree do
                 tree_node content: "Eukarya" do
                   tree_node content: "Animalia" do
@@ -150,34 +144,10 @@ defmodule RenderingDemo do
           end
 
           column(size: 8) do
-            panel title: "Column 2 Row 2" do
-              sparkline(values: Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
+            panel title: "Charts & Sparklines" do
+              chart(type: :line, series: state.series_1, height: 6)
 
-              table do
-                table_row(
-                  values: [
-                    "Current Time:",
-                    DateTime.utc_now() |> DateTime.to_string()
-                  ]
-                )
-              end
-
-              table do
-                table_row(values: ["Column 1", "Column 2", "Column 3"])
-                table_row(values: ["a", "b", "c"])
-                table_row(values: ["d", "e", "f"])
-              end
-
-              table do
-                table_row(values: ["Random Number:", inspect(:rand.uniform())])
-
-                table_row(
-                  values: [
-                    "Hello:",
-                    String.duplicate("World", Enum.random(1..3))
-                  ]
-                )
-              end
+              sparkline(series: state.series_2)
             end
           end
         end

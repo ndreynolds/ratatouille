@@ -30,6 +30,7 @@ defmodule ExTermbox.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:asciichart, "~> 1.0"},
       {:elixir_make, "~> 0.4", runtime: false},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:dialyze, "~> 0.2.0", only: :dev},

@@ -6,14 +6,16 @@ defmodule ExTermbox.Renderer.Sparkline do
   @ticks ~w[▁ ▂ ▃ ▄ ▅ ▆ ▇ █]
   @range length(@ticks) - 1
 
-  def render(%Canvas{} = canvas, %{values: values}) do
+  def render(%Canvas{} = canvas, %{series: series}) do
     text =
-      values
+      series
       |> normalize()
       |> Enum.map(fn idx -> Enum.at(@ticks, idx) end)
       |> Enum.join()
 
-    Text.render(canvas, canvas.box.top_left, text)
+    canvas
+    |> Text.render(canvas.box.top_left, text)
+    |> Canvas.consume_rows(1)
   end
 
   def render(%Canvas{} = canvas, _other), do: canvas

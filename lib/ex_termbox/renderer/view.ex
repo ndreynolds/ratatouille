@@ -61,6 +61,7 @@ defmodule ExTermbox.Renderer.View do
 
   @element_types [
     :bar,
+    :chart,
     :column,
     :label,
     :panel,

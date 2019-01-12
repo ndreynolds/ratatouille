@@ -7,6 +7,7 @@ defmodule ExTermbox.Renderer do
 
   alias ExTermbox.Renderer.{
     Canvas,
+    Chart,
     Element,
     Panel,
     Row,
@@ -24,6 +25,7 @@ defmodule ExTermbox.Renderer do
 
   @type child_tag ::
           :bar
+          | :chart
           | :column
           | :label
           | :panel
@@ -78,6 +80,9 @@ defmodule ExTermbox.Renderer do
       :table ->
         Table.render(canvas, children)
 
+      :chart ->
+        Chart.render(canvas, attrs)
+
       :sparkline ->
         Sparkline.render(canvas, attrs)
 
@@ -97,8 +102,8 @@ defmodule ExTermbox.Renderer do
   @valid_relationships %{
     view: [:row, :panel],
     row: [:column],
-    column: [:panel, :table, :row, :label, :sparkline, :tree],
-    panel: [:table, :row, :label, :panel, :sparkline, :tree],
+    column: [:panel, :table, :row, :label, :chart, :sparkline, :tree],
+    panel: [:table, :row, :label, :panel, :chart, :sparkline, :tree],
     label: [:text],
     bar: [:label],
     table: [:table_row],
