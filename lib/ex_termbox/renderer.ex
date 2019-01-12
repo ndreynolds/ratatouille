@@ -9,11 +9,11 @@ defmodule ExTermbox.Renderer do
     Canvas,
     Chart,
     Element,
+    Label,
     Panel,
     Row,
     Sparkline,
     Table,
-    Text,
     Tree,
     View
   }
@@ -90,7 +90,7 @@ defmodule ExTermbox.Renderer do
         render_tree(canvas, children)
 
       :label ->
-        Text.render_group(canvas, children)
+        Label.render(canvas, attrs, children)
 
       :tree ->
         Tree.render(canvas, children)

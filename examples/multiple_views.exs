@@ -54,9 +54,7 @@ defmodule MultipleViewsDemo do
 
   def title_bar do
     bar do
-      label do
-        text(content: "Multiple Views Demo (Press 1, 2 or 3, or q to quit)")
-      end
+      label(content: "Multiple Views Demo (Press 1, 2 or 3, or q to quit)")
     end
   end
 

@@ -51,16 +51,12 @@ defmodule RenderingDemo do
   def demo_view(state) do
     top_bar =
       bar do
-        label do
-          text(content: "A top bar for the view")
-        end
+        label(content: "A top bar for the view")
       end
 
     bottom_bar =
       bar do
-        label do
-          text(content: "A bottom bar for the view")
-        end
+        label(content: "A bottom bar for the view")
       end
 
     view(top_bar: top_bar, bottom_bar: bottom_bar) do
@@ -68,25 +64,19 @@ defmodule RenderingDemo do
         row do
           column(size: 4) do
             panel title: "Columns" do
-              label do
-                text(content: "4/12")
-              end
+              label(content: "4/12")
             end
           end
 
           column(size: 3) do
             panel do
-              label do
-                text(content: "3/12")
-              end
+              label(content: "3/12")
             end
           end
 
           column(size: 5) do
             panel do
-              label do
-                text(content: "5/12")
-              end
+              label(content: "5/12")
             end
           end
         end
@@ -100,9 +90,7 @@ defmodule RenderingDemo do
                 text(@style_blue_bold_underlined ++ [content: "Blue, bold underlined text"])
               end
 
-              label do
-                text(content: "Current Time: " <> DateTime.to_string(state.current_time))
-              end
+              label(content: "Current Time: " <> DateTime.to_string(state.current_time))
             end
           end
 
