@@ -48,23 +48,21 @@ defmodule EventViewer do
 
     layout([
       table do
-        table_row(["Type", inspect(type), inspect(type_name)])
-        table_row(["Mod", inspect(mod), ""])
-        table_row(["Key", inspect(key), inspect(key_name)])
-        table_row(["Char", inspect(ch), <<ch::utf8>>])
-        table_row(["Width", inspect(w), ""])
-        table_row(["Height", inspect(h), ""])
-        table_row(["X", inspect(x), ""])
-        table_row(["Y", inspect(y), ""])
+        table_row(values: ["Type", inspect(type), inspect(type_name)])
+        table_row(values: ["Mod", inspect(mod), ""])
+        table_row(values: ["Key", inspect(key), inspect(key_name)])
+        table_row(values: ["Char", inspect(ch), <<ch::utf8>>])
+        table_row(values: ["Width", inspect(w), ""])
+        table_row(values: ["Height", inspect(h), ""])
+        table_row(values: ["X", inspect(x), ""])
+        table_row(values: ["Y", inspect(y), ""])
       end
     ])
   end
 
   def layout(children \\ []) do
     view do
-      panel title: @title, height: :fill do
-        children
-      end
+      panel([title: @title, height: :fill], children)
     end
   end
 

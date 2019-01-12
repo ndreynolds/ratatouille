@@ -36,25 +36,27 @@ defmodule MultipleViewsDemo do
 
   def view_1 do
     view(top_bar: title_bar(), bottom_bar: status_bar_for("View 1")) do
-      element(:panel, %{title: "View 1", height: :fill}, [])
+      panel(title: "View 1", height: :fill)
     end
   end
 
   def view_2 do
     view(top_bar: title_bar(), bottom_bar: status_bar_for("View 2")) do
-      element(:panel, %{title: "View 2", height: :fill}, [])
+      panel(title: "View 2", height: :fill)
     end
   end
 
   def view_3 do
     view(top_bar: title_bar(), bottom_bar: status_bar_for("View 3")) do
-      element(:panel, %{title: "View 3", height: :fill}, [])
+      panel(title: "View 3", height: :fill)
     end
   end
 
   def title_bar do
     bar do
-      label("Multiple Views Demo (Press 1, 2 or 3, or q to quit)")
+      label do
+        text(content: "Multiple Views Demo (Press 1, 2 or 3, or q to quit)")
+      end
     end
   end
 
@@ -67,11 +69,11 @@ defmodule MultipleViewsDemo do
     options =
       for item <- Enum.intersperse(["View 1", "View 2", "View 3"], " ") do
         attrs = if(item == selected, do: @style_highlighted, else: [])
-        text(attrs, item)
+        text(attrs ++ [content: item])
       end
 
     bar do
-      element(:label, [], options)
+      label(options)
     end
   end
 end

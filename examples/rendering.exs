@@ -45,12 +45,16 @@ defmodule RenderingDemo do
   def demo_view do
     top_bar =
       bar do
-        label("A top bar for the view")
+        label do
+          text(content: "A top bar for the view")
+        end
       end
 
     bottom_bar =
       bar do
-        label("A bottom bar for the view")
+        label do
+          text(content: "A bottom bar for the view")
+        end
       end
 
     view(top_bar: top_bar, bottom_bar: bottom_bar) do
@@ -59,59 +63,67 @@ defmodule RenderingDemo do
           column(size: 6) do
             panel title: "Column 1 Row 1" do
               label do
-                text(@style_red, "Red text")
-                text(" ")
-                text(@style_blue_bold_underlined, "Blue, bold underlined text")
+                text(@style_red ++ [content: "Red text"])
+                text(content: " ")
+                text(@style_blue_bold_underlined ++ [content: "Blue, bold underlined text"])
               end
 
               table do
-                table_row([
-                  "Current Time:",
-                  DateTime.utc_now() |> DateTime.to_string()
-                ])
+                table_row(
+                  values: [
+                    "Current Time:",
+                    DateTime.utc_now() |> DateTime.to_string()
+                  ]
+                )
               end
 
               table do
-                table_row(["Column 1", "Column 2", "Column 3"])
-                table_row(["a", "b", "c"])
-                table_row(["d", "e", "f"])
+                table_row(values: ["Column 1", "Column 2", "Column 3"])
+                table_row(values: ["a", "b", "c"])
+                table_row(values: ["d", "e", "f"])
               end
 
               table do
-                table_row(["Random Number:", inspect(:rand.uniform())])
+                table_row(values: ["Random Number:", inspect(:rand.uniform())])
 
-                table_row([
-                  "Hello:",
-                  String.duplicate("World", Enum.random(1..3))
-                ])
+                table_row(
+                  values: [
+                    "Hello:",
+                    String.duplicate("World", Enum.random(1..3))
+                  ]
+                )
               end
             end
           end
 
           column(size: 6) do
             panel title: "Column 2 Row 1" do
-              sparkline(Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
+              sparkline(values: Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
 
               table do
-                table_row([
-                  "Current Time:",
-                  DateTime.utc_now() |> DateTime.to_string()
-                ])
+                table_row(
+                  values: [
+                    "Current Time:",
+                    DateTime.utc_now() |> DateTime.to_string()
+                  ]
+                )
               end
 
               table do
-                table_row(["Column 1", "Column 2", "Column 3"])
-                table_row(["a", "b", "c"])
-                table_row(["d", "e", "f"])
+                table_row(values: ["Column 1", "Column 2", "Column 3"])
+                table_row(values: ["a", "b", "c"])
+                table_row(values: ["d", "e", "f"])
               end
 
               table do
-                table_row(["Random Number:", inspect(:rand.uniform())])
+                table_row(values: ["Random Number:", inspect(:rand.uniform())])
 
-                table_row([
-                  "Hello:",
-                  String.duplicate("World", Enum.random(1..3))
-                ])
+                table_row(
+                  values: [
+                    "Hello:",
+                    String.duplicate("World", Enum.random(1..3))
+                  ]
+                )
               end
             end
           end
@@ -139,28 +151,32 @@ defmodule RenderingDemo do
 
           column(size: 8) do
             panel title: "Column 2 Row 2" do
-              sparkline(Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
+              sparkline(values: Enum.shuffle([0, 1, 2, 3, 4, 5, 6]))
 
               table do
-                table_row([
-                  "Current Time:",
-                  DateTime.utc_now() |> DateTime.to_string()
-                ])
+                table_row(
+                  values: [
+                    "Current Time:",
+                    DateTime.utc_now() |> DateTime.to_string()
+                  ]
+                )
               end
 
               table do
-                table_row(["Column 1", "Column 2", "Column 3"])
-                table_row(["a", "b", "c"])
-                table_row(["d", "e", "f"])
+                table_row(values: ["Column 1", "Column 2", "Column 3"])
+                table_row(values: ["a", "b", "c"])
+                table_row(values: ["d", "e", "f"])
               end
 
               table do
-                table_row(["Random Number:", inspect(:rand.uniform())])
+                table_row(values: ["Random Number:", inspect(:rand.uniform())])
 
-                table_row([
-                  "Hello:",
-                  String.duplicate("World", Enum.random(1..3))
-                ])
+                table_row(
+                  values: [
+                    "Hello:",
+                    String.duplicate("World", Enum.random(1..3))
+                  ]
+                )
               end
             end
           end
