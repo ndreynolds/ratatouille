@@ -5,10 +5,8 @@ defmodule ExTermbox.Renderer.Tree do
 
   def render(%Canvas{} = canvas, nodes) do
     canvas
-    |> Canvas.padded(1)
     |> render_nodes(nodes, "", true)
-    |> Canvas.padded(-1)
-    |> Canvas.consume(0, 1)
+    |> Canvas.consume_rows(1)
   end
 
   def render_nodes(canvas, [], _depth, _root) do

@@ -28,7 +28,7 @@ defmodule ExTermbox.Renderer.Panel do
     constrained_canvas
     |> wrapper_canvas(rendered_canvas, fill_empty?)
     |> render_features(attrs)
-    |> Canvas.consume(0, consume_y)
+    |> Canvas.consume_rows(consume_y)
   end
 
   defp render_children(canvas, render_fn) do

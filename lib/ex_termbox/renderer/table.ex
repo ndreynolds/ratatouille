@@ -9,9 +9,7 @@ defmodule ExTermbox.Renderer.Table do
 
   def render(%Canvas{} = canvas, rows) do
     canvas
-    |> Canvas.padded(1)
     |> render_table(rows)
-    |> Canvas.padded(-1)
     |> Canvas.consume(0, 1)
   end
 
