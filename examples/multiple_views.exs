@@ -3,10 +3,11 @@ defmodule MultipleViewsDemo do
   An example of how to implement navigation between multiple views.
   """
 
-  alias ExTermbox.{EventManager, Event, Window}
+  alias ExTermbox.{EventManager, Event}
+  alias Ratatouille.Window
 
   import ExTermbox.Constants, only: [color: 1]
-  import ExTermbox.Renderer.View
+  import Ratatouille.Renderer.View
 
   def run do
     {:ok, _pid} = Window.start_link()

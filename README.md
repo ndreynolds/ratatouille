@@ -1,15 +1,15 @@
-# ExTermbox
+# Ratatouille
 
-[![Hex.pm](https://img.shields.io/hexpm/v/ex_termbox.svg)](https://hex.pm/packages/ex_termbox)
-[![Hexdocs.pm](https://img.shields.io/badge/api-hexdocs-brightgreen.svg)](https://hexdocs.pm/ex_termbox)
+[![Hex.pm](https://img.shields.io/hexpm/v/ratatouille.svg)](https://hex.pm/packages/ratatouille)
+[![Hexdocs.pm](https://img.shields.io/badge/api-hexdocs-brightgreen.svg)](https://hexdocs.pm/ratatouille)
 
-Low-level [termbox](https://github.com/nsf/termbox) bindings and a high-level,
-functional terminal UI kit for Elixir.
+Ratatouille is a declarative terminal UI kit for Elixir for building rich
+text-based terminal applications similar to how you write HTML.
 
-The low-level bindings can already be used; the high-level APIs are still under
-active development and subject to change.
+It builds on top of the [termbox](https://github.com/nsf/termbox) API (using the
+Elixir bindings from [ex_termbox](https://github.com/ndreynolds/ex_termbox)].
 
-For the API Reference, see: [https://hexdocs.pm/ex_termbox](https://hexdocs.pm/ex_termbox).
+For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/ratatouille).
 
 ## Getting Started
 
@@ -19,36 +19,24 @@ TODO - Add examples & screenshots here.
 
 ### From Hex
 
-Add ExTermbox as a dependency in your project's `mix.exs`:
+Add Ratatouille as a dependency in your project's `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:ex_termbox, "~> 0.1.0"}
+    {:ratatouille, "~> 0.1.0"}
   ]
 end
 ```
-
-The Hex package bundles a compatible version of termbox. There are some compile
-hooks to automatically build and link a local copy of `ltermbox` for your
-application. This should happen the first time you build ExTermbox (e.g., via
-`mix deps.compile`).
-
-So far the build has been tested on macOS and a few Linux distros. Please add
-an issue if you encounter any issues.
 
 ### From Source
 
 To try out the master branch, first clone the repo:
 
 ```bash
-git clone --recurse-submodules git@github.com:ndreynolds/ex_termbox.git
-cd ex_termbox
+git clone https://github.com/ndreynolds/ratatouille.git
+cd ratatouille
 ```
-
-The `--recurse-submodules` flag (`--recursive` before Git 2.13) is necessary in
-order to additionally clone the termbox source code, which is required to
-build this project.
 
 Next, fetch the deps:
 

@@ -1,13 +1,14 @@
 defmodule RenderingDemo do
   @moduledoc """
   This is a kitchen sink example intended to show off most of the
-  declarative-style rendering functionality provided by `ExTermbox`.
+  declarative-style rendering functionality provided by `Ratatouille`.
   """
 
   alias ExTermbox.{EventManager, Event, Window}
+  alias Ratatouille.Window
 
-  import ExTermbox.Renderer.View
   import ExTermbox.Constants, only: [color: 1, attribute: 1]
+  import Ratatouille.Renderer.View
 
   @refresh_interval 500
 

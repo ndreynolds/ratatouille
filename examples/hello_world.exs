@@ -4,8 +4,10 @@
 #
 #    mix run examples/hello_world.exs
 
-alias ExTermbox.{EventManager, Event, Window}
-import ExTermbox.Renderer.View
+alias ExTermbox.{EventManager, Event}
+alias Ratatouille.Window
+
+import Ratatouille.Renderer.View
 
 # This initializes the application, drawing a blank canvas over the
 # terminal.
