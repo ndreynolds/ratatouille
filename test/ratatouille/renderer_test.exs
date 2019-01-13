@@ -30,14 +30,16 @@ defmodule Ratatouille.RendererTest do
     end
 
     test "validates relationships" do
-      assert {:error, "Invalid view hierarchy: 'column' cannot be a child of 'view'"} =
+      assert {:error,
+              "Invalid view hierarchy: 'column' cannot be a child of 'view'"} =
                Renderer.validate_tree(
                  element(:view, [
                    element(:column, [])
                  ])
                )
 
-      assert {:error, "Invalid view hierarchy: 'panel' cannot be a child of 'row'"} =
+      assert {:error,
+              "Invalid view hierarchy: 'panel' cannot be a child of 'row'"} =
                Renderer.validate_tree(
                  element(:view, [
                    element(:row, [
@@ -46,7 +48,8 @@ defmodule Ratatouille.RendererTest do
                  ])
                )
 
-      assert {:error, "Invalid view hierarchy: 'text' cannot be a child of 'column'"} =
+      assert {:error,
+              "Invalid view hierarchy: 'text' cannot be a child of 'column'"} =
                Renderer.validate_tree(
                  element(:view, [
                    element(:row, [

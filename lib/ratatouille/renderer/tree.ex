@@ -15,7 +15,10 @@ defmodule Ratatouille.Renderer.Tree do
 
   def render_nodes(
         %Canvas{box: box} = canvas,
-        [%Element{tag: :tree_node, attributes: attrs, children: children} | siblings],
+        [
+          %Element{tag: :tree_node, attributes: attrs, children: children}
+          | siblings
+        ],
         parent_prefix,
         root
       ) do

@@ -102,7 +102,7 @@ defmodule Ratatouille.Renderer.Box do
     do: %Position{x: x, y: y}
 
   def bottom_left(%Box{top_left: %Position{x: x}, bottom_right: %Position{y: y}}),
-    do: %Position{x: x, y: y}
+      do: %Position{x: x, y: y}
 
   def bottom_right(%Box{bottom_right: bottom_right}), do: bottom_right
 

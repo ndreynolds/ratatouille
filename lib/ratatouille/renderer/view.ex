@@ -39,9 +39,10 @@ defmodule Ratatouille.Renderer.View do
   ### Element Definition
 
   def element(tag, attributes_or_children) do
-    if Keyword.keyword?(attributes_or_children) || is_map(attributes_or_children),
-      do: element(tag, attributes_or_children, []),
-      else: element(tag, %{}, attributes_or_children)
+    if Keyword.keyword?(attributes_or_children) ||
+         is_map(attributes_or_children),
+       do: element(tag, attributes_or_children, []),
+       else: element(tag, %{}, attributes_or_children)
   end
 
   def element(tag, attributes, children)

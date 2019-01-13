@@ -87,10 +87,17 @@ defmodule RenderingDemo do
               label do
                 text(@style_red ++ [content: "Red text"])
                 text(content: " ")
-                text(@style_blue_bold_underlined ++ [content: "Blue, bold underlined text"])
+
+                text(
+                  @style_blue_bold_underlined ++
+                    [content: "Blue, bold underlined text"]
+                )
               end
 
-              label(content: "Current Time: " <> DateTime.to_string(state.current_time))
+              label(
+                content:
+                  "Current Time: " <> DateTime.to_string(state.current_time)
+              )
             end
           end
 
@@ -103,7 +110,10 @@ defmodule RenderingDemo do
               end
 
               table do
-                table_row(values: ["Column 1", "Column 2", "Column 3", "Column 4"])
+                table_row(
+                  values: ["Column 1", "Column 2", "Column 3", "Column 4"]
+                )
+
                 table_row(values: ["g", "h", "i", "j"])
                 table_row(values: ["k", "l", "m", "n"])
               end

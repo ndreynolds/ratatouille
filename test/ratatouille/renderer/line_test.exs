@@ -14,7 +14,8 @@ defmodule Ratatouille.Renderer.LineTest do
                  %Position{x: 0, y: 1} => %Cell{ch: ?|},
                  %Position{x: 0, y: 2} => %Cell{ch: ?|}
                }
-             } = Line.render_vertical(empty_canvas, %Position{x: 0, y: 0}, "|", 3)
+             } =
+               Line.render_vertical(empty_canvas, %Position{x: 0, y: 0}, "|", 3)
     end
   end
 
@@ -28,7 +29,13 @@ defmodule Ratatouille.Renderer.LineTest do
                  %Position{x: 1, y: 0} => %Cell{ch: ?-},
                  %Position{x: 2, y: 0} => %Cell{ch: ?-}
                }
-             } = Line.render_horizontal(empty_canvas, %Position{x: 0, y: 0}, "-", 3)
+             } =
+               Line.render_horizontal(
+                 empty_canvas,
+                 %Position{x: 0, y: 0},
+                 "-",
+                 3
+               )
     end
   end
 end

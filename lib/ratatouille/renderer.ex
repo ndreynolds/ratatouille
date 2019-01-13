@@ -122,7 +122,10 @@ defmodule Ratatouille.Renderer do
   end
 
   def validate_tree(%Element{tag: tag}) do
-    {:error, "Invalid view hierarchy: Root element must have tag 'view', but found '#{tag}'"}
+    {:error,
+     "Invalid view hierarchy: Root element must have tag 'view', but found '#{
+       tag
+     }'"}
   end
 
   defp validate_subtree(parent, [%Element{tag: tag, children: children} | rest]) do
@@ -140,7 +143,10 @@ defmodule Ratatouille.Renderer do
     if child_tag in Map.get(@valid_relationships, parent_tag, []) do
       :ok
     else
-      {:error, "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{parent_tag}'"}
+      {:error,
+       "Invalid view hierarchy: '#{child_tag}' cannot be a child of '#{
+         parent_tag
+       }'"}
     end
   end
 end
