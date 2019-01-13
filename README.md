@@ -11,6 +11,9 @@ Elixir bindings from [ex_termbox](https://github.com/ndreynolds/ex_termbox)].
 
 For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/ratatouille).
 
+![Toby](doc/toby.png)
+*[Toby](https://github.com/ndreynolds/toby), a terminal-based Erlang observer built with Ratatouille*
+
 ## Getting Started
 
 ## First Steps
