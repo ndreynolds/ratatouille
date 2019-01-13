@@ -41,14 +41,18 @@ defmodule Ratatouille.Renderer.TableTest do
     test "only displays columns that fit in the passed box" do
       canvas =
         Table.render(
-          Canvas.from_dimensions(11, 4),
+          Canvas.from_dimensions(20, 4),
           [
-            element(:table_row, %{values: ["first-column", "this-is-way-too-long"]}, [])
+            element(
+              :table_row,
+              %{values: ["first-column", "truncated-text", "not-rendered"]},
+              []
+            )
           ]
         )
 
       assert Canvas.render_to_strings(canvas) === [
-               "first-colum"
+               "first-column  trunca"
              ]
     end
   end

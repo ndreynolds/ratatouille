@@ -70,9 +70,12 @@ defmodule Ratatouille.Renderer.Table do
           acc
 
         size, {:open, sizes} ->
-          if Enum.sum([size | sizes]) < max_size,
+          size_excluded = Enum.sum(sizes)
+          size_included = size_excluded + size
+
+          if size_included <= max_size,
             do: {:open, sizes ++ [size]},
-            else: {:full, sizes}
+            else: {:full, sizes ++ [max_size - size_excluded]}
       end)
 
     if Enum.empty?(displayable_columns),
