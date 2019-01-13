@@ -1,0 +1,17 @@
+language: elixir
+matrix:
+  include:
+    - os: linux
+      otp_release: 21.0
+      elixir: 1.7
+    - os: osx
+      language: generic
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install elixir; fi
+script:
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get
+  - mix test
+  - mix format --check-formatted
+  - mix hex.audit
