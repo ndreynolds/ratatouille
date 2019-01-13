@@ -4,8 +4,7 @@ defmodule RenderingDemo do
   declarative-style rendering functionality provided by `Ratatouille`.
   """
 
-  alias ExTermbox.{EventManager, Event, Window}
-  alias Ratatouille.Window
+  alias Ratatouille.{EventManager, Window}
 
   import ExTermbox.Constants, only: [color: 1, attribute: 1]
   import Ratatouille.Renderer.View
@@ -29,7 +28,7 @@ defmodule RenderingDemo do
 
     with :ok <- Window.update(demo_view(state)) do
       receive do
-        {:event, %Event{ch: ?q}} ->
+        {:event, %{ch: ?q}} ->
           :ok = Window.close()
       after
         @refresh_interval ->

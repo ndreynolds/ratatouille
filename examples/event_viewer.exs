@@ -4,8 +4,8 @@ defmodule EventViewer do
   can be click, resize or key press events.
   """
 
-  alias ExTermbox.{Constants, EventManager, Event}
-  alias Ratatouille.Window
+  alias ExTermbox.Event
+  alias Ratatouille.{Constants, EventManager, Window}
 
   import Ratatouille.Renderer.View
 

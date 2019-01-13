@@ -4,8 +4,7 @@
 #
 #    mix run examples/hello_world.exs
 
-alias ExTermbox.{EventManager, Event}
-alias Ratatouille.Window
+alias Ratatouille.{EventManager, Window}
 
 import Ratatouille.Renderer.View
 
@@ -35,6 +34,6 @@ hello_world_view =
 # When a key is pressed, it'll be sent to us by the event manager. Once we
 # receive a 'q' key press, we'll close the application.
 receive do
-  {:event, %Event{ch: ?q}} ->
+  {:event, %{ch: ?q}} ->
     :ok = Window.close()
 end
