@@ -11,25 +11,38 @@ defmodule Ratatouille.Window do
   alias Ratatouille.Renderer
   alias Ratatouille.Renderer.{Canvas, Element}
 
-  @name {:global, :extb_window_server}
+  ### Client
 
-  def start_link do
-    GenServer.start_link(__MODULE__, :ok, name: @name)
+  @doc """
+  Starts the gen_server representing the window.
+
+  The window is intended to be run as a singleton gen_server process, as
+  initializing the underlying termbox library multiple times on the same TTY can
+  lead to undefined behavior. By default, `name: Ratatouille.Window` is passed
+  in order to protect against this, but this can be overridden by passing `nil`
+  or another value for `name`.
+  """
+  @spec start_link(Keyword.t()) :: :ok
+  def start_link(opts \\ []) do
+    bindings = opts[:bindings] || Bindings
+    server_opts = Keyword.merge([name: __MODULE__], opts)
+
+    GenServer.start_link(__MODULE__, %{bindings: bindings}, server_opts)
   end
 
   @doc """
   Updates the window by rendering the given view to the termbox buffer and
   presenting it.
   """
-  @spec update(Element.t()) :: :ok
-  def update(view), do: GenServer.call(@name, {:update, view})
+  @spec update(pid(), Element.t()) :: :ok
+  def update(pid \\ __MODULE__, view), do: GenServer.call(pid, {:update, view})
 
   @doc """
   Closes the window by stopping the GenServer. Prior to this, termbox is
   de-initialized so that the terminal is restored to its previous state.
   """
-  @spec close :: :ok
-  def close, do: GenServer.stop(@name)
+  @spec close(pid()) :: :ok
+  def close(pid \\ __MODULE__), do: GenServer.stop(pid)
 
   @doc """
   Fetches an attribute for the window. This is currently limited to the window
@@ -45,52 +58,58 @@ defmodule Ratatouille.Window do
       {:error, :unknown_attribute}
 
   """
-  @spec fetch(atom()) :: any()
-  def fetch(attr), do: GenServer.call(@name, {:fetch, attr})
+  @spec fetch(pid(), atom()) :: any()
+  def fetch(pid \\ __MODULE__, attr), do: GenServer.call(pid, {:fetch, attr})
 
-  def init(:ok) do
+  ### Server
+
+  @impl true
+  def init(%{bindings: bindings}) do
     Process.flag(:trap_exit, true)
-    :ok = Bindings.init()
-    {:ok, {}}
+    :ok = bindings.init()
+    {:ok, %{bindings: bindings}}
   end
 
-  def handle_call({:update, view}, _from, state) do
-    :ok = Bindings.clear()
-    {:reply, render_view(view), state}
+  @impl true
+  def handle_call({:update, view}, _from, %{bindings: bindings} = state) do
+    :ok = bindings.clear()
+    {:reply, render_view(bindings, view), state}
   end
 
-  def handle_call({:fetch, attr}, _from, state) do
-    {:reply, fetch_attr(attr), state}
+  @impl true
+  def handle_call({:fetch, attr}, _from, %{bindings: bindings} = state) do
+    {:reply, fetch_attr(bindings, attr), state}
   end
 
-  def terminate(_reason, _state) do
-    case Bindings.shutdown() do
+  @impl true
+  def terminate(_reason, %{bindings: bindings}) do
+    case bindings.shutdown() do
       :ok -> :normal
       err -> {:error, err}
     end
   end
 
-  defp fetch_attr(attr) do
+  defp fetch_attr(bindings, attr) do
     case attr do
-      :width -> {:ok, Bindings.width()}
-      :height -> {:ok, Bindings.height()}
-      :box -> {:ok, canvas().box}
+      :width -> {:ok, bindings.width()}
+      :height -> {:ok, bindings.height()}
+      :box -> {:ok, canvas(bindings).box}
       _ -> {:error, :unknown_attribute}
     end
   end
 
-  defp render_view(view) do
-    with empty_canvas <- canvas(),
+  defp render_view(bindings, view) do
+    with empty_canvas <- canvas(bindings),
          {:ok, filled_canvas} <- Renderer.render(empty_canvas, view),
-         :ok <- Canvas.render_to_termbox(filled_canvas) do
-      Bindings.present()
+         :ok <- Canvas.render_to_termbox(bindings, filled_canvas) do
+      bindings.present()
     end
   end
 
-  defp canvas do
+  defp canvas(bindings) do
     Canvas.from_dimensions(
-      Bindings.width(),
-      Bindings.height()
+      bindings.width(),
+      bindings.height()
     )
   end
 end

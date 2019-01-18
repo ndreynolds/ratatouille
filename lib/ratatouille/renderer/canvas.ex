@@ -8,7 +8,7 @@ defmodule Ratatouille.Renderer.Canvas do
   rendering to strings, which is useful for testing.
   """
 
-  alias ExTermbox.{Bindings, Cell, Position}
+  alias ExTermbox.{Cell, Position}
   alias Ratatouille.Renderer.Box
 
   alias __MODULE__, as: Canvas
@@ -113,10 +113,10 @@ defmodule Ratatouille.Renderer.Canvas do
   def render_to_string(%Canvas{} = canvas),
     do: canvas |> render_to_strings() |> Enum.join("\n")
 
-  def render_to_termbox(%Canvas{cells: cells}) do
+  def render_to_termbox(bindings, %Canvas{cells: cells}) do
     # TODO: only attempt to render cells in the canvas box
     for {_pos, cell} <- cells do
-      :ok = Bindings.put_cell(cell)
+      :ok = bindings.put_cell(cell)
     end
 
     :ok
