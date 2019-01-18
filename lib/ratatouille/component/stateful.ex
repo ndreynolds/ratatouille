@@ -35,7 +35,7 @@ defmodule Ratatouille.Component.Stateful do
   interval. This allows the component to update information that changes over
   time.
   """
-  @callback tick(state) :: {:ok, state} | {:error, term}
+  @callback handle_tick(state) :: {:ok, state} | {:error, term}
 
   @doc """
   The `render/1` callback provides an interface for rendering the component's
