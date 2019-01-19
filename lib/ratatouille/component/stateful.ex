@@ -31,9 +31,9 @@ defmodule Ratatouille.Component.Stateful do
   @callback handle_event(Event.t(), state) :: {:ok, state} | {:error, term}
 
   @doc """
-  The `tick/1` callback provides an interface for refreshing the state on some
-  interval. This allows the component to update information that changes over
-  time.
+  The `handle_tick/1` callback provides an interface for refreshing the state on
+  some interval. This allows the component to update information that changes
+  over time.
   """
   @callback handle_tick(state) :: {:ok, state} | {:error, term}
 

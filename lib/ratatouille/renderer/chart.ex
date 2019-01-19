@@ -1,6 +1,8 @@
 defmodule Ratatouille.Renderer.Chart do
   @moduledoc false
 
+  # TODO: Replace Asciichart with more featureful plotter.
+
   alias ExTermbox.Position
   alias Ratatouille.Renderer.{Canvas, Text}
 
@@ -33,11 +35,8 @@ defmodule Ratatouille.Renderer.Chart do
   end
 
   defp plot(series, opts) do
-    try do
-      Asciichart.plot(series, opts)
-    rescue
-      _ ->
-        {:error, :plot_error}
-    end
+    Asciichart.plot(series, opts)
+  rescue
+    _ -> {:error, :plot_error}
   end
 end
