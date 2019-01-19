@@ -8,7 +8,7 @@ defmodule Ratatouille.Renderer.Panel do
   @title_offset_x 2
 
   def render(%Canvas{box: box} = canvas, %{height: :fill} = attrs, inner_fn) do
-    merged_attrs = Map.merge(attrs, %{height: Box.height(box)})
+    merged_attrs = Map.merge(attrs, %{height: Box.height(box) - 1})
     render(canvas, merged_attrs, inner_fn)
   end
 
@@ -62,7 +62,13 @@ defmodule Ratatouille.Renderer.Panel do
   defp wrapper_box(original_box, _rendered_box, true), do: original_box
 
   defp wrapper_box(original_box, rendered_box, false),
-    do: %Box{original_box | bottom_right: Box.top_right(rendered_box)}
+    do: %Box{
+      original_box
+      | bottom_right: %Position{
+          x: original_box.bottom_right.x,
+          y: rendered_box.top_left.y
+        }
+    }
 
   defp constrain_canvas(%Canvas{box: box} = canvas, height),
     do: %Canvas{canvas | box: constrain_box(box, height)}

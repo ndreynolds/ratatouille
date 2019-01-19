@@ -16,10 +16,12 @@ defmodule Ratatouille.Renderer.TableTest do
           ]
         )
 
-      assert Canvas.render_to_strings(canvas) === [
-               "a   b   c   ",
-               "d   e   f   "
-             ]
+      assert [
+               "a    b    c    " = line,
+               "d    e    f    "
+             ] = Canvas.render_to_strings(canvas)
+
+      assert String.length(line) == 15
     end
 
     test "aligns columns with content of differing lengths" do
@@ -32,10 +34,12 @@ defmodule Ratatouille.Renderer.TableTest do
           ]
         )
 
-      assert Canvas.render_to_strings(canvas) === [
-               "very-very-long   foo   ",
-               "short            bar   "
-             ]
+      assert [
+               "very-very-long    foo    " = line,
+               "short             bar    "
+             ] = Canvas.render_to_strings(canvas)
+
+      assert String.length(line) == 25
     end
 
     test "only displays columns that fit in the passed box" do

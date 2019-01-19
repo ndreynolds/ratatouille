@@ -107,10 +107,10 @@ defmodule Ratatouille.Renderer.Box do
   def bottom_right(%Box{bottom_right: bottom_right}), do: bottom_right
 
   def width(%Box{top_left: %Position{x: x1}, bottom_right: %Position{x: x2}}),
-    do: x2 - x1
+    do: x2 - x1 + 1
 
   def height(%Box{top_left: %Position{y: y1}, bottom_right: %Position{y: y2}}),
-    do: y2 - y1
+    do: y2 - y1 + 1
 
   def contains?(
         %Box{

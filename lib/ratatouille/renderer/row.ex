@@ -19,10 +19,10 @@ defmodule Ratatouille.Renderer.Row do
       |> Enum.zip(column_boxes(box, col_sizes))
       |> Enum.reduce({canvas, []}, &reduce_columns(render_fun, &1, &2))
 
-    consume_y = largest_y(boxes) - box.top_left.y
+    occupied_rows = largest_y(boxes) - box.top_left.y
 
     %Canvas{new_canvas | box: box}
-    |> Canvas.consume(0, consume_y)
+    |> Canvas.consume_rows(occupied_rows)
   end
 
   defp largest_y(boxes) do
@@ -38,13 +38,24 @@ defmodule Ratatouille.Renderer.Row do
   end
 
   defp column_boxes(outer_box, col_sizes) do
-    unit_width = Box.width(outer_box) / @grid_size
+    col_count = length(col_sizes)
+
+    outer_box_width = Box.width(outer_box)
+    unit_width = outer_box_width / @grid_size
+    total_width = Enum.sum(for size <- col_sizes, do: trunc(unit_width * size))
+
+    padding =
+      if col_count > 1 do
+        trunc((outer_box_width - total_width) / (col_count - 1))
+      else
+        0
+      end
 
     {boxes, _remaining_box} =
       Enum.map_reduce(col_sizes, outer_box, fn size, remaining_box ->
         col_width = trunc(size * unit_width)
         col_box = column_box(remaining_box, col_width)
-        remaining_box = Box.translate(col_box, col_width, 0)
+        remaining_box = Box.translate(col_box, col_width + padding, 0)
         {col_box, remaining_box}
       end)
 
