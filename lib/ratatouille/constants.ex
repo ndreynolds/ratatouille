@@ -22,7 +22,7 @@ defmodule Ratatouille.Constants do
     defdelegate unquote(lookup)(name), to: TermboxConstants
 
     @doc """
-    See `ExTermbox.Constants.#{collection}/1`.
+    See `ExTermbox.Constants.#{collection}/0`.
     """
     defdelegate unquote(collection)(), to: TermboxConstants
   end
