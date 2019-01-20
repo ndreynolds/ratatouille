@@ -10,9 +10,10 @@ defmodule EventViewer do
   import Ratatouille.Renderer.View
 
   @title "Event Viewer (click, resize, or press a key - 'q' to quit)"
+  @input_mode Constants.input_mode(:esc_with_mouse)
 
   def run do
-    {:ok, _pid} = Window.start_link()
+    {:ok, _pid} = Window.start_link(input_mode: @input_mode)
     {:ok, _pid} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
 

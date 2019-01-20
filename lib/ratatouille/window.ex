@@ -8,8 +8,13 @@ defmodule Ratatouille.Window do
 
   alias ExTermbox.Bindings
 
+  alias Ratatouille.Constants
   alias Ratatouille.Renderer
   alias Ratatouille.Renderer.{Canvas, Element}
+
+  @default_bindings Bindings
+  @default_input_mode Constants.input_mode(:esc)
+  @default_output_mode Constants.output_mode(:normal)
 
   ### Client
 
@@ -18,16 +23,41 @@ defmodule Ratatouille.Window do
 
   The window is intended to be run as a singleton gen_server process, as
   initializing the underlying termbox library multiple times on the same TTY can
-  lead to undefined behavior. By default, `name: Ratatouille.Window` is passed
-  in order to protect against this, but this can be overridden by passing `nil`
-  or another value for `name`.
+  lead to undefined behavior.
+
+  ## Options
+
+  * `:name`        - Override the name passed to `GenServer.start_link/3`. By
+                     default, `name: Ratatouille.Window` is passed in order to
+                     protect against accidental double initialization, but this
+                     can be overridden by passing `nil` or an alternate value.
+  * `:input_mode`  - Configure the input mode. See `Ratatouille.Constants.input_mode/1`
+                     for possible values.
+  * `:output_mode` - Configure the output mode. See `Ratatouille.Constants.output_mode/1`
+                     for possible values.
   """
   @spec start_link(Keyword.t()) :: :ok
   def start_link(opts \\ []) do
-    bindings = opts[:bindings] || Bindings
-    server_opts = Keyword.merge([name: __MODULE__], opts)
+    {init_opts, server_opts} =
+      Keyword.split(opts, [:bindings, :input_mode, :output_mode])
 
-    GenServer.start_link(__MODULE__, %{bindings: bindings}, server_opts)
+    defaulted_init_opts =
+      Map.merge(
+        %{
+          bindings: @default_bindings,
+          input_mode: @default_input_mode,
+          output_mode: @default_output_mode
+        },
+        Enum.into(init_opts, %{})
+      )
+
+    defaulted_server_opts = Keyword.merge([name: __MODULE__], server_opts)
+
+    GenServer.start_link(
+      __MODULE__,
+      defaulted_init_opts,
+      defaulted_server_opts
+    )
   end
 
   @doc """
@@ -64,9 +94,17 @@ defmodule Ratatouille.Window do
   ### Server
 
   @impl true
-  def init(%{bindings: bindings}) do
+  def init(%{
+        bindings: bindings,
+        input_mode: input_mode,
+        output_mode: output_mode
+      }) do
     Process.flag(:trap_exit, true)
+
     :ok = bindings.init()
+    bindings.select_input_mode(input_mode)
+    bindings.select_output_mode(output_mode)
+
     {:ok, %{bindings: bindings}}
   end
 
