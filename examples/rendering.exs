@@ -104,18 +104,46 @@ defmodule RenderingDemo do
           column(size: 8) do
             panel title: "Tables" do
               table do
-                table_row(values: ["Column 1", "Column 2", "Column 3"])
-                table_row(values: ["a", "b", "c"])
-                table_row(values: ["d", "e", "f"])
+                table_row do
+                  table_cell(content: "Column 1")
+                  table_cell(content: "Column 2")
+                  table_cell(content: "Column 3")
+                end
+
+                table_row do
+                  table_cell(content: "a")
+                  table_cell(content: "b")
+                  table_cell(content: "c")
+                end
+
+                table_row do
+                  table_cell(content: "d")
+                  table_cell(content: "e")
+                  table_cell(content: "f")
+                end
               end
 
               table do
-                table_row(
-                  values: ["Column 1", "Column 2", "Column 3", "Column 4"]
-                )
+                table_row do
+                  table_cell(content: "Column 1")
+                  table_cell(content: "Column 2")
+                  table_cell(content: "Column 3")
+                  table_cell(content: "Column 4")
+                end
 
-                table_row(values: ["g", "h", "i", "j"])
-                table_row(values: ["k", "l", "m", "n"])
+                table_row do
+                  table_cell(content: "g")
+                  table_cell(content: "h")
+                  table_cell(content: "i")
+                  table_cell(content: "j")
+                end
+
+                table_row do
+                  table_cell(content: "k")
+                  table_cell(content: "l")
+                  table_cell(content: "m")
+                  table_cell(content: "n")
+                end
               end
             end
           end

@@ -135,13 +135,10 @@ defmodule Ratatouille.Renderer.RowTest do
   end
 
   def render_canvas(columns, {width, height}) do
-    canvas =
-      Row.render(
-        Canvas.from_dimensions(width, height),
-        columns,
-        &Renderer.render_tree/2
-      )
+    canvas = Canvas.from_dimensions(width, height)
 
-    Canvas.render_to_strings(canvas)
+    canvas
+    |> Row.render(columns, &Renderer.render_tree/2)
+    |> Canvas.render_to_strings()
   end
 end

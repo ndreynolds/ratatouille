@@ -32,8 +32,11 @@ defmodule Ratatouille.Renderer do
           | :row
           | :sparkline
           | :table
+          | :table_cell
+          | :table_row
           | :text
           | :tree
+          | :tree_node
 
   @type child_element :: %Element{tag: child_tag()}
 
@@ -107,6 +110,8 @@ defmodule Ratatouille.Renderer do
     label: [:text],
     bar: [:label],
     table: [:table_row],
+    table_cell: [:text],
+    table_row: [:table_cell],
     tree: [:tree_node],
     tree_node: [:tree_node]
   }

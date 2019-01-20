@@ -1,63 +1,88 @@
 defmodule Ratatouille.Renderer.TableTest do
   use ExUnit.Case, async: true
 
-  alias Ratatouille.Renderer.{Canvas, Table}
+  alias Ratatouille.Renderer.{Canvas, Element, Table}
 
-  import Ratatouille.Renderer.View
+  @simple [
+    %Element{
+      tag: :table_row,
+      children: [
+        %Element{tag: :table_cell, attributes: %{content: "a"}},
+        %Element{tag: :table_cell, attributes: %{content: "b"}},
+        %Element{tag: :table_cell, attributes: %{content: "c"}}
+      ]
+    },
+    %Element{
+      tag: :table_row,
+      children: [
+        %Element{tag: :table_cell, attributes: %{content: "d"}},
+        %Element{tag: :table_cell, attributes: %{content: "e"}},
+        %Element{tag: :table_cell, attributes: %{content: "f"}}
+      ]
+    }
+  ]
+
+  @differing_lengths [
+    %Element{
+      tag: :table_row,
+      children: [
+        %Element{tag: :table_cell, attributes: %{content: "very-very-long"}},
+        %Element{tag: :table_cell, attributes: %{content: "foo"}}
+      ]
+    },
+    %Element{
+      tag: :table_row,
+      children: [
+        %Element{tag: :table_cell, attributes: %{content: "short"}},
+        %Element{tag: :table_cell, attributes: %{content: "bar"}}
+      ]
+    }
+  ]
+
+  @truncated [
+    %Element{
+      tag: :table_row,
+      children: [
+        %Element{tag: :table_cell, attributes: %{content: "first-column"}},
+        %Element{tag: :table_cell, attributes: %{content: "truncated-text"}},
+        %Element{tag: :table_cell, attributes: %{content: "not-rendered"}}
+      ]
+    }
+  ]
 
   describe "render/2" do
     test "returns the table" do
-      canvas =
-        Table.render(
-          Canvas.from_dimensions(15, 5),
-          [
-            element(:table_row, %{values: ["a", "b", "c"]}, []),
-            element(:table_row, %{values: ["d", "e", "f"]}, [])
-          ]
-        )
-
       assert [
                "a    b    c    " = line,
                "d    e    f    "
-             ] = Canvas.render_to_strings(canvas)
+             ] = render_canvas(@simple, {15, 5})
 
       assert String.length(line) == 15
     end
 
     test "aligns columns with content of differing lengths" do
-      canvas =
-        Table.render(
-          Canvas.from_dimensions(25, 5),
-          [
-            element(:table_row, %{values: ["very-very-long", "foo"]}, []),
-            element(:table_row, %{values: ["short", "bar"]}, [])
-          ]
-        )
-
       assert [
                "very-very-long    foo    " = line,
                "short             bar    "
-             ] = Canvas.render_to_strings(canvas)
+             ] = render_canvas(@differing_lengths, {25, 5})
 
       assert String.length(line) == 25
     end
 
     test "only displays columns that fit in the passed box" do
-      canvas =
-        Table.render(
-          Canvas.from_dimensions(20, 4),
-          [
-            element(
-              :table_row,
-              %{values: ["first-column", "truncated-text", "not-rendered"]},
-              []
-            )
-          ]
-        )
+      assert [
+               "first-column  trunca" = line
+             ] = render_canvas(@truncated, {20, 4})
 
-      assert Canvas.render_to_strings(canvas) === [
-               "first-column  trunca"
-             ]
+      assert String.length(line) == 20
     end
+  end
+
+  def render_canvas(table_rows, {width, height}) do
+    canvas = Canvas.from_dimensions(width, height)
+
+    canvas
+    |> Table.render(table_rows)
+    |> Canvas.render_to_strings()
   end
 end

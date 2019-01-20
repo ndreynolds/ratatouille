@@ -50,14 +50,53 @@ defmodule EventViewer do
 
     layout([
       table do
-        table_row(values: ["Type", inspect(type), inspect(type_name)])
-        table_row(values: ["Mod", inspect(mod), ""])
-        table_row(values: ["Key", inspect(key), inspect(key_name)])
-        table_row(values: ["Char", inspect(ch), <<ch::utf8>>])
-        table_row(values: ["Width", inspect(w), ""])
-        table_row(values: ["Height", inspect(h), ""])
-        table_row(values: ["X", inspect(x), ""])
-        table_row(values: ["Y", inspect(y), ""])
+        table_row do
+          table_cell(content: "Type")
+          table_cell(content: inspect(type))
+          table_cell(content: inspect(type_name))
+        end
+
+        table_row do
+          table_cell(content: "Mod")
+          table_cell(content: inspect(mod))
+          table_cell()
+        end
+
+        table_row do
+          table_cell(content: "Key")
+          table_cell(content: inspect(key))
+          table_cell(content: inspect(key_name))
+        end
+
+        table_row do
+          table_cell(content: "Char")
+          table_cell(content: inspect(ch))
+          table_cell(content: <<ch::utf8>>)
+        end
+
+        table_row do
+          table_cell(content: "Width")
+          table_cell(content: inspect(w))
+          table_cell()
+        end
+
+        table_row do
+          table_cell(content: "Height")
+          table_cell(content: inspect(h))
+          table_cell()
+        end
+
+        table_row do
+          table_cell(content: "X")
+          table_cell(content: inspect(x))
+          table_cell()
+        end
+
+        table_row do
+          table_cell(content: "Y")
+          table_cell(content: inspect(y))
+          table_cell()
+        end
       end
     ])
   end

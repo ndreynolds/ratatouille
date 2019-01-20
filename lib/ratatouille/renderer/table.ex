@@ -5,7 +5,7 @@ defmodule Ratatouille.Renderer.Table do
   @min_padding 2
 
   alias ExTermbox.Position
-  alias Ratatouille.Renderer.{Box, Canvas, Element, Text}
+  alias Ratatouille.Renderer.{Box, Canvas, Text}
 
   def render(%Canvas{} = canvas, rows) do
     canvas
@@ -26,7 +26,7 @@ defmodule Ratatouille.Renderer.Table do
   end
 
   defp render_table_row(%Canvas{} = canvas, col_sizes, row) do
-    cells = row.attributes[:values] || []
+    cells = for cell <- row.children, do: cell.attributes[:content] || ""
 
     cells
     |> Enum.zip(col_sizes)
@@ -42,11 +42,15 @@ defmodule Ratatouille.Renderer.Table do
   end
 
   defp column_sizes(%Box{} = box, rows) do
-    rows = for %Element{attributes: %{values: values}} <- rows, do: values
-    :ok = check_row_uniformity(rows)
+    cells_by_row =
+      for row <- rows do
+        for cell <- row.children, do: cell.attributes[:content] || ""
+      end
+
+    :ok = check_row_uniformity(cells_by_row)
 
     max_width = Box.width(box)
-    columns = transpose(rows)
+    columns = transpose(cells_by_row)
 
     columns
     |> min_column_sizes()
