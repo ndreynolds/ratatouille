@@ -148,28 +148,11 @@ defmodule Ratatouille.Renderer.View do
 
   ### Element Definition Macros
 
-  @elements [
-    {:bar, children: true},
-    {:chart, children: false},
-    {:column, children: true},
-    {:label, children: true},
-    {:panel, children: true},
-    {:row, children: true},
-    {:sparkline, children: false},
-    {:table, children: true},
-    {:table_row, children: true},
-    {:table_cell, children: false},
-    {:text, children: false},
-    {:tree, children: true},
-    {:tree_node, children: true},
-    {:view, children: true}
-  ]
-
   @empty_attrs Macro.escape(%{})
   @empty_children Macro.escape([])
 
-  for {name, children: accepts_children} <- @elements do
-    if accepts_children do
+  for {name, spec} <- Element.specs() do
+    if length(spec[:child_tags]) > 0 do
       @doc """
       Defines an element with the `:#{name}` tag.
 

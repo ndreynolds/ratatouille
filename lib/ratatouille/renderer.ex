@@ -102,19 +102,7 @@ defmodule Ratatouille.Renderer do
 
   ### View Tree Validation
 
-  @valid_relationships %{
-    view: [:row, :panel],
-    row: [:column],
-    column: [:panel, :table, :row, :label, :chart, :sparkline, :tree],
-    panel: [:table, :row, :label, :panel, :chart, :sparkline, :tree],
-    label: [:text],
-    bar: [:label],
-    table: [:table_row],
-    table_cell: [:text],
-    table_row: [:table_cell],
-    tree: [:tree_node],
-    tree_node: [:tree_node]
-  }
+  @element_specs Element.specs()
 
   @doc """
   Validates the hierarchy of a view tree given the root element.
@@ -133,8 +121,11 @@ defmodule Ratatouille.Renderer do
      }'"}
   end
 
-  defp validate_subtree(parent, [%Element{tag: tag, children: children} | rest]) do
-    with :ok <- validate_child(parent, tag),
+  defp validate_subtree(parent, [
+         %Element{tag: tag, attributes: attributes, children: children} | rest
+       ]) do
+    with :ok <- validate_relationship(parent, tag),
+         :ok <- validate_attributes(tag, attributes),
          :ok <- validate_subtree(tag, children),
          :ok <- validate_subtree(parent, rest),
          do: :ok
@@ -144,8 +135,36 @@ defmodule Ratatouille.Renderer do
     :ok
   end
 
-  defp validate_child(parent_tag, child_tag) do
-    if child_tag in Map.get(@valid_relationships, parent_tag, []) do
+  defp validate_attributes(tag, attributes) do
+    spec = Keyword.fetch!(@element_specs, tag)
+    attribute_specs = spec[:attributes] || []
+
+    used_keys = Map.keys(attributes)
+    valid_keys = Keyword.keys(attribute_specs)
+    required_keys = for {key, {:required, _desc}} <- attribute_specs, do: key
+
+    case {used_keys -- valid_keys, required_keys -- used_keys} do
+      {[], []} ->
+        :ok
+
+      {invalid_keys, []} ->
+        {:error,
+         "Invalid attributes: '#{tag}' does not accept attributes #{
+           inspect(invalid_keys)
+         }"}
+
+      {_, missing_keys} ->
+        {:error,
+         "Invalid attributes: '#{tag}' is missing required attributes #{
+           inspect(missing_keys)
+         }"}
+    end
+  end
+
+  defp validate_relationship(parent_tag, child_tag) do
+    valid_child_tags = @element_specs[parent_tag][:child_tags] || []
+
+    if child_tag in valid_child_tags do
       :ok
     else
       {:error,
