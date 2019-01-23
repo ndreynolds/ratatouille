@@ -2,7 +2,7 @@ defmodule Ratatouille.WindowTest do
   use ExUnit.Case, async: true
 
   alias Ratatouille.Renderer.{Box, View}
-  alias Ratatouille.Window
+  alias Ratatouille.{Constants, Window}
 
   alias ExTermbox.Position
 
@@ -22,6 +22,8 @@ defmodule Ratatouille.WindowTest do
     def clear, do: track(:clear)
     def present, do: track(:present)
     def shutdown, do: track(:shutdown)
+    def select_input_mode(mode), do: track({:select_input_mode, mode})
+    def select_output_mode(mode), do: track({:select_output_mode, mode})
 
     def width, do: 42
     def height, do: 81
@@ -42,12 +44,20 @@ defmodule Ratatouille.WindowTest do
     %{pid: pid}
   end
 
+  @input_mode_esc Constants.input_mode(:esc)
+  @output_mode_normal Constants.output_mode(:normal)
+
   describe "start_link/1" do
-    test "returns tagged tuple with pid and calls bindings.init/0" do
+    test "returns tagged tuple with pid and initializes the terminal" do
       assert {:ok, pid} = Window.start_link()
 
       assert is_pid(pid)
-      assert [:init | _] = bindings_calls()
+
+      assert [
+               {:select_output_mode, @output_mode_normal},
+               {:select_input_mode, @input_mode_esc},
+               :init
+             ] = bindings_calls()
     end
   end
 
