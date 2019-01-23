@@ -3,13 +3,12 @@ defmodule MultipleViewsDemo do
   An example of how to implement navigation between multiple views.
   """
 
-  alias ExTermbox.{EventManager, Event}
-  alias Ratatouille.Window
+  alias Ratatouille.{EventManager, Window}
 
-  import ExTermbox.Constants, only: [color: 1]
+  import Ratatouille.Constants, only: [color: 1]
   import Ratatouille.Renderer.View
 
-  def run do
+  def start do
     {:ok, _pid} = Window.start_link()
     {:ok, _pid} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
@@ -21,16 +20,16 @@ defmodule MultipleViewsDemo do
     Window.update(view)
 
     receive do
-      {:event, %Event{ch: ?q}} ->
+      {:event, %{ch: ?q}} ->
         :ok = Window.close()
 
-      {:event, %Event{ch: ?1}} ->
+      {:event, %{ch: ?1}} ->
         loop(view_1())
 
-      {:event, %Event{ch: ?2}} ->
+      {:event, %{ch: ?2}} ->
         loop(view_2())
 
-      {:event, %Event{ch: ?3}} ->
+      {:event, %{ch: ?3}} ->
         loop(view_3())
     end
   end
@@ -77,4 +76,4 @@ defmodule MultipleViewsDemo do
   end
 end
 
-MultipleViewsDemo.run()
+MultipleViewsDemo.start()

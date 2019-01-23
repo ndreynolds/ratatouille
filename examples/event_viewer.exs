@@ -4,7 +4,6 @@ defmodule EventViewer do
   can be click, resize or key press events.
   """
 
-  alias ExTermbox.Event
   alias Ratatouille.{Constants, EventManager, Window}
 
   import Ratatouille.Renderer.View
@@ -12,7 +11,7 @@ defmodule EventViewer do
   @title "Event Viewer (click, resize, or press a key - 'q' to quit)"
   @input_mode Constants.input_mode(:esc_with_mouse)
 
-  def run do
+  def start do
     {:ok, _pid} = Window.start_link(input_mode: @input_mode)
     {:ok, _pid} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
@@ -23,16 +22,16 @@ defmodule EventViewer do
 
   def loop do
     receive do
-      {:event, %Event{ch: ?q}} ->
+      {:event, %{ch: ?q}} ->
         :ok = Window.close()
 
-      {:event, %Event{} = event} ->
+      {:event, %{} = event} ->
         Window.update(event_view(event))
         loop()
     end
   end
 
-  def event_view(%Event{
+  def event_view(%{
         type: type,
         mod: mod,
         key: key,
@@ -113,4 +112,4 @@ defmodule EventViewer do
   end
 end
 
-EventViewer.run()
+EventViewer.start()

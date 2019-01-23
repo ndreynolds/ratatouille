@@ -12,7 +12,7 @@ defmodule Ratatouille.Component.Stateless do
   props.
   """
 
-  alias Ratatouille.View
+  alias Ratatouille.Renderer.Element
 
   @type props :: term
 
@@ -20,5 +20,5 @@ defmodule Ratatouille.Component.Stateless do
   The `render/1` callback provides an interface for rendering the component's
   view based on the current state.
   """
-  @callback render(props) :: View.t()
+  @callback render(props) :: Element.t()
 end

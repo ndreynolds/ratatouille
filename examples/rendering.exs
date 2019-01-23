@@ -6,12 +6,12 @@ defmodule RenderingDemo do
 
   alias Ratatouille.{EventManager, Window}
 
-  import ExTermbox.Constants, only: [color: 1, attribute: 1]
+  import Ratatouille.Constants, only: [color: 1, attribute: 1]
   import Ratatouille.Renderer.View
 
   @refresh_interval 500
 
-  def run do
+  def start do
     {:ok, _pid} = Window.start_link()
     {:ok, _pid} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
@@ -85,19 +85,20 @@ defmodule RenderingDemo do
           column(size: 4) do
             panel title: "Text & Labels" do
               label do
-                text(@style_red ++ [content: "Red text"])
-                text(content: " ")
+                text(content: "Normal ")
+                text(@style_red ++ [content: "Red"])
+              end
 
+              label do
                 text(
                   @style_blue_bold_underlined ++
-                    [content: "Blue, bold underlined text"]
+                    [content: "Blue, bold underlined"]
                 )
               end
 
-              label(
-                content:
-                  "Current Time: " <> DateTime.to_string(state.current_time)
-              )
+              label()
+              label(content: "Current Time:")
+              label(content: DateTime.to_string(state.current_time))
             end
           end
 
@@ -182,4 +183,4 @@ defmodule RenderingDemo do
   end
 end
 
-RenderingDemo.run()
+RenderingDemo.start()

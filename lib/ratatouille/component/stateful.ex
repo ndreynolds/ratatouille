@@ -13,9 +13,11 @@ defmodule Ratatouille.Component.Stateful do
   """
 
   alias ExTermbox.Event
-  alias Ratatouille.View
+  alias Ratatouille.Renderer.Element
 
   @type state :: term
+
+  # TODO: Add an init callback?
 
   @doc """
   The `handle_event/2` callback provides an interface for reacting to window
@@ -41,5 +43,5 @@ defmodule Ratatouille.Component.Stateful do
   The `render/1` callback provides an interface for rendering the component's
   view based on the current state.
   """
-  @callback render(state) :: View.t()
+  @callback render(state) :: Element.t()
 end
