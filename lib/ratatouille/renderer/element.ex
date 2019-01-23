@@ -81,7 +81,13 @@ defmodule Ratatouille.Renderer.Element do
     table_row: [
       description: "Container representing a row of the table",
       child_tags: [:table_cell],
-      attributes: []
+      attributes: [
+        color: {:optional, "Constant representing color to use for foreground"},
+        background:
+          {:optional, "Constant representing color to use for background"},
+        attributes:
+          {:optional, "Constant representing style attributes to apply"}
+      ]
     ],
     table_cell: [
       description: "Element representing a table cell",
