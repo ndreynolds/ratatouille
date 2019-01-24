@@ -6,7 +6,7 @@
 
 alias Ratatouille.{EventManager, Window}
 
-import Ratatouille.Renderer.View
+import Ratatouille.View
 
 # This initializes the application, drawing a blank canvas over the
 # terminal.

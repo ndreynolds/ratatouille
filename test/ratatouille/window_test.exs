@@ -1,10 +1,11 @@
 defmodule Ratatouille.WindowTest do
   use ExUnit.Case, async: true
 
-  alias Ratatouille.Renderer.{Box, View}
-  alias Ratatouille.{Constants, Window}
+  alias Ratatouille.{Constants, Renderer.Box, Window}
 
   alias ExTermbox.Position
+
+  import Ratatouille.View
 
   # Since the `ExTermbox.Bindings` NIFs are imperative with troublesome side
   # effects, we configure the test windows to use this stub instead.
@@ -63,7 +64,7 @@ defmodule Ratatouille.WindowTest do
 
   describe "update/2" do
     test "renders a view via clear/0 and present/0", %{pid: pid} do
-      view = View.element(:view, [])
+      view = view()
       assert :ok = Window.update(pid, view)
       assert [:present, :clear | _] = bindings_calls()
     end

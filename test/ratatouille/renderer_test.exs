@@ -1,7 +1,7 @@
 defmodule Ratatouille.RendererTest do
   use ExUnit.Case, async: true
 
-  import Ratatouille.Renderer.View
+  import Ratatouille.View
 
   alias Ratatouille.Renderer
 

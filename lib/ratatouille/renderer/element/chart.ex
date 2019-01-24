@@ -1,12 +1,17 @@
-defmodule Ratatouille.Renderer.Chart do
+defmodule Ratatouille.Renderer.Element.Chart do
   @moduledoc false
+  @behaviour Ratatouille.Renderer
 
   # TODO: Replace Asciichart with more featureful plotter.
 
   alias ExTermbox.Position
-  alias Ratatouille.Renderer.{Canvas, Text}
+  alias Ratatouille.Renderer.{Canvas, Element, Text}
 
-  def render(%Canvas{box: box} = canvas, %{type: :line, series: series} = attrs) do
+  def render(
+        %Canvas{render_box: box} = canvas,
+        %Element{attributes: %{type: :line, series: series} = attrs},
+        _render_fn
+      ) do
     chart_opts = Map.take(attrs, [:height, :offset, :padding])
 
     case plot(series, chart_opts) do
@@ -20,7 +25,7 @@ defmodule Ratatouille.Renderer.Chart do
     end
   end
 
-  defp render_chart(%Canvas{box: box} = canvas, chart) do
+  defp render_chart(%Canvas{render_box: box} = canvas, chart) do
     lines = String.split(chart, "\n")
 
     lines

@@ -1,7 +1,7 @@
 defmodule Ratatouille.Renderer.Canvas do
   @moduledoc """
-  A canvas represents a terminal window (or a subdivision of it) and a sparse
-  mapping of positions to cells.
+  A canvas represents a terminal window, a subvision of it for rendering, and a
+  sparse mapping of positions to cells.
 
   A `%Canvas{}` struct can be rendered to different output formats. This includes
   the primary use-case of rendering to the termbox-managed window, but also
@@ -9,14 +9,15 @@ defmodule Ratatouille.Renderer.Canvas do
   """
 
   alias ExTermbox.{Cell, Position}
-  alias Ratatouille.Renderer.Box
+  alias Ratatouille.Renderer.{Box, Utils}
 
   alias __MODULE__, as: Canvas
 
-  @type t :: %Canvas{box: Box.t(), cells: map()}
+  @type t :: %Canvas{render_box: Box.t(), outer_box: Box.t(), cells: map()}
 
-  @enforce_keys [:box]
-  defstruct box: nil,
+  @enforce_keys [:render_box, :outer_box]
+  defstruct render_box: nil,
+            outer_box: nil,
             cells: %{}
 
   @doc """
@@ -26,7 +27,11 @@ defmodule Ratatouille.Renderer.Canvas do
 
       iex> Canvas.from_dimensions(10, 20)
       %Canvas{
-        box: %Ratatouille.Renderer.Box{
+        outer_box: %Ratatouille.Renderer.Box{
+          top_left: %ExTermbox.Position{x: 0, y: 0},
+          bottom_right: %ExTermbox.Position{x: 9, y: 19}
+        },
+        render_box: %Ratatouille.Renderer.Box{
           top_left: %ExTermbox.Position{x: 0, y: 0},
           bottom_right: %ExTermbox.Position{x: 9, y: 19}
         },
@@ -36,34 +41,50 @@ defmodule Ratatouille.Renderer.Canvas do
   """
   @spec from_dimensions(non_neg_integer(), non_neg_integer()) :: Canvas.t()
   def from_dimensions(x, y) do
-    %Canvas{box: Box.from_dimensions(x, y)}
+    %Canvas{
+      render_box: Box.from_dimensions(x, y),
+      outer_box: Box.from_dimensions(x, y)
+    }
   end
 
   @spec put_box(Canvas.t(), Box.t()) :: Canvas.t()
-  def put_box(%Canvas{} = canvas, box) do
-    %Canvas{canvas | box: box}
+  def put_box(%Canvas{} = canvas, render_box) do
+    %Canvas{canvas | render_box: render_box}
+  end
+
+  @whitespace Utils.atoi(" ")
+
+  def fill_background(%Canvas{render_box: box, cells: cells} = canvas) do
+    positions = Box.positions(box)
+
+    filled_cells =
+      for pos <- positions,
+          do: {pos, %Cell{ch: @whitespace, position: pos}},
+          into: %{}
+
+    %Canvas{canvas | cells: Map.merge(cells, filled_cells)}
   end
 
   @doc """
-  Copies the canvas to a new one with the box padded on each side (top, left,
-  bottom, right) by `size`. Pass a negative size to remove padding.
+  Copies the canvas to a new one with the render box padded on each side (top,
+  left, bottom, right) by `size`. Pass a negative size to remove padding.
   """
   @spec padded(Canvas.t(), integer()) :: Canvas.t()
-  def padded(%Canvas{box: box} = canvas, size) do
-    %Canvas{canvas | box: Box.padded(box, size)}
+  def padded(%Canvas{render_box: box} = canvas, size) do
+    %Canvas{canvas | render_box: Box.padded(box, size)}
   end
 
   @doc """
-  Copies the canvas to a new one with the box consumed by the given `dx` and
-  `dy`.
+  Copies the canvas to a new one with the render box consumed by the given `dx`
+  and `dy`.
 
-  The box is used to indicate the empty, renderable space on the canvas,
+  The render box is used to indicate the empty, renderable space on the canvas,
   so this might be called with a `dy` of 1 after rendering a line of text. The
   box is consumed left-to-right and top-to-bottom.
   """
   @spec consume(Canvas.t(), integer(), integer()) :: Canvas.t()
-  def consume(%Canvas{box: box} = canvas, dx, dy) do
-    %Canvas{canvas | box: Box.consume(box, dx, dy)}
+  def consume(%Canvas{render_box: box} = canvas, dx, dy) do
+    %Canvas{canvas | render_box: Box.consume(box, dx, dy)}
   end
 
   @doc """
@@ -79,8 +100,8 @@ defmodule Ratatouille.Renderer.Canvas do
   def consume_columns(canvas, n), do: consume(canvas, n, 0)
 
   @spec translate(Canvas.t(), integer(), integer()) :: Canvas.t()
-  def translate(%Canvas{box: box} = canvas, dx, dy) do
-    %Canvas{canvas | box: Box.translate(box, dx, dy)}
+  def translate(%Canvas{render_box: box} = canvas, dx, dy) do
+    %Canvas{canvas | render_box: Box.translate(box, dx, dy)}
   end
 
   @spec render_to_strings(Canvas.t()) :: list(String.t())

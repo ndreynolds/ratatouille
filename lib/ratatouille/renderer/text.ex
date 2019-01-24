@@ -23,7 +23,7 @@ defmodule Ratatouille.Renderer.Text do
   def render_group(canvas, text_elements) do
     %Canvas{
       Enum.reduce(text_elements, canvas, &render_group_member/2)
-      | box: canvas.box
+      | render_box: canvas.render_box
     }
     |> Canvas.consume_rows(1)
   end
@@ -35,7 +35,7 @@ defmodule Ratatouille.Renderer.Text do
     text = attrs[:content] || ""
 
     canvas
-    |> render(canvas.box.top_left, text, attrs)
+    |> render(canvas.render_box.top_left, text, attrs)
     |> Canvas.translate(String.length(text), 0)
   end
 

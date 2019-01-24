@@ -1,18 +1,29 @@
-defmodule Ratatouille.Renderer.Panel do
+defmodule Ratatouille.Renderer.Element.Panel do
   @moduledoc false
+  @behaviour Ratatouille.Renderer
 
   alias ExTermbox.Position
-  alias Ratatouille.Renderer.{Border, Box, Canvas, Text}
+  alias Ratatouille.Renderer.{Border, Box, Canvas, Element, Text}
 
   @padding 2
   @title_offset_x 2
 
-  def render(%Canvas{box: box} = canvas, %{height: :fill} = attrs, inner_fn) do
-    merged_attrs = Map.merge(attrs, %{height: Box.height(box) - 1})
-    render(canvas, merged_attrs, inner_fn)
+  @impl true
+  def render(
+        %Canvas{render_box: box} = canvas,
+        %Element{attributes: %{height: :fill} = attrs} = element,
+        render_fn
+      ) do
+    new_attrs = %{attrs | height: Box.height(box)}
+
+    render(canvas, %Element{element | attributes: new_attrs}, render_fn)
   end
 
-  def render(%Canvas{box: box} = canvas, attrs, inner_fn) do
+  def render(
+        %Canvas{render_box: box} = canvas,
+        %Element{attributes: attrs, children: children},
+        render_fn
+      ) do
     fill_empty? = !is_nil(attrs[:height])
 
     constrained_canvas =
@@ -21,20 +32,16 @@ defmodule Ratatouille.Renderer.Panel do
 
     rendered_canvas =
       constrained_canvas
-      |> render_children(inner_fn)
+      |> Canvas.padded(@padding)
+      |> render_fn.(children)
 
-    consume_y = rendered_canvas.box.top_left.y - box.top_left.y + @padding
+    consume_y =
+      rendered_canvas.render_box.top_left.y - box.top_left.y + @padding
 
     constrained_canvas
     |> wrapper_canvas(rendered_canvas, fill_empty?)
     |> render_features(attrs)
     |> Canvas.consume_rows(consume_y)
-  end
-
-  defp render_children(canvas, render_fn) do
-    canvas
-    |> Canvas.padded(@padding)
-    |> render_fn.()
   end
 
   defp render_features(canvas, attrs) do
@@ -45,7 +52,7 @@ defmodule Ratatouille.Renderer.Panel do
 
   defp render_title(canvas, nil), do: canvas
 
-  defp render_title(%Canvas{box: box} = canvas, title) do
+  defp render_title(%Canvas{render_box: box} = canvas, title) do
     Text.render(canvas, title_position(box), title)
   end
 
@@ -55,7 +62,12 @@ defmodule Ratatouille.Renderer.Panel do
   defp wrapper_canvas(original_canvas, rendered_canvas, fill?) do
     %Canvas{
       rendered_canvas
-      | box: wrapper_box(original_canvas.box, rendered_canvas.box, fill?)
+      | render_box:
+          wrapper_box(
+            original_canvas.render_box,
+            rendered_canvas.render_box,
+            fill?
+          )
     }
   end
 
@@ -70,8 +82,8 @@ defmodule Ratatouille.Renderer.Panel do
         }
     }
 
-  defp constrain_canvas(%Canvas{box: box} = canvas, height),
-    do: %Canvas{canvas | box: constrain_box(box, height)}
+  defp constrain_canvas(%Canvas{render_box: box} = canvas, height),
+    do: %Canvas{canvas | render_box: constrain_box(box, height)}
 
   defp constrain_box(box, nil), do: box
 

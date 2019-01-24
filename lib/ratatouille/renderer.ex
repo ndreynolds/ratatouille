@@ -5,18 +5,7 @@ defmodule Ratatouille.Renderer do
   This API is still under development.
   """
 
-  alias Ratatouille.Renderer.{
-    Canvas,
-    Chart,
-    Element,
-    Label,
-    Panel,
-    Row,
-    Sparkline,
-    Table,
-    Tree,
-    View
-  }
+  alias Ratatouille.Renderer.{Canvas, Element}
 
   @type root_element :: %Element{
           tag: :view,
@@ -28,6 +17,7 @@ defmodule Ratatouille.Renderer do
           | :chart
           | :column
           | :label
+          | :overlay
           | :panel
           | :row
           | :sparkline
@@ -39,6 +29,14 @@ defmodule Ratatouille.Renderer do
           | :tree_node
 
   @type child_element :: %Element{tag: child_tag()}
+
+  @callback render(
+              Canvas.t(),
+              Element.t(),
+              (Canvas.t(), Element.t() -> Canvas.t())
+            ) :: Canvas.t()
+
+  @element_specs Element.specs()
 
   @doc """
   Renders a view tree to canvas, given a canvas and a root element (an element
@@ -62,47 +60,17 @@ defmodule Ratatouille.Renderer do
     end)
   end
 
-  def render_tree(%Canvas{} = canvas, %Element{
-        tag: tag,
-        attributes: attrs,
-        children: children
-      }) do
-    case tag do
-      :view ->
-        View.render(canvas, attrs, children, &render_tree/2)
+  def render_tree(
+        %Canvas{} = canvas,
+        %Element{tag: tag} = element
+      ) do
+    spec = Keyword.fetch!(@element_specs, tag)
+    renderer = Keyword.fetch!(spec, :renderer)
 
-      :row ->
-        Row.render(canvas, children, &render_tree/2)
-
-      :column ->
-        render_tree(canvas, children)
-
-      :panel ->
-        Panel.render(canvas, attrs, &render_tree(&1, children))
-
-      :table ->
-        Table.render(canvas, children)
-
-      :chart ->
-        Chart.render(canvas, attrs)
-
-      :sparkline ->
-        Sparkline.render(canvas, attrs)
-
-      :bar ->
-        render_tree(canvas, children)
-
-      :label ->
-        Label.render(canvas, attrs, children)
-
-      :tree ->
-        Tree.render(canvas, children)
-    end
+    renderer.render(canvas, element, &render_tree/2)
   end
 
   ### View Tree Validation
-
-  @element_specs Element.specs()
 
   @doc """
   Validates the hierarchy of a view tree given the root element.

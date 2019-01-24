@@ -1,4 +1,4 @@
-defmodule Ratatouille.Renderer.View do
+defmodule Ratatouille.View do
   @moduledoc """
   In Ratatouille, a view is simply a tree of elements. Each element in the tree
   holds an attributes map and a list of zero or more child nodes. Visually, it
@@ -93,36 +93,7 @@ defmodule Ratatouille.Renderer.View do
   In such cases, the block and list forms are unsupported.
   """
 
-  alias Ratatouille.Renderer.{Box, Canvas, Element}
-
-  ### View Rendering
-
-  def render(canvas, attrs, children, render_fn) do
-    canvas
-    |> render_top_bar(attrs[:top_bar], render_fn)
-    |> render_bottom_bar(attrs[:bottom_bar], render_fn)
-    |> render_fn.(children)
-  end
-
-  defp render_top_bar(canvas, nil, _render_fn), do: canvas
-
-  defp render_top_bar(%Canvas{box: box} = canvas, bar, render_fn) do
-    canvas
-    |> Canvas.put_box(Box.head(box, 1))
-    |> render_fn.(bar)
-    |> Canvas.put_box(box)
-    |> Canvas.consume_rows(1)
-  end
-
-  defp render_bottom_bar(canvas, nil, _render_fn), do: canvas
-
-  defp render_bottom_bar(%Canvas{box: box} = canvas, bar, render_fn) do
-    canvas
-    |> Canvas.put_box(Box.tail(box, 1))
-    |> render_fn.(bar)
-    |> Canvas.put_box(box)
-    |> Canvas.consume_rows(1)
-  end
+  alias Ratatouille.Renderer.Element
 
   ### Element Definition
 
@@ -135,7 +106,11 @@ defmodule Ratatouille.Renderer.View do
 
   def element(tag, attributes, children)
       when is_atom(tag) and is_map(attributes) and is_list(children) do
-    %Element{tag: tag, attributes: attributes, children: List.flatten(children)}
+    %Element{
+      tag: tag,
+      attributes: attributes,
+      children: flatten_children(children)
+    }
   end
 
   def element(tag, attributes, %Element{} = child) do
@@ -144,6 +119,12 @@ defmodule Ratatouille.Renderer.View do
 
   def element(tag, attributes, children) when is_list(attributes) do
     element(tag, Enum.into(attributes, %{}), children)
+  end
+
+  defp flatten_children(children) do
+    children
+    |> List.flatten()
+    |> Enum.filter(&(!is_nil(&1)))
   end
 
   ### Element Definition Macros

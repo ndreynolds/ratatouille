@@ -32,7 +32,7 @@ line by line to see what each line does. You can also find this example
 
 alias Ratatouille.{EventManager, Window}
 
-import Ratatouille.Renderer.View
+import Ratatouille.View
 
 {:ok, _pid} = Window.start_link()
 {:ok, _pid} = EventManager.start_link()
@@ -60,10 +60,10 @@ alias Ratatouille.{EventManager, Window}
 ```
 
 Next, we import the View DSL from
-[`Ratatouille.Renderer.View`](https://hexdocs.pm/ratatouille/Ratatouille.Renderer.View):
+[`Ratatouille.View`](https://hexdocs.pm/ratatouille/Ratatouille.View):
 
 ```elixir
-import Ratatouille.Renderer.View
+import Ratatouille.View
 ```
 
 The View DSL provides element builder functions like `view`, `row`, `table`,
@@ -156,7 +156,7 @@ need to kill the process (for example, by closing your terminal window).
 defmodule Clock do
   alias Ratatouille.Window
 
-  import Ratatouille.Renderer.View
+  import Ratatouille.View
 
   def start do
     {:ok, _pid} = Window.start_link()
@@ -209,7 +209,7 @@ handle events---and therefore, no way to quit the application. Let's fix that:
 defmodule Clock do
   alias Ratatouille.{EventManager, Window}
 
-  import Ratatouille.Renderer.View
+  import Ratatouille.View
 
   def start do
     {:ok, _pid} = Window.start_link()

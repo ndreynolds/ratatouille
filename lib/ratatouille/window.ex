@@ -131,7 +131,7 @@ defmodule Ratatouille.Window do
     case attr do
       :width -> {:ok, bindings.width()}
       :height -> {:ok, bindings.height()}
-      :box -> {:ok, canvas(bindings).box}
+      :box -> {:ok, canvas(bindings).outer_box}
       _ -> {:error, :unknown_attribute}
     end
   end

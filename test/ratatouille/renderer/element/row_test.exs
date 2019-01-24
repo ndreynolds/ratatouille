@@ -2,75 +2,46 @@ defmodule Ratatouille.Renderer.RowTest do
   use ExUnit.Case, async: true
 
   alias Ratatouille.Renderer
-  alias Ratatouille.Renderer.{Canvas, Element, Row}
+  alias Ratatouille.Renderer.Canvas
+  alias Ratatouille.Renderer.Element.Row
 
-  @three_equal_columns [
-    %Element{
-      tag: :column,
-      attributes: %{size: 4},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col1"}
-      }
-    },
-    %Element{
-      tag: :column,
-      attributes: %{size: 4},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col2"}
-      }
-    },
-    %Element{
-      tag: :column,
-      attributes: %{size: 4},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col3"}
-      }
-    }
-  ]
+  import Ratatouille.View
 
-  @two_unequal_columns [
-    %Element{
-      tag: :column,
-      attributes: %{size: 9},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col1"}
-      }
-    },
-    %Element{
-      tag: :column,
-      attributes: %{size: 3},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col2"}
-      }
-    }
-  ]
+  @three_equal_columns (row do
+                          column size: 4 do
+                            panel(title: "Col1")
+                          end
 
-  @single_full_width_column [
-    %Element{
-      tag: :column,
-      attributes: %{size: 12},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col1"}
-      }
-    }
-  ]
+                          column size: 4 do
+                            panel(title: "Col2")
+                          end
 
-  @single_partial_width_column [
-    %Element{
-      tag: :column,
-      attributes: %{size: 6},
-      children: %Element{
-        tag: :panel,
-        attributes: %{title: "Col1"}
-      }
-    }
-  ]
+                          column size: 4 do
+                            panel(title: "Col3")
+                          end
+                        end)
+
+  @two_unequal_columns (row do
+                          column size: 9 do
+                            panel(title: "Col1")
+                          end
+
+                          column size: 3 do
+                            panel(title: "Col2")
+                          end
+                        end)
+
+  @single_full_width_column (row do
+                               column size: 12 do
+                                 panel(title: "Col1")
+                               end
+                             end)
+
+  @single_partial_width_column (row do
+                                  column size: 6 do
+                                    panel(title: "Col1")
+                                  end
+                                end)
 
   describe "render/3" do
     test "renders columns evenly using full width" do
@@ -134,11 +105,11 @@ defmodule Ratatouille.Renderer.RowTest do
     end
   end
 
-  def render_canvas(columns, {width, height}) do
+  def render_canvas(row, {width, height}) do
     canvas = Canvas.from_dimensions(width, height)
 
     canvas
-    |> Row.render(columns, &Renderer.render_tree/2)
+    |> Row.render(row, &Renderer.render_tree/2)
     |> Canvas.render_to_strings()
   end
 end

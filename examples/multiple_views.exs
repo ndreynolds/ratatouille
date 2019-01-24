@@ -6,7 +6,7 @@ defmodule MultipleViewsDemo do
   alias Ratatouille.{EventManager, Window}
 
   import Ratatouille.Constants, only: [color: 1]
-  import Ratatouille.Renderer.View
+  import Ratatouille.View
 
   def start do
     {:ok, _pid} = Window.start_link()

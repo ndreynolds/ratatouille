@@ -1,21 +1,23 @@
-defmodule Ratatouille.Renderer.Table do
+defmodule Ratatouille.Renderer.Element.Table do
   @moduledoc false
+  @behaviour Ratatouille.Renderer
 
   # Minimum padding on the right of each column
   @min_padding 2
 
   alias ExTermbox.Position
-  alias Ratatouille.Renderer.{Box, Canvas, Text}
+  alias Ratatouille.Renderer.{Box, Canvas, Element, Text}
 
-  def render(%Canvas{} = canvas, rows) do
+  @impl true
+  def render(%Canvas{} = canvas, %Element{children: rows}, _render_fn) do
     canvas
     |> render_table(rows)
     |> Canvas.consume(0, 1)
   end
 
   defp render_table(%Canvas{} = canvas, rows) do
-    col_sizes = column_sizes(canvas.box, rows)
-    max_rows = Box.height(canvas.box)
+    col_sizes = column_sizes(canvas.render_box, rows)
+    max_rows = Box.height(canvas.render_box)
 
     rows
     |> Enum.take(max_rows)
@@ -34,7 +36,7 @@ defmodule Ratatouille.Renderer.Table do
   end
 
   defp render_table_cell({text, col_size}, {canvas, offset}, attrs) do
-    pos = Position.translate_x(canvas.box.top_left, offset)
+    pos = Position.translate_x(canvas.render_box.top_left, offset)
     padded_text = String.pad_trailing(text, col_size, " ")
     canvas = Text.render(canvas, pos, padded_text, attrs)
 

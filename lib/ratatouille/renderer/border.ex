@@ -16,7 +16,7 @@ defmodule Ratatouille.Renderer.Border do
     top_left: "┌"
   }
 
-  def render(%Canvas{box: box} = canvas) do
+  def render(%Canvas{render_box: box} = canvas) do
     width = Box.width(box)
     height = Box.height(box)
 

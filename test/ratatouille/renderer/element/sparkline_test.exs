@@ -1,14 +1,18 @@
 defmodule Ratatouille.Renderer.SparklineTest do
   use ExUnit.Case, async: true
 
-  alias Ratatouille.Renderer.{Canvas, Sparkline}
+  alias Ratatouille.Renderer.Canvas
+  alias Ratatouille.Renderer.Element.Sparkline
 
-  describe "render/2" do
-    test "returns the sparkine" do
+  import Ratatouille.View
+
+  describe "render/3" do
+    test "returns the sparkline" do
       canvas =
         Sparkline.render(
           Canvas.from_dimensions(6, 1),
-          %{series: [1, 40, 18, 5, 7, 50]}
+          sparkline(series: [1, 40, 18, 5, 7, 50]),
+          nil
         )
 
       assert Canvas.render_to_strings(canvas) === ["▁▇▃▂▂█"]

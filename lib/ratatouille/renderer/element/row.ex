@@ -1,13 +1,17 @@
-defmodule Ratatouille.Renderer.Row do
-  @moduledoc """
-  Renders a layout with one or more columns.
-  """
+defmodule Ratatouille.Renderer.Element.Row do
+  @moduledoc false
+  @behaviour Ratatouille.Renderer
 
   alias Ratatouille.Renderer.{Box, Canvas, Element}
 
   @grid_size 12
 
-  def render(%Canvas{box: box} = canvas, children, render_fun) do
+  @impl true
+  def render(
+        %Canvas{render_box: box} = canvas,
+        %Element{children: children},
+        render_fun
+      ) do
     col_sizes =
       Enum.map(children, fn
         %Element{attributes: %{size: size}} -> size
@@ -21,7 +25,8 @@ defmodule Ratatouille.Renderer.Row do
 
     occupied_rows = largest_y(boxes) - box.top_left.y
 
-    %Canvas{new_canvas | box: box}
+    new_canvas
+    |> Canvas.put_box(box)
     |> Canvas.consume_rows(occupied_rows)
   end
 
@@ -32,9 +37,9 @@ defmodule Ratatouille.Renderer.Row do
   end
 
   defp reduce_columns(render_fun, {el, column_box}, {canvas, boxes}) do
-    column_canvas = %Canvas{canvas | box: column_box}
+    column_canvas = %Canvas{canvas | render_box: column_box}
     canvas = render_fun.(column_canvas, el)
-    {canvas, [canvas.box | boxes]}
+    {canvas, [canvas.render_box | boxes]}
   end
 
   defp column_boxes(outer_box, col_sizes) do

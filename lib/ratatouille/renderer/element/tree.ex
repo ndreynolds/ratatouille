@@ -1,9 +1,11 @@
-defmodule Ratatouille.Renderer.Tree do
+defmodule Ratatouille.Renderer.Element.Tree do
   @moduledoc false
+  @behaviour Ratatouille.Renderer
 
   alias Ratatouille.Renderer.{Canvas, Element, Text}
 
-  def render(%Canvas{} = canvas, nodes) do
+  @impl true
+  def render(%Canvas{} = canvas, %Element{children: nodes}, _render_fn) do
     canvas
     |> render_nodes(nodes, "", true)
     |> Canvas.consume_rows(1)
@@ -14,7 +16,7 @@ defmodule Ratatouille.Renderer.Tree do
   end
 
   def render_nodes(
-        %Canvas{box: box} = canvas,
+        %Canvas{render_box: box} = canvas,
         [
           %Element{tag: :tree_node, attributes: attrs, children: children}
           | siblings

@@ -6,33 +6,48 @@ defmodule RenderingDemo do
 
   alias Ratatouille.{EventManager, Window}
 
-  import Ratatouille.Constants, only: [color: 1, attribute: 1]
-  import Ratatouille.Renderer.View
+  import Ratatouille.Constants, only: [color: 1, attribute: 1, key: 1]
+  import Ratatouille.View
 
   @refresh_interval 500
+  @spacebar key(:space)
 
   def start do
     {:ok, _pid} = Window.start_link()
     {:ok, _pid} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
 
-    loop()
-  end
-
-  def loop do
     state = %{
       current_time: DateTime.utc_now(),
-      series_1: for(_ <- 0..50, do: :rand.uniform() * 1000),
-      series_2: Enum.shuffle([0, 1, 2, 3, 4, 5, 6])
+      series_1: [],
+      series_2: [],
+      overlay: true
     }
 
+    loop(state)
+  end
+
+  def tick(state) do
+    %{
+      state
+      | current_time: DateTime.utc_now(),
+        series_1: for(_ <- 0..50, do: :rand.uniform() * 1000),
+        series_2: Enum.shuffle([0, 1, 2, 3, 4, 5, 6])
+    }
+  end
+
+  def loop(state) do
     with :ok <- Window.update(demo_view(state)) do
       receive do
         {:event, %{ch: ?q}} ->
           :ok = Window.close()
+
+        {:event, %{key: @spacebar}} ->
+          loop(%{state | overlay: !state.overlay})
       after
         @refresh_interval ->
-          loop()
+          new_state = tick(state)
+          loop(new_state)
       end
     else
       err ->
@@ -176,6 +191,13 @@ defmodule RenderingDemo do
 
               sparkline(series: state.series_2)
             end
+          end
+        end
+      end
+
+      if state.overlay do
+        overlay(padding: 15) do
+          panel title: "Overlay (toggle with <space>)", height: :fill do
           end
         end
       end

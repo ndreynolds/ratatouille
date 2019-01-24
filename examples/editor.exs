@@ -10,7 +10,7 @@ defmodule Editor do
 
   alias Ratatouille.{EventManager, Window}
 
-  import Ratatouille.Renderer.View
+  import Ratatouille.View
   import Ratatouille.Constants, only: [key: 1]
 
   @title "Editor (CTRL-d to quit)"

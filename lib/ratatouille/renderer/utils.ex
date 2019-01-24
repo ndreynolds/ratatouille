@@ -6,7 +6,10 @@ defmodule Ratatouille.Renderer.Utils do
   alias ExTermbox.{Cell, Position}
   alias Ratatouille.Renderer.{Box, Canvas}
 
-  def render_cells(cells, %Canvas{box: box, cells: canvas_cells} = canvas) do
+  def render_cells(
+        cells,
+        %Canvas{render_box: box, cells: canvas_cells} = canvas
+      ) do
     new_cells =
       for c <- cells,
           Box.contains?(box, c.position),
@@ -30,7 +33,7 @@ defmodule Ratatouille.Renderer.Utils do
     end
   end
 
-  defp atoi(str) do
+  def atoi(str) do
     <<char::utf8>> = str
     char
   end

@@ -76,6 +76,13 @@ defmodule Ratatouille.Renderer.Box do
     }
   end
 
+  def positions(%Box{
+        top_left: %Position{x: x1, y: y1},
+        bottom_right: %Position{x: x2, y: y2}
+      }) do
+    for x <- x1..x2, y <- y1..y2, do: %Position{x: x, y: y}
+  end
+
   @doc """
   Given a box, returns a slice of the y axis with `n` rows from the top.
   """

@@ -3,6 +3,20 @@ defmodule Ratatouille.Renderer.Element do
 
   alias __MODULE__, as: Element
 
+  alias Ratatouille.Renderer.Element.{
+    Bar,
+    Chart,
+    Column,
+    Label,
+    Overlay,
+    Panel,
+    Row,
+    Sparkline,
+    Table,
+    Tree,
+    View
+  }
+
   @type t :: %Element{tag: atom()}
 
   @enforce_keys [:tag]
@@ -11,23 +25,29 @@ defmodule Ratatouille.Renderer.Element do
   ### Element Specs
 
   @specs [
-    view: [
-      description: "Top-level container",
-      child_tags: [:row, :panel],
-      attributes: [
-        top_bar: {:optional, "A `:bar` element to occupy the view's first row"},
-        bottom_bar:
-          {:optional, "A `:bar` element to occupy the view's last row"}
-      ]
-    ],
-    row: [
+    bar: [
       description:
-        "Container used to define grid layouts with one or more columns",
-      child_tags: [:column],
+        "Block-level element for creating title, status or menu bars",
+      renderer: Bar,
+      child_tags: [:label],
       attributes: []
+    ],
+    chart: [
+      description: "Element for plotting a series as a multi-line chart",
+      renderer: Chart,
+      child_tags: [],
+      attributes: [
+        series:
+          {:required, "List of float or integer values representing the series"},
+        type:
+          {:required,
+           "Type of chart to plot. Currently only `:line` is supported"},
+        height: {:optional, "Height of the chart in rows"}
+      ]
     ],
     column: [
       description: "Container occupying a vertical segment of the grid",
+      renderer: Column,
       child_tags: [:panel, :table, :row, :label, :chart, :sparkline, :tree],
       attributes: [
         size:
@@ -35,9 +55,27 @@ defmodule Ratatouille.Renderer.Element do
            "Number of units on the grid that the column should occupy"}
       ]
     ],
+    label: [
+      description: "Block-level element for displaying text",
+      renderer: Label,
+      child_tags: [:text],
+      attributes: [
+        content:
+          {:optional, "Binary containing the text content to be displayed"}
+      ]
+    ],
+    overlay: [
+      description: "Container overlaid on top of the view",
+      renderer: Overlay,
+      child_tags: [:panel, :row],
+      attributes: [
+        padding: {:optional, "Integer number of units of padding"}
+      ]
+    ],
     panel: [
       description:
         "Container with a border and title used to demarcate content",
+      renderer: Panel,
       child_tags: [:table, :row, :label, :panel, :chart, :sparkline, :tree],
       attributes: [
         height:
@@ -46,12 +84,44 @@ defmodule Ratatouille.Renderer.Element do
         title: {:optional, "Binary containing the title for the panel"}
       ]
     ],
-    label: [
-      description: "Block-level element for displaying text",
-      child_tags: [:text],
+    row: [
+      description:
+        "Container used to define grid layouts with one or more columns",
+      renderer: Row,
+      child_tags: [:column],
+      attributes: []
+    ],
+    sparkline: [
+      description: "Element for plotting a series in a single line",
+      renderer: Sparkline,
+      child_tags: [],
       attributes: [
-        content:
-          {:optional, "Binary containing the text content to be displayed"}
+        series:
+          {:required, "List of float or integer values representing the series"}
+      ]
+    ],
+    table: [
+      description: "Container for displaying data in rows and columns",
+      renderer: Table,
+      child_tags: [:table_row],
+      attributes: []
+    ],
+    table_cell: [
+      description: "Element representing a table cell",
+      child_tags: [],
+      attributes: [
+        content: "Binary containing the text content to be displayed"
+      ]
+    ],
+    table_row: [
+      description: "Container representing a row of the table",
+      child_tags: [:table_cell],
+      attributes: [
+        color: {:optional, "Constant representing color to use for foreground"},
+        background:
+          {:optional, "Constant representing color to use for background"},
+        attributes:
+          {:optional, "Constant representing style attributes to apply"}
       ]
     ],
     text: [
@@ -67,37 +137,9 @@ defmodule Ratatouille.Renderer.Element do
           {:optional, "Constant representing style attributes to apply"}
       ]
     ],
-    bar: [
-      description:
-        "Block-level element for creating title, status or menu bars",
-      child_tags: [:label],
-      attributes: []
-    ],
-    table: [
-      description: "Container for displaying data in rows and columns",
-      child_tags: [:table_row],
-      attributes: []
-    ],
-    table_row: [
-      description: "Container representing a row of the table",
-      child_tags: [:table_cell],
-      attributes: [
-        color: {:optional, "Constant representing color to use for foreground"},
-        background:
-          {:optional, "Constant representing color to use for background"},
-        attributes:
-          {:optional, "Constant representing style attributes to apply"}
-      ]
-    ],
-    table_cell: [
-      description: "Element representing a table cell",
-      child_tags: [],
-      attributes: [
-        content: "Binary containing the text content to be displayed"
-      ]
-    ],
     tree: [
       description: "Container for displaying data as a tree of nodes",
+      renderer: Tree,
       child_tags: [:tree_node],
       attributes: []
     ],
@@ -108,24 +150,14 @@ defmodule Ratatouille.Renderer.Element do
         content: {:required, "Binary label for the node"}
       ]
     ],
-    sparkline: [
-      description: "Element for plotting a series in a single line",
-      child_tags: [],
+    view: [
+      description: "Top-level container",
+      renderer: View,
+      child_tags: [:row, :panel, :overlay],
       attributes: [
-        series:
-          {:required, "List of float or integer values representing the series"}
-      ]
-    ],
-    chart: [
-      description: "Element for plotting a series as a multi-line chart",
-      child_tags: [],
-      attributes: [
-        series:
-          {:required, "List of float or integer values representing the series"},
-        type:
-          {:required,
-           "Type of chart to plot. Currently only `:line` is supported"},
-        height: {:optional, "Height of the chart in rows"}
+        top_bar: {:optional, "A `:bar` element to occupy the view's first row"},
+        bottom_bar:
+          {:optional, "A `:bar` element to occupy the view's last row"}
       ]
     ]
   ]
