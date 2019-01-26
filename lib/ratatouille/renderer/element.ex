@@ -153,7 +153,7 @@ defmodule Ratatouille.Renderer.Element do
     view: [
       description: "Top-level container",
       renderer: View,
-      child_tags: [:row, :panel, :overlay],
+      child_tags: [:label, :row, :panel, :overlay],
       attributes: [
         top_bar: {:optional, "A `:bar` element to occupy the view's first row"},
         bottom_bar:
