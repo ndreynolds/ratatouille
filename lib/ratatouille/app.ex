@@ -43,9 +43,9 @@ defmodule Ratatouille.App do
 
   The behaviour callbacks map to these three parts:
 
-  * `model/1` defines your initial model, using provided context if needed.
-  * `update/2` handles a message and retuns a new model.
-  * `render/1` receives a model and builds a view (an element tree) to view it.
+  * `c:model/1` defines your initial model, using provided context if needed.
+  * `c:update/2` handles a message and retuns a new model.
+  * `c:render/1` receives a model and builds a view (an element tree) to view it.
 
   See the documentation for each callback below for additional details.
 

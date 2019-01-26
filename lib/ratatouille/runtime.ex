@@ -6,7 +6,7 @@ defmodule Ratatouille.Runtime do
   ## Runtime Context
 
   The runtime provides a map with additional context to the app's
-  `Ratatouille.App.model/1` callback. This can be used, for example,
+  `c:Ratatouille.App.model/1` callback. This can be used, for example,
   to get information about the terminal window.  Currently, the following
   attributes are provided via the map:
 

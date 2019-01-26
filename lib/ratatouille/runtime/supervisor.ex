@@ -15,7 +15,7 @@ defmodule Ratatouille.Runtime.Supervisor do
 
   ## Options
 
-  * `:runtime` - Options for the runtime. See `Ratatouille.Runtime.start_link/2`.
+  * `:runtime` - Options for the runtime. See `Ratatouille.Runtime.start_link/1`.
   """
   def start_link(opts \\ []) do
     {child_opts, sup_opts} = Keyword.split(opts, [:app, :runtime])
