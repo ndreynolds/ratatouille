@@ -13,8 +13,9 @@ defmodule Ratatouille.Renderer.Element.Chart do
         _render_fn
       ) do
     chart_opts = Map.take(attrs, [:height, :offset, :padding])
+    normalized_series = normalize_series(series)
 
-    case plot(series, chart_opts) do
+    case plot(normalized_series, chart_opts) do
       {:ok, chart} ->
         render_chart(canvas, chart)
 
@@ -44,4 +45,9 @@ defmodule Ratatouille.Renderer.Element.Chart do
   rescue
     _ -> {:error, :plot_error}
   end
+
+  # Work around some hard arithmetic errors in asciichart with certain inputs
+  defp normalize_series([x]), do: [0, x]
+  defp normalize_series([x, x]), do: [0, x, x]
+  defp normalize_series(other), do: other
 end
