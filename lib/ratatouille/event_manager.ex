@@ -1,17 +1,22 @@
 defmodule Ratatouille.EventManager do
   @moduledoc """
-  A convenience wrapper of `ExTermbox.EventManager`.
+  A wrapper of `ExTermbox.EventManager` so that Ratatouille applications don't
+  need to use or depend on ex_termbox directly.
   """
-
-  alias ExTermbox.EventManager, as: TermboxEventManager
 
   @doc """
   Starts the `ExTermbox.EventManager` gen_server.
   """
-  defdelegate start_link, to: TermboxEventManager
+  defdelegate start_link(opts \\ []), to: ExTermbox.EventManager
 
   @doc """
   Subscribes the given pid to future event notifications.
   """
-  defdelegate subscribe(subscriber_pid), to: TermboxEventManager
+  defdelegate subscribe(subscriber_pid), to: ExTermbox.EventManager
+
+  @doc """
+  Provides a child specification to use when starting the event manager under a
+  supervisor.
+  """
+  defdelegate child_spec(opts), to: ExTermbox.EventManager
 end
