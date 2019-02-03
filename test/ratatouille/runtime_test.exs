@@ -42,7 +42,10 @@ defmodule Ratatouille.RuntimeTest do
     _ = start_supervised!(BindingsStub)
     _ = start_supervised!(AppStub)
 
-    window = start_supervised!({Window, name: nil, bindings: BindingsStub}, restart: :transient)
+    window =
+      start_supervised!({Window, name: nil, bindings: BindingsStub},
+        restart: :transient
+      )
 
     event_manager =
       start_supervised!({EventManager, name: nil, bindings: BindingsStub})
