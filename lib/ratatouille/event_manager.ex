@@ -7,7 +7,11 @@ defmodule Ratatouille.EventManager do
   @doc """
   Starts the `ExTermbox.EventManager` gen_server.
   """
-  defdelegate start_link(opts \\ []), to: ExTermbox.EventManager
+  def start_link(opts \\ []) do
+    opts_with_defaults = Keyword.merge([name: __MODULE__], opts)
+
+    ExTermbox.EventManager.start_link(opts_with_defaults)
+  end
 
   @doc """
   Subscribes the given pid to future event notifications.
