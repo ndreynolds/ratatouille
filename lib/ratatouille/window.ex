@@ -6,13 +6,11 @@ defmodule Ratatouille.Window do
 
   use GenServer
 
-  alias ExTermbox.Bindings
-
   alias Ratatouille.Constants
   alias Ratatouille.Renderer
   alias Ratatouille.Renderer.{Canvas, Element}
 
-  @default_bindings Bindings
+  @default_bindings ExTermbox.Bindings
   @default_input_mode Constants.input_mode(:esc)
   @default_output_mode Constants.output_mode(:normal)
 

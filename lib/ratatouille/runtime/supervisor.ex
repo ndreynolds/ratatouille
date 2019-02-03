@@ -30,9 +30,21 @@ defmodule Ratatouille.Runtime.Supervisor do
     runtime_opts = opts[:runtime] || []
 
     children = [
-      EventManager,
-      Window,
-      {Runtime, runtime_opts}
+      %{
+        id: EventManager,
+        start: {EventManager, :start_link, []},
+        restart: :transient
+      },
+      %{
+        id: Window,
+        start: {Window, :start_link, []},
+        restart: :transient
+      },
+      %{
+        id: Runtime,
+        start: {Runtime, :start_link, [runtime_opts]},
+        restart: :transient
+      }
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

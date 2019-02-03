@@ -10,6 +10,7 @@ defmodule Ratatouille.Mixfile do
       deps: deps(),
       description: description(),
       package: package(),
+      elixirc_paths: elixirc_paths(Mix.env()),
 
       # Docs
       name: "Ratatouille",
@@ -48,4 +49,7 @@ defmodule Ratatouille.Mixfile do
       links: %{"GitHub" => "https://github.com/ndreynolds/ratatouille"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

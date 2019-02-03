@@ -1,3 +1,7 @@
+# Run this example with:
+#
+#   mix run --no-halt examples/counter.exs
+
 defmodule Counter do
   @behaviour Ratatouille.App
 
@@ -20,15 +24,7 @@ defmodule Counter do
   end
 end
 
-# Now start the runtime and wait for it to stop
-# (Stops when user presses 'q' or ctrl-c.)
-
-{:ok, _} = Ratatouille.Window.start_link()
-{:ok, _} = Ratatouille.EventManager.start_link()
-{:ok, runtime_pid} = Ratatouille.Runtime.start_link(app: Counter)
-
-ref = Process.monitor(runtime_pid)
-
-receive do
-  {:DOWN, ^ref, _, _, _} -> :ok
-end
+{:ok, _pid} =
+  Ratatouille.Runtime.Supervisor.start_link(
+    runtime: [app: Counter, shutdown: {:system, :halt}]
+  )

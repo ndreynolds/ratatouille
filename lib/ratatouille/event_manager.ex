@@ -12,7 +12,8 @@ defmodule Ratatouille.EventManager do
   @doc """
   Subscribes the given pid to future event notifications.
   """
-  defdelegate subscribe(subscriber_pid), to: ExTermbox.EventManager
+  defdelegate subscribe(pid \\ __MODULE__, subscriber_pid),
+    to: ExTermbox.EventManager
 
   @doc """
   Provides a child specification to use when starting the event manager under a

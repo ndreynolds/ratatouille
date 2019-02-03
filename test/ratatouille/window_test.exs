@@ -11,27 +11,19 @@ defmodule Ratatouille.WindowTest do
   # effects, we configure the test windows to use this stub instead.
   #
   # The stub is an `Agent` that remembers its calls so that the bindings usage
-  # can be verified.
+  # can be verified. See `Ratatouille.Stub` for details.
   defmodule BindingsStub do
-    use Agent
+    use Ratatouille.Stub
 
-    def start_link(opts) do
-      Agent.start_link(fn -> [] end, opts)
-    end
-
-    def init, do: track(:init)
-    def clear, do: track(:clear)
-    def present, do: track(:present)
-    def shutdown, do: track(:shutdown)
-    def select_input_mode(mode), do: track({:select_input_mode, mode})
-    def select_output_mode(mode), do: track({:select_output_mode, mode})
+    deftracked init, do: :ok
+    deftracked clear, do: :ok
+    deftracked present, do: :ok
+    deftracked shutdown, do: :ok
+    deftracked select_input_mode(mode), do: :ok
+    deftracked select_output_mode(mode), do: :ok
 
     def width, do: 42
     def height, do: 81
-
-    defp track(call) do
-      Agent.update(__MODULE__, fn calls -> [call | calls] end)
-    end
   end
 
   setup do
@@ -58,7 +50,7 @@ defmodule Ratatouille.WindowTest do
                {:select_output_mode, @output_mode_normal},
                {:select_input_mode, @input_mode_esc},
                :init
-             ] = bindings_calls()
+             ] = BindingsStub.calls()
     end
   end
 
@@ -66,14 +58,14 @@ defmodule Ratatouille.WindowTest do
     test "renders a view via clear/0 and present/0", %{pid: pid} do
       view = view()
       assert :ok = Window.update(pid, view)
-      assert [:present, :clear | _] = bindings_calls()
+      assert [:present, :clear | _] = BindingsStub.calls()
     end
   end
 
   describe "close/1" do
     test "stops the gen_server and calls bindings.shutdown/0", %{pid: pid} do
       assert :ok = Window.close(pid)
-      assert [:shutdown | _] = bindings_calls()
+      assert [:shutdown | _] = BindingsStub.calls()
     end
   end
 
@@ -98,6 +90,4 @@ defmodule Ratatouille.WindowTest do
       assert {:error, :unknown_attribute} = Window.fetch(pid, :foo)
     end
   end
-
-  defp bindings_calls, do: Agent.get(BindingsStub, & &1)
 end
