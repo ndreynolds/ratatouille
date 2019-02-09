@@ -34,7 +34,7 @@ defmodule Ratatouille.Window do
   * `:output_mode` - Configure the output mode. See `Ratatouille.Constants.output_mode/1`
                      for possible values.
   """
-  @spec start_link(Keyword.t()) :: :ok
+  @spec start_link(Keyword.t()) :: {:ok, pid()} | :ignore | {:error, term()}
   def start_link(opts \\ []) do
     {init_opts, server_opts} =
       Keyword.split(opts, [:bindings, :input_mode, :output_mode])
@@ -62,14 +62,14 @@ defmodule Ratatouille.Window do
   Updates the window by rendering the given view to the termbox buffer and
   presenting it.
   """
-  @spec update(pid(), Element.t()) :: :ok
+  @spec update(GenServer.server(), Element.t()) :: :ok
   def update(pid \\ __MODULE__, view), do: GenServer.call(pid, {:update, view})
 
   @doc """
   Closes the window by stopping the GenServer. Prior to this, termbox is
   de-initialized so that the terminal is restored to its previous state.
   """
-  @spec close(pid()) :: :ok
+  @spec close(GenServer.server()) :: :ok
   def close(pid \\ __MODULE__), do: GenServer.stop(pid)
 
   @doc """
@@ -86,7 +86,7 @@ defmodule Ratatouille.Window do
       {:error, :unknown_attribute}
 
   """
-  @spec fetch(pid(), atom()) :: any()
+  @spec fetch(GenServer.server(), atom()) :: any()
   def fetch(pid \\ __MODULE__, attr), do: GenServer.call(pid, {:fetch, attr})
 
   ### Server
