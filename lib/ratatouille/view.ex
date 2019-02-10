@@ -91,6 +91,26 @@ defmodule Ratatouille.View do
   child elements of its own.
 
   In such cases, the block and list forms are unsupported.
+
+  ### Validation
+
+  While some errors---such as passing children to empty elements---are prevented
+  by the DSL, it's still possible (for now, at least) to build
+  semantically-invalid element trees using the DSL. This means that the elements
+  are being used in a way that doesn't make sense to the renderer.
+
+  In order to prevent cryptic rendering errors, the renderer first validates the
+  element tree it's given and rejects the whole thing if the structure is
+  unsupported. It currently checks the following things:
+
+  * The top-level element passed to the renderer must have the `:view` tag.
+  * A parent element may only have child elements that have one of the
+    supported child tags for the parent element.
+  * An element must define all of its required attributes and may not define any
+    unknown attributes.
+
+  The last two rules are based on the element's definition in
+  `Ratatouille.Renderer.Element`.
   """
 
   alias Ratatouille.Renderer.Element
