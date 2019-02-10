@@ -114,14 +114,13 @@ defmodule Ratatouille.Renderer.Canvas do
     y_max = Enum.max(ys, fn -> 0 end)
     x_max = Enum.max(xs, fn -> 0 end)
 
-    empty_cells =
-      for y <- 0..y_max,
-          x <- 0..x_max,
-          do: empty_cell(x, y)
+    cells =
+      for y <- 0..y_max, x <- 0..x_max do
+        pos = %Position{x: x, y: y}
+        cells_map[pos] || %Cell{position: pos, ch: ' '}
+      end
 
-    filled_cells = Enum.map(empty_cells, &fetch_cell(cells_map, &1))
-
-    filled_cells
+    cells
     |> Enum.chunk_by(&row_idx/1)
     |> Enum.map(fn columns ->
       columns
@@ -146,9 +145,4 @@ defmodule Ratatouille.Renderer.Canvas do
   defp cell_to_string(%Cell{ch: ch}), do: to_string([ch])
 
   defp row_idx(%Cell{position: %Position{y: y}}), do: y
-
-  defp fetch_cell(cells, empty_cell),
-    do: Map.get(cells, empty_cell.position, empty_cell)
-
-  defp empty_cell(x, y), do: %Cell{position: %Position{x: x, y: y}, ch: ' '}
 end
