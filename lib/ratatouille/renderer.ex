@@ -54,6 +54,7 @@ defmodule Ratatouille.Renderer do
     end
   end
 
+  @spec render_tree(Canvas.t(), Element.t() | list(Element.t())) :: Canvas.t()
   def render_tree(%Canvas{} = canvas, elements) when is_list(elements) do
     Enum.reduce(elements, canvas, fn el, new_canvas ->
       render_tree(new_canvas, el)
@@ -78,6 +79,7 @@ defmodule Ratatouille.Renderer do
   Used by the render/2 function to prevent strange errors that may otherwise
   occur when processing invalid view trees.
   """
+  @spec validate_tree(Element.t()) :: :ok | {:error, String.t()}
   def validate_tree(%Element{tag: :view, children: children}) do
     validate_subtree(:view, children)
   end

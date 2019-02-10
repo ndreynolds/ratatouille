@@ -34,7 +34,7 @@ defmodule Ratatouille.Window do
   * `:output_mode` - Configure the output mode. See `Ratatouille.Constants.output_mode/1`
                      for possible values.
   """
-  @spec start_link(Keyword.t()) :: {:ok, pid()} | :ignore | {:error, term()}
+  @spec start_link(Keyword.t()) :: GenServer.on_start()
   def start_link(opts \\ []) do
     {init_opts, server_opts} =
       Keyword.split(opts, [:bindings, :input_mode, :output_mode])
@@ -72,6 +72,8 @@ defmodule Ratatouille.Window do
   @spec close(GenServer.server()) :: :ok
   def close(pid \\ __MODULE__), do: GenServer.stop(pid)
 
+  @type fetch_attr :: :width | :height | :box
+
   @doc """
   Fetches an attribute for the window. This is currently limited to the window
   dimensions, which can be useful when laying out content.
@@ -86,7 +88,7 @@ defmodule Ratatouille.Window do
       {:error, :unknown_attribute}
 
   """
-  @spec fetch(GenServer.server(), atom()) :: any()
+  @spec fetch(GenServer.server(), fetch_attr()) :: term()
   def fetch(pid \\ __MODULE__, attr), do: GenServer.call(pid, {:fetch, attr})
 
   ### Server

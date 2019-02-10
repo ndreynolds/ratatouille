@@ -60,6 +60,7 @@ defmodule Ratatouille.Runtime do
     to either `{:ch, ch}` or `{:key, key}`. If not specified, ctrl-c and q / Q
     can be used to quit the application by default.
   """
+  @spec start_link(Keyword.t()) :: {:ok, pid()}
   def start_link(opts) do
     app = Keyword.fetch!(opts, :app)
 
@@ -78,6 +79,7 @@ defmodule Ratatouille.Runtime do
     Task.start_link(__MODULE__, :run, [app, opts_with_defaults])
   end
 
+  @spec run(module(), Keyword.t()) :: :ok
   def run(app, opts) do
     :ok = EventManager.subscribe(opts[:event_manager], self())
 

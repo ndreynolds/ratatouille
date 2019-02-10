@@ -7,6 +7,7 @@ defmodule Ratatouille.EventManager do
   @doc """
   Starts the `ExTermbox.EventManager` gen_server.
   """
+  @spec start_link(Keyword.t()) :: GenServer.on_start()
   def start_link(opts \\ []) do
     opts_with_defaults = Keyword.merge([name: __MODULE__], opts)
 
