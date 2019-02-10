@@ -35,6 +35,8 @@ defmodule Ratatouille.Runtime do
 
   import Ratatouille.Constants, only: [event_type: 1, key: 1]
 
+  require Logger
+
   @default_interval_ms 500
 
   @default_quit_events [
@@ -81,7 +83,8 @@ defmodule Ratatouille.Runtime do
 
   @spec run(module(), Keyword.t()) :: :ok
   def run(app, opts) do
-    :ok = EventManager.subscribe(opts[:event_manager], self())
+    event_manager = Keyword.fetch!(opts, :event_manager)
+    :ok = EventManager.subscribe(event_manager, self())
 
     model =
       opts
@@ -90,6 +93,14 @@ defmodule Ratatouille.Runtime do
       |> app.update(:tick)
 
     loop(app, model, opts)
+
+  rescue
+    # We rescue any exceptions so that we can be sure they're printed to the
+    # screen.
+    e ->
+      window = Keyword.fetch!(opts, :window)
+      formatted_exception = Exception.format(:error, e, __STACKTRACE__)
+      abort(window, "Error in application loop:\n  #{formatted_exception}")
   end
 
   defp loop(app, model, opts) do
@@ -130,10 +141,17 @@ defmodule Ratatouille.Runtime do
     %{height: height, width: width}
   end
 
-  defp quit_event?([], _event), do: false
-  defp quit_event?([{:ch, ch} | _], %{ch: ch}), do: true
-  defp quit_event?([{:key, key} | _], %{key: key}), do: true
-  defp quit_event?([_ | events], event), do: quit_event?(events, event)
+  defp abort(window, error_msg) do
+    :ok = Window.close(window)
+
+    Logger.error(error_msg)
+
+    Logger.warn(
+      "The Ratatouille termbox window was automatically closed due to an error (you may need to quit Erlang manually)."
+    )
+
+    :ok
+  end
 
   defp shutdown(opts) do
     window = Keyword.fetch!(opts, :window)
@@ -148,4 +166,9 @@ defmodule Ratatouille.Runtime do
       :window -> :ok
     end
   end
+
+  defp quit_event?([], _event), do: false
+  defp quit_event?([{:ch, ch} | _], %{ch: ch}), do: true
+  defp quit_event?([{:key, key} | _], %{key: key}), do: true
+  defp quit_event?([_ | events], event), do: quit_event?(events, event)
 end
