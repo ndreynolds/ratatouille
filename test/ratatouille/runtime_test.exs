@@ -23,7 +23,7 @@ defmodule Ratatouille.RuntimeTest do
 
     import Ratatouille.View
 
-    deftracked model(context) do
+    deftracked init(context) do
       0
     end
 
@@ -77,9 +77,8 @@ defmodule Ratatouille.RuntimeTest do
       wait_for_quit(pid)
 
       assert [
-               {:render, 1},
-               {:update, 0, :tick},
-               {:model, %{window: %{height: 42, width: 81}}}
+               {:render, 0},
+               {:init, %{window: %{height: 42, width: 81}}}
              ] = AppStub.calls()
     end
 
@@ -88,8 +87,8 @@ defmodule Ratatouille.RuntimeTest do
       wait_for_quit(pid)
 
       assert [
-               {:render, 2},
-               {:update, 1, {:resize, %{}}}
+               {:render, 1},
+               {:update, 0, {:resize, %{}}}
                | _
              ] = AppStub.calls()
     end
@@ -99,8 +98,8 @@ defmodule Ratatouille.RuntimeTest do
       wait_for_quit(pid)
 
       assert [
-               {:render, 2},
-               {:update, 1, {:event, %{ch: ?a}}}
+               {:render, 1},
+               {:update, 0, {:event, %{ch: ?a}}}
                | _
              ] = AppStub.calls()
     end

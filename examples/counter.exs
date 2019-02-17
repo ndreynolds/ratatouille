@@ -7,7 +7,7 @@ defmodule Counter do
 
   import Ratatouille.View
 
-  def model(_context), do: 0
+  def init(_context), do: 0
 
   def update(model, msg) do
     case msg do

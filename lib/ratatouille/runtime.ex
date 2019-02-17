@@ -6,7 +6,7 @@ defmodule Ratatouille.Runtime do
   ## Runtime Context
 
   The runtime provides a map with additional context to the app's
-  `c:Ratatouille.App.model/1` callback. This can be used, for example,
+  `c:Ratatouille.App.init/1` callback. This can be used, for example,
   to get information about the terminal window.  Currently, the following
   attributes are provided via the map:
 
@@ -32,6 +32,7 @@ defmodule Ratatouille.Runtime do
   use Task, restart: :transient
 
   alias Ratatouille.{EventManager, Window}
+  alias Ratatouille.Runtime.{Command, State, Subscription}
 
   import Ratatouille.Constants, only: [event_type: 1, key: 1]
 
@@ -51,88 +52,162 @@ defmodule Ratatouille.Runtime do
   Starts the application runtime given a module defining a Ratatouille terminal
   application.
 
-  ## Options
+  ## Configuration
 
   * `:app` (required) - The `Ratatouille.App` to run.
   * `:shutdown` - The strategy for stopping the terminal application when a quit
      event is received.
-  * `:interval` - Tick interval in milliseconds. The default interval is 500 ms.
+  * `:interval` - The runtime loop interval in milliseconds. The default
+     interval is 500 ms. A subscription can be fulfilled at most once every
+     interval, so this effectively configures the maximum subscription
+     resolution that's possible.
   * `:quit_events` - Specifies the events that should quit the terminal
-    application. Given as a list of tuples conforming where each tuple conforms
-    to either `{:ch, ch}` or `{:key, key}`. If not specified, ctrl-c and q / Q
-    can be used to quit the application by default.
+     application. Given as a list of tuples conforming where each tuple conforms
+     to either `{:ch, ch}` or `{:key, key}`. If not specified, ctrl-c and q / Q
+     can be used to quit the application by default.
   """
   @spec start_link(Keyword.t()) :: {:ok, pid()}
-  def start_link(opts) do
-    app = Keyword.fetch!(opts, :app)
+  def start_link(config) do
+    state = %State{
+      app: Keyword.fetch!(config, :app),
+      event_manager: Keyword.get(config, :event_manager, EventManager),
+      window: Keyword.get(config, :window, Window),
+      shutdown: Keyword.get(config, :shutdown, :window),
+      interval: Keyword.get(config, :interval, @default_interval_ms),
+      quit_events: Keyword.get(config, :quit_events, @default_quit_events)
+    }
 
-    opts_with_defaults =
-      Keyword.merge(
-        [
-          event_manager: EventManager,
-          window: Window,
-          shutdown: :window,
-          interval: @default_interval_ms,
-          quit_events: @default_quit_events
-        ],
-        opts
-      )
-
-    Task.start_link(__MODULE__, :run, [app, opts_with_defaults])
+    Task.start_link(__MODULE__, :run, [state])
   end
 
-  @spec run(module(), Keyword.t()) :: :ok
-  def run(app, opts) do
-    event_manager = Keyword.fetch!(opts, :event_manager)
-    :ok = EventManager.subscribe(event_manager, self())
+  @spec run(State.t()) :: :ok
+  def run(state) do
+    :ok = EventManager.subscribe(state.event_manager, self())
 
-    model =
-      opts
-      |> context()
-      |> app.model()
-      |> app.update(:tick)
+    model = initial_model(state)
 
-    loop(app, model, opts)
+    subscriptions =
+      if function_exported?(state.app, :subscribe, 1) do
+        model |> state.app.subscribe() |> Subscription.to_list()
+      else
+        []
+      end
 
+    loop(%State{state | model: model, subscriptions: subscriptions})
   rescue
     # We rescue any exceptions so that we can be sure they're printed to the
     # screen.
     e ->
-      window = Keyword.fetch!(opts, :window)
       formatted_exception = Exception.format(:error, e, __STACKTRACE__)
-      abort(window, "Error in application loop:\n  #{formatted_exception}")
+
+      abort(
+        state.window,
+        "Error in application loop:\n  #{formatted_exception}"
+      )
   end
 
-  defp loop(app, model, opts) do
-    window = Keyword.fetch!(opts, :window)
-    interval = Keyword.fetch!(opts, :interval)
-    quit_events = Keyword.fetch!(opts, :quit_events)
-
-    :ok = Window.update(window, app.render(model))
+  defp loop(state) do
+    :ok = Window.update(state.window, state.app.render(state.model))
 
     receive do
       {:event, %{type: @resize_event} = event} ->
-        new_model = app.update(model, {:resize, event})
-        loop(app, new_model, opts)
+        state
+        |> process_update({:resize, event})
+        |> loop()
 
       {:event, event} ->
-        if quit_event?(quit_events, event) do
-          shutdown(opts)
+        if quit_event?(state.quit_events, event) do
+          shutdown(state)
         else
-          new_model = app.update(model, {:event, event})
-          loop(app, new_model, opts)
+          state
+          |> process_update({:event, event})
+          |> loop()
         end
+
+      {:command_result, message} ->
+        state
+        |> process_update(message)
+        |> loop()
     after
-      interval ->
-        new_model = app.update(model, :tick)
-        loop(app, new_model, opts)
+      state.interval ->
+        state
+        |> process_subscriptions()
+        |> loop()
     end
   end
 
-  defp context(opts) do
-    window = Keyword.fetch!(opts, :window)
+  defp initial_model(state) do
+    ctx = context(state)
 
-    %{window: window_info(window)}
+    case state.app.init(ctx) do
+      {model, %Command{} = command} ->
+        :ok = process_command_async(command)
+        model
+
+      model ->
+        model
+    end
+  end
+
+  defp process_update(state, message) do
+    case state.app.update(state.model, message) do
+      {model, %Command{} = command} ->
+        :ok = process_command_async(command)
+        %State{state | model: model}
+
+      model ->
+        %State{state | model: model}
+    end
+  end
+
+  defp process_subscriptions(state) do
+    {new_subs, new_state} =
+      Enum.map_reduce(state.subscriptions, state, fn sub, state_acc ->
+        process_subscription(state_acc, sub)
+      end)
+
+    %State{new_state | subscriptions: new_subs}
+  end
+
+  defp process_subscription(state, sub) do
+    case sub do
+      %Subscription{type: :interval, data: {interval_ms, last_at_ms}} ->
+        now = :erlang.monotonic_time(:millisecond)
+
+        if last_at_ms + interval_ms <= now do
+          new_sub = %Subscription{sub | data: {interval_ms, now}}
+          new_state = process_update(state, sub.message)
+          {new_sub, new_state}
+        else
+          {sub, state}
+        end
+
+      _ ->
+        {sub, state}
+    end
+  end
+
+  defp process_command_async(command) do
+    runtime_pid = self()
+
+    for cmd <- Command.to_list(command) do
+      # TODO: This is missing a few things:
+      # - Need to capture failures and report them via the update/2 callback.
+      #   - Could be as simple as {:ok, result} | {:error, error}
+      # - Should provide a timeout mechanism with sensible defaults. This should
+      #   help prevent h
+      {:ok, _pid} =
+        Task.start(fn ->
+          result = cmd.function.()
+          send(runtime_pid, {:command_result, {cmd.message, result}})
+        end)
+    end
+
+    :ok
+  end
+
+  defp context(state) do
+    %{window: window_info(state.window)}
   end
 
   defp window_info(window) do
@@ -147,19 +222,17 @@ defmodule Ratatouille.Runtime do
     Logger.error(error_msg)
 
     Logger.warn(
-      "The Ratatouille termbox window was automatically closed due to an error (you may need to quit Erlang manually)."
+      "The Ratatouille termbox window was automatically closed due " <>
+        "to an error (you may need to quit Erlang manually)."
     )
 
     :ok
   end
 
-  defp shutdown(opts) do
-    window = Keyword.fetch!(opts, :window)
-    shutdown = Keyword.fetch!(opts, :shutdown)
+  defp shutdown(state) do
+    :ok = Window.close(state.window)
 
-    :ok = Window.close(window)
-
-    case shutdown do
+    case state.shutdown do
       {:application, app} -> Application.stop(app)
       {:system, :stop} -> System.stop()
       {:system, :halt} -> System.halt()
