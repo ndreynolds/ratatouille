@@ -14,19 +14,31 @@ defmodule Ratatouille.Runtime do
 
   ## Shutdown Options
 
-  * `:window`: Resets the terminal window and stops the runtime process.
-    Afterwards the system will still be running unless stopped elsewhere.
-  * `{:system, :stop}`: Resets the terminal window and gracefully stops the
-    system (calls `:init.stop/0`). Gracefully shutting down the VM ensures that
-    all applications are stopped, but it takes at least one second which results
-    in a noticeable lag.
-  * `{:system, :halt}`: Resets the terminal window and immediately halts the
-    system (calls `:erlang.halt/0`). Applications are not cleanly stopped, but
-    this maybe be reasonable for some use cases.
-  * `{:application, name}` - Resets the terminal window and stops the named
-    application. Afterwards the rest of the system will still be running unless
-    stopped elsewhere.
+  When a quit event is received (by default, "q", "Q" or ctrl-c), the runtime
+  will carry out the configured shutdown strategy. The default strategy
+  (`:self`) just stops the runtime process itself. In certain cases, it may
+  be desirable to stop an OTP application or the system itself, so a few other
+  strategies are provided:
 
+  * `:supervisor` - Stops the runtime supervisor, which will terminate the
+    runtime process and other dependencies. The VM will still be running
+    afterwards unless stopped by other means.
+  * `{:application, name}` - Stops the named application. The VM will still be
+    running afterwards unless stopped by other means.
+  * `:system`: Gracefully stops the system (calls `:init.stop/0`). Gracefully
+    shutting down the VM ensures that all applications are stopped. There will
+    be some lag between sending the quit event and the OS process actually
+    exiting, as the VM needs about a second to stop this way. See the note below
+    if this is a problem.
+
+  If the `:system` option is too slow, it's possible to halt the system manually
+  with `System.halt/0`. It's just important to ensure that the system is only
+  halted after the terminal was restored to its original state. Otherwise, there
+  may be rendering artifacts or issues with the cursor. The `:supervisor` option
+  can be used to properly halt the system by monitoring the runtime supervisor
+  and halting once it has exited. Alternatively, use the `:application` option
+  to stop an application that runs the runtime supervisor and halt in the
+  application's `stop/1` callback.
   """
 
   use Task, restart: :transient
@@ -70,9 +82,10 @@ defmodule Ratatouille.Runtime do
   def start_link(config) do
     state = %State{
       app: Keyword.fetch!(config, :app),
+      supervisor: Keyword.get(config, :supervisor),
       event_manager: Keyword.get(config, :event_manager, EventManager),
       window: Keyword.get(config, :window, Window),
-      shutdown: Keyword.get(config, :shutdown, :window),
+      shutdown: Keyword.get(config, :shutdown, :self),
       interval: Keyword.get(config, :interval, @default_interval_ms),
       quit_events: Keyword.get(config, :quit_events, @default_quit_events)
     }
@@ -230,13 +243,11 @@ defmodule Ratatouille.Runtime do
   end
 
   defp shutdown(state) do
-    :ok = Window.close(state.window)
-
     case state.shutdown do
+      :supervisor -> Supervisor.stop(state.supervisor)
       {:application, app} -> Application.stop(app)
-      {:system, :stop} -> System.stop()
-      {:system, :halt} -> System.halt()
-      :window -> :ok
+      :system -> System.stop()
+      :self -> :ok
     end
   end
 

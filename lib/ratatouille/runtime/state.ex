@@ -9,6 +9,7 @@ defmodule Ratatouille.Runtime.State do
     :model,
     :window,
     :event_manager,
+    :supervisor,
     :shutdown,
     :interval,
     :quit_events,

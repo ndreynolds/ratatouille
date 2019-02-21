@@ -105,12 +105,11 @@ defmodule Ratatouille.RuntimeTest do
     end
   end
 
-  describe "window setup & teardown" do
-    test "initializes and deinitializes the bindings via Window", %{pid: pid} do
+  describe "window setup" do
+    test "initializes the bindings via Window", %{pid: pid} do
       wait_for_quit(pid)
 
-      assert [:shutdown | calls] = BindingsStub.calls()
-      assert [:init | _] = Enum.reverse(calls)
+      assert [:init | _] = Enum.reverse(BindingsStub.calls())
     end
   end
 
