@@ -17,7 +17,7 @@ defmodule Ratatouille.Mixfile do
       name: "Ratatouille",
       source_url: "https://github.com/ndreynolds/ratatouille",
       docs: [
-        extras: ["README.md"]
+        extras: ["README.md", "pages/under-the-hood.md"]
       ]
     ]
   end
@@ -53,8 +53,7 @@ defmodule Ratatouille.Mixfile do
 
   defp aliases do
     [
-      test: "test --exclude integration",
-      "test.integration": "test --only integration"
+      test: "test --exclude integration"
     ]
   end
 

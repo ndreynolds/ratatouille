@@ -1,16 +1,14 @@
-defmodule EventViewer do
-  @moduledoc """
-  A sample application that shows debug information about terminal events. These
-  can be click, resize or key press events.
-  """
+# A sample application that shows debug information about terminal events.
+# These can be click, resize or key press events.
 
-  @behaviour Ratatouille.App
+defmodule EventViewer do
+  alias Ratatouille.{EventManager, Window}
 
   import Ratatouille.View
   import Ratatouille.Constants
 
   @title "Event Viewer (click, resize, or press a key - 'q' to quit)"
-  @input_mode Constants.input_mode(:esc_with_mouse)
+  @input_mode input_mode(:esc_with_mouse)
 
   def start do
     {:ok, _pid} = Window.start_link(input_mode: @input_mode)
@@ -42,11 +40,11 @@ defmodule EventViewer do
         x: x,
         y: y
       }) do
-    type_name = reverse_lookup(Constants.event_types(), type)
+    type_name = reverse_lookup(event_types(), type)
 
     key_name =
       if key != 0,
-        do: reverse_lookup(Constants.keys(), key),
+        do: reverse_lookup(keys(), key),
         else: :none
 
     layout([

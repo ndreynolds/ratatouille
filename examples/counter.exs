@@ -19,7 +19,7 @@ defmodule Counter do
 
   def render(model) do
     view do
-      label(content: "Counter is #{model} (+/-)")
+      label(content: "Counter is #{model} (+/- to increment/decrement, q to quit)")
     end
   end
 end

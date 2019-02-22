@@ -1,8 +1,9 @@
-# This is a simple terminal application to show how to get started.
+# This is a simple terminal application to show how Ratatouille works.
+# For real apps, it's recommended to use the application runtime.
 #
 # To run this file:
 #
-#    mix run examples/hello_world.exs
+#    mix run examples/no-runtime/hello_world.exs
 
 alias Ratatouille.{EventManager, Window}
 

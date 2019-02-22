@@ -14,7 +14,7 @@ defmodule Ratatouille.ExamplesTest do
   import Ratatouille.Constants, only: [key: 1]
 
   @examples_root Path.join(Path.dirname(__ENV__.file), "../../examples")
-  @examples Path.wildcard("#{@examples_root}/*.exs")
+  @examples Path.wildcard("#{@examples_root}/**/*.exs")
 
   @ctrl_d key(:ctrl_d)
 

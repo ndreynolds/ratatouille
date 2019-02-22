@@ -1,8 +1,6 @@
-defmodule Clock do
-  @moduledoc """
-  An example of how to create application loops.
-  """
+# An example of how to create application loops.
 
+defmodule Clock do
   alias Ratatouille.{EventManager, Window}
 
   import Ratatouille.View
