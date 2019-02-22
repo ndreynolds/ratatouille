@@ -12,6 +12,6 @@ script:
   - mix local.rebar --force
   - mix local.hex --force
   - mix deps.get
-  - mix test
-  - mix format --check-formatted
+  - MIX_ENV=test mix test
+  - MIX_ENV=test mix test.integration
   - mix hex.audit

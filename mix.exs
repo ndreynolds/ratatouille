@@ -10,6 +10,7 @@ defmodule Ratatouille.Mixfile do
       deps: deps(),
       description: description(),
       package: package(),
+      aliases: aliases(),
       elixirc_paths: elixirc_paths(Mix.env()),
 
       # Docs
@@ -47,6 +48,13 @@ defmodule Ratatouille.Mixfile do
       maintainers: ["Nick Reynolds"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/ndreynolds/ratatouille"}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: "test --exclude integration",
+      "test.integration": "test --only integration"
     ]
   end
 
