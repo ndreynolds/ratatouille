@@ -4,66 +4,51 @@ defmodule RenderingDemo do
   declarative-style rendering functionality provided by `Ratatouille`.
   """
 
-  alias Ratatouille.{EventManager, Window}
+  @behaviour Ratatouille.App
+
+  alias Ratatouille.Runtime.Subscription
 
   import Ratatouille.Constants, only: [color: 1, attribute: 1, key: 1]
   import Ratatouille.View
 
-  @refresh_interval 500
   @spacebar key(:space)
+  @red color(:red)
+  @blue color(:blue)
+  @bold attribute(:bold)
+  @underline attribute(:underline)
 
-  def start do
-    {:ok, _pid} = Window.start_link()
-    {:ok, _pid} = EventManager.start_link()
-    :ok = EventManager.subscribe(self())
-
-    state = %{
+  def init(_context) do
+    %{
       current_time: DateTime.utc_now(),
       series_1: [],
       series_2: [],
       overlay: true
     }
-
-    loop(state)
   end
 
-  def tick(state) do
-    %{
-      state
-      | current_time: DateTime.utc_now(),
-        series_1: for(_ <- 0..50, do: :rand.uniform() * 1000),
-        series_2: Enum.shuffle([0, 1, 2, 3, 4, 5, 6])
-    }
-  end
+  def update(model, message) do
+    case message do
+      {:event, %{key: @spacebar}} ->
+        %{model | overlay: !model.overlay}
 
-  def loop(state) do
-    with :ok <- Window.update(demo_view(state)) do
-      receive do
-        {:event, %{ch: ?q}} ->
-          :ok = Window.close()
+      :tick ->
+        %{
+          model
+          | current_time: DateTime.utc_now(),
+            series_1: for(_ <- 0..50, do: :rand.uniform() * 1000),
+            series_2: Enum.shuffle([0, 1, 2, 3, 4, 5, 6])
+        }
 
-        {:event, %{key: @spacebar}} ->
-          loop(%{state | overlay: !state.overlay})
-      after
-        @refresh_interval ->
-          new_state = tick(state)
-          loop(new_state)
-      end
-    else
-      err ->
-        Window.close()
-        IO.write(:stderr, "Render error occurred: " <> inspect(err))
+      _ ->
+        model
     end
   end
 
-  @style_red [color: color(:red)]
+  def subscribe(_model) do
+    Subscription.interval(500, :tick)
+  end
 
-  @style_blue_bold_underlined [
-    color: color(:blue),
-    attributes: [attribute(:bold), attribute(:underline)]
-  ]
-
-  def demo_view(state) do
+  def render(model) do
     top_bar =
       bar do
         label(content: "A top bar for the view")
@@ -101,19 +86,20 @@ defmodule RenderingDemo do
             panel title: "Text & Labels" do
               label do
                 text(content: "Normal ")
-                text(@style_red ++ [content: "Red"])
+                text(content: "Red", color: @red)
               end
 
               label do
                 text(
-                  @style_blue_bold_underlined ++
-                    [content: "Blue, bold underlined"]
+                  content: "Blue, bold underlined",
+                  color: @blue,
+                  attributes: [@bold, @underline]
                 )
               end
 
               label()
               label(content: "Current Time:")
-              label(content: DateTime.to_string(state.current_time))
+              label(content: DateTime.to_string(model.current_time))
             end
           end
 
@@ -187,15 +173,15 @@ defmodule RenderingDemo do
 
           column(size: 8) do
             panel title: "Charts & Sparklines" do
-              chart(type: :line, series: state.series_1, height: 6)
+              chart(type: :line, series: model.series_1, height: 6)
 
-              sparkline(series: state.series_2)
+              sparkline(series: model.series_2)
             end
           end
         end
       end
 
-      if state.overlay do
+      if model.overlay do
         overlay(padding: 15) do
           panel title: "Overlay (toggle with <space>)", height: :fill do
           end
@@ -205,4 +191,4 @@ defmodule RenderingDemo do
   end
 end
 
-RenderingDemo.start()
+Ratatouille.run(RenderingDemo)

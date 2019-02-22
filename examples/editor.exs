@@ -8,14 +8,11 @@ defmodule Editor do
   entry---that's left as an exercise for the reader.
   """
 
-  alias Ratatouille.{EventManager, Window}
+  @behaviour Ratatouille.App
 
   import Ratatouille.View
   import Ratatouille.Constants, only: [key: 1]
 
-  @title "Editor (CTRL-d to quit)"
-
-  @ctrl_d key(:ctrl_d)
   @spacebar key(:space)
 
   @delete_keys [
@@ -24,41 +21,38 @@ defmodule Editor do
     key(:backspace2)
   ]
 
-  def start do
-    {:ok, _pid} = Window.start_link()
-    {:ok, _pid} = EventManager.start_link()
-    :ok = EventManager.subscribe(self())
-
-    loop("")
+  def init(_context) do
+    ""
   end
 
-  def loop(text) do
-    text
-    |> render()
-    |> Window.update()
-
-    receive do
-      {:event, %{key: @ctrl_d}} ->
-        :ok = Window.close()
-
+  def update(model, message) do
+    case message do
       {:event, %{key: key}} when key in @delete_keys ->
-        loop(String.slice(text, 0..-2))
+        String.slice(model, 0..-2)
 
       {:event, %{key: @spacebar}} ->
-        loop(text <> " ")
+        model <> " "
 
       {:event, %{ch: ch}} when ch > 0 ->
-        loop(text <> <<ch::utf8>>)
+        model <> <<ch::utf8>>
+
+      _ ->
+        model
     end
   end
 
   def render(text) do
     view do
-      panel title: @title do
+      panel title: "Editor (CTRL-d to quit)" do
         label(content: text <> "▌")
       end
     end
   end
 end
 
-Editor.start()
+Ratatouille.run(
+  Editor,
+  quit_events: [
+    {:key, Ratatouille.Constants.key(:ctrl_d)}
+  ]
+)

@@ -3,52 +3,31 @@ defmodule MultipleViewsDemo do
   An example of how to implement navigation between multiple views.
   """
 
-  alias Ratatouille.{EventManager, Window}
+  @behaviour Ratatouille.App
 
   import Ratatouille.Constants, only: [color: 1]
   import Ratatouille.View
 
-  def start do
-    {:ok, _pid} = Window.start_link()
-    {:ok, _pid} = EventManager.start_link()
-    :ok = EventManager.subscribe(self())
-
-    loop(view_1())
+  def init(_context) do
+    %{selected_tab: 1}
   end
 
-  def loop(view) do
-    Window.update(view)
-
-    receive do
-      {:event, %{ch: ?q}} ->
-        :ok = Window.close()
-
-      {:event, %{ch: ?1}} ->
-        loop(view_1())
-
-      {:event, %{ch: ?2}} ->
-        loop(view_2())
-
-      {:event, %{ch: ?3}} ->
-        loop(view_3())
+  def update(model, message) do
+    case message do
+      {:event, %{ch: ?1}} -> %{model | selected_tab: 1}
+      {:event, %{ch: ?2}} -> %{model | selected_tab: 2}
+      {:event, %{ch: ?3}} -> %{model | selected_tab: 3}
+      _ -> model
     end
   end
 
-  def view_1 do
-    view(top_bar: title_bar(), bottom_bar: status_bar_for("View 1")) do
-      panel(title: "View 1", height: :fill)
-    end
-  end
-
-  def view_2 do
-    view(top_bar: title_bar(), bottom_bar: status_bar_for("View 2")) do
-      panel(title: "View 2", height: :fill)
-    end
-  end
-
-  def view_3 do
-    view(top_bar: title_bar(), bottom_bar: status_bar_for("View 3")) do
-      panel(title: "View 3", height: :fill)
+  def render(model) do
+    view top_bar: title_bar(), bottom_bar: status_bar(model.selected_tab) do
+      case model.selected_tab do
+        1 -> panel(title: "View 1", height: :fill)
+        2 -> panel(title: "View 2", height: :fill)
+        3 -> panel(title: "View 3", height: :fill)
+      end
     end
   end
 
@@ -58,22 +37,23 @@ defmodule MultipleViewsDemo do
     end
   end
 
-  @style_highlighted [
-    background: color(:white),
-    color: color(:black)
-  ]
-
-  def status_bar_for(selected) do
-    options =
-      for item <- Enum.intersperse(["View 1", "View 2", "View 3"], " ") do
-        attrs = if(item == selected, do: @style_highlighted, else: [])
-        text(attrs ++ [content: item])
-      end
-
+  def status_bar(selected) do
     bar do
-      label(options)
+      label do
+        for item <- 1..3 do
+          if item == selected do
+            text(
+              background: color(:white),
+              color: color(:black),
+              content: " View #{item} "
+            )
+          else
+            text(content: " View #{item} ")
+          end
+        end
+      end
     end
   end
 end
 
-MultipleViewsDemo.start()
+Ratatouille.run(MultipleViewsDemo)

@@ -4,9 +4,10 @@ defmodule EventViewer do
   can be click, resize or key press events.
   """
 
-  alias Ratatouille.{Constants, EventManager, Window}
+  @behaviour Ratatouille.App
 
   import Ratatouille.View
+  import Ratatouille.Constants
 
   @title "Event Viewer (click, resize, or press a key - 'q' to quit)"
   @input_mode Constants.input_mode(:esc_with_mouse)
