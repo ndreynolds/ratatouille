@@ -44,7 +44,7 @@ defmodule Ratatouille.Mixfile do
 
   defp package do
     [
-      files: ~w(lib mix.exs README.md LICENSE),
+      files: ~w(lib pages mix.exs README.md CHANGELOG.md LICENSE),
       maintainers: ["Nick Reynolds"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/ndreynolds/ratatouille"}
