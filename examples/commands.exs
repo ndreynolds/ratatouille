@@ -3,7 +3,7 @@
 #
 # Run this example with:
 #
-#   mix run --no-halt examples/commands.exs
+#   mix run examples/commands.exs
 
 defmodule Commands do
   @behaviour Ratatouille.App
@@ -62,7 +62,4 @@ defmodule Commands do
   end
 end
 
-{:ok, _pid} =
-  Ratatouille.Runtime.Supervisor.start_link(
-    runtime: [app: Commands, shutdown: {:system, :halt}]
-  )
+Ratatouille.run(Commands)

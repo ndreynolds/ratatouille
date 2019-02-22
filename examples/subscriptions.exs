@@ -4,7 +4,7 @@
 #
 # Run this example with:
 #
-#   mix run --no-halt examples/subscriptions.exs
+#   mix run examples/subscriptions.exs
 
 defmodule Subscriptions do
   @behaviour Ratatouille.App
@@ -43,7 +43,4 @@ defmodule Subscriptions do
   end
 end
 
-{:ok, _pid} =
-  Ratatouille.Runtime.Supervisor.start_link(
-    runtime: [app: Subscriptions, interval: 100, shutdown: {:system, :halt}]
-  )
+Ratatouille.run(Subscriptions, interval: 100)

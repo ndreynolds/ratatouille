@@ -1,6 +1,6 @@
 # Run this example with:
 #
-#   mix run --no-halt examples/counter.exs
+#   mix run examples/counter.exs
 
 defmodule Counter do
   @behaviour Ratatouille.App
@@ -24,7 +24,4 @@ defmodule Counter do
   end
 end
 
-{:ok, _pid} =
-  Ratatouille.Runtime.Supervisor.start_link(
-    runtime: [app: Counter, shutdown: {:system, :halt}]
-  )
+Ratatouille.run(Counter)
