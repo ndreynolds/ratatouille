@@ -16,11 +16,11 @@ defmodule Ratatouille.Runtime.Command do
             subcommands: []
 
   @opaque t :: %__MODULE__{
-    type: :single | :batch,
-    message: term(),
-    function: (() -> term()) | nil,
-    subcommands: list(t())
-  }
+            type: :single | :batch,
+            message: term(),
+            function: (() -> term()) | nil,
+            subcommands: list(t())
+          }
 
   @doc """
   Returns a new command that can be returned in the `c:Ratatouille.App.update/2`

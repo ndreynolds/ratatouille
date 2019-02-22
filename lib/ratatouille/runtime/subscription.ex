@@ -30,10 +30,10 @@ defmodule Ratatouille.Runtime.Subscription do
   defstruct [:type, :message, :data]
 
   @opaque t :: %__MODULE__{
-    type: :interval | :batch,
-    message: term(),
-    data: term()
-  }
+            type: :interval | :batch,
+            message: term(),
+            data: term()
+          }
 
   @doc """
   Returns a subscription based on a time interval. Takes the number of
