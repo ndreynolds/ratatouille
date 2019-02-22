@@ -28,10 +28,11 @@ defmodule Ratatouille.Runtime.Supervisor do
 
   @impl true
   def init(opts) do
-    runtime_opts = Keyword.merge(
-      [shutdown: :supervisor, supervisor: self()],
-      opts[:runtime] || []
-    )
+    runtime_opts =
+      Keyword.merge(
+        [shutdown: :supervisor, supervisor: self()],
+        opts[:runtime] || []
+      )
 
     children = [
       %{

@@ -29,6 +29,12 @@ defmodule Ratatouille.Runtime.Subscription do
   @enforce_keys [:type]
   defstruct [:type, :message, :data]
 
+  @opaque t :: %__MODULE__{
+    type: :interval | :batch,
+    message: term(),
+    data: term()
+  }
+
   @doc """
   Returns a subscription based on a time interval. Takes the number of
   milliseconds (`ms`) and a message as arguments. When returned in the

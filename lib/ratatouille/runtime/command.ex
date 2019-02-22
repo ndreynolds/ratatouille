@@ -10,7 +10,17 @@ defmodule Ratatouille.Runtime.Command do
   alias __MODULE__
 
   @enforce_keys [:type]
-  defstruct [:type, :message, :function, :subcommands]
+  defstruct type: nil,
+            message: nil,
+            function: nil,
+            subcommands: []
+
+  @opaque t :: %__MODULE__{
+    type: :single | :batch,
+    message: term(),
+    function: (() -> term()) | nil,
+    subcommands: list(t())
+  }
 
   @doc """
   Returns a new command that can be returned in the `c:Ratatouille.App.update/2`
@@ -20,7 +30,7 @@ defmodule Ratatouille.Runtime.Command do
   response back to your app along with the result. It can be any Erlang term, so
   it's also possible to include identifiers (e.g., `{:finished, id}`).
   """
-  @spec new((-> term()), term()) :: Command.t()
+  @spec new((() -> term()), term()) :: Command.t()
   def new(func, message) when is_function(func) do
     %Command{type: :single, message: message, function: func}
   end
