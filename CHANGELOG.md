@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+## [0.4.1] - 2019-02-23
+
+### Fixed
+* Errors in panel box calculation with certain layouts.
+
+### Added
+* Documentation of element attributes is now generated based on element specs.
+
+
 ## [0.4.0] - 2019-02-22
 
 ### Added
@@ -23,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * Removed the experimental component support in favor of the new TEA-based apps.
+
 
 ## [0.3.0] - 2019-01-25
 
