@@ -153,6 +153,18 @@ defmodule Ratatouille.View do
   @empty_children Macro.escape([])
 
   for {name, spec} <- Element.specs() do
+    attributes_content =
+      case spec[:attributes] do
+        [] ->
+          "None"
+
+        attributes ->
+          for {attr, {type, desc}} <- attributes do
+            "* `#{attr}` (#{type}) - #{desc}"
+          end
+          |> Enum.join("\n")
+      end
+
     if length(spec[:child_tags]) > 0 do
       @doc """
       Defines an element with the `:#{name}` tag.
@@ -166,7 +178,7 @@ defmodule Ratatouille.View do
       With a block:
 
           #{name} do
-            bar()
+            # ...child elements...
           end
 
       """
@@ -184,6 +196,10 @@ defmodule Ratatouille.View do
       * given attributes and an optional block
       * a list of child elements
 
+      ## Attributes
+
+      #{attributes_content}
+
       ## Examples
 
       Passing attributes:
@@ -193,7 +209,7 @@ defmodule Ratatouille.View do
       Passing attributes and a block:
 
           #{name}(key: value) do
-            bar()
+            # ...child elements...
           end
 
       Passing list of children:
@@ -212,6 +228,10 @@ defmodule Ratatouille.View do
       @doc """
       Defines an element with the `:#{name}` tag and the given attributes and
       child elements.
+
+      ## Attributes
+
+      #{attributes_content}
 
       ## Examples
 
@@ -238,6 +258,10 @@ defmodule Ratatouille.View do
 
       @doc """
       Defines an element with the `:#{name}` tag and the given attributes.
+
+      ## Attributes
+
+      #{attributes_content}
 
       ## Examples
 
