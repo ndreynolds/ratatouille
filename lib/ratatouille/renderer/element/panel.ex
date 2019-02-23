@@ -6,6 +6,7 @@ defmodule Ratatouille.Renderer.Element.Panel do
   alias Ratatouille.Renderer.{Border, Box, Canvas, Element, Text}
 
   @padding 2
+  @margin_y 1
   @title_offset_x 2
 
   @impl true
@@ -25,23 +26,25 @@ defmodule Ratatouille.Renderer.Element.Panel do
         render_fn
       ) do
     fill_empty? = !is_nil(attrs[:height])
-
-    constrained_canvas =
-      canvas
-      |> constrain_canvas(attrs[:height])
+    constrained_canvas = constrain_canvas(canvas, attrs[:height])
 
     rendered_canvas =
       constrained_canvas
       |> Canvas.padded(@padding)
       |> render_fn.(children)
+      |> wrapper_canvas(constrained_canvas, fill_empty?)
+      |> render_features(attrs)
 
-    consume_y =
-      rendered_canvas.render_box.top_left.y - box.top_left.y + @padding
-
-    constrained_canvas
-    |> wrapper_canvas(rendered_canvas, fill_empty?)
-    |> render_features(attrs)
-    |> Canvas.consume_rows(consume_y)
+    %Canvas{
+      rendered_canvas
+      | render_box: %Box{
+          box
+          | top_left: %Position{
+              x: box.top_left.x,
+              y: rendered_canvas.render_box.bottom_right.y + @margin_y
+            }
+        }
+    }
   end
 
   defp render_features(canvas, attrs) do
@@ -59,21 +62,21 @@ defmodule Ratatouille.Renderer.Element.Panel do
   defp title_position(box),
     do: Position.translate_x(box.top_left, @title_offset_x)
 
-  defp wrapper_canvas(original_canvas, rendered_canvas, fill?) do
+  defp wrapper_canvas(rendered_canvas, original_canvas, fill?) do
     %Canvas{
       rendered_canvas
       | render_box:
           wrapper_box(
-            original_canvas.render_box,
             rendered_canvas.render_box,
+            original_canvas.render_box,
             fill?
           )
     }
   end
 
-  defp wrapper_box(original_box, _rendered_box, true), do: original_box
+  defp wrapper_box(_rendered_box, original_box, true), do: original_box
 
-  defp wrapper_box(original_box, rendered_box, false),
+  defp wrapper_box(rendered_box, original_box, false),
     do: %Box{
       original_box
       | bottom_right: %Position{
