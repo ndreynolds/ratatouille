@@ -32,7 +32,7 @@ For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/
   * [Under the Hood](#under-the-hood)
   * [Packaging and Distributing](#packaging-and-distributing)
     * [Defining an OTP Application](#defining-an-otp-application)
-    * [Distillery Releases](#distillery-releases)
+    * [Executable Releases with Distillery](#executable-releases-with-distillery)
   * [Installation](#installation)
     * [From Hex](#from-hex)
     * [From Source](#from-source)
