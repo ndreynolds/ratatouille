@@ -1,13 +1,15 @@
+# A sample application that shows how to accept user input and render it to the
+# terminal.
+#
+# Supports editing a single line of text with support for entering characters
+# and spaces and deleting them. No support moving the cursor or multiline
+# entry---that's left as an exercise for the reader.
+#
+# Run this example with:
+#
+#   mix run examples/editor.exs
+
 defmodule Editor do
-  @moduledoc """
-  A sample application that shows how to accept user input and render it to the
-  terminal.
-
-  Supports editing a single line of text with support for entering characters
-  and spaces and deleting them. No support moving the cursor or multiline
-  entry---that's left as an exercise for the reader.
-  """
-
   @behaviour Ratatouille.App
 
   import Ratatouille.View

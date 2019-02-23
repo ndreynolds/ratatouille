@@ -1,9 +1,11 @@
-defmodule RenderingDemo do
-  @moduledoc """
-  This is a kitchen sink example intended to show off most of the
-  declarative-style rendering functionality provided by `Ratatouille`.
-  """
+# This is a kitchen sink example intended to show off most of the
+# declarative-style rendering functionality provided by Ratatouille.
+#
+# Run this example with:
+#
+#   mix run examples/rendering.exs
 
+defmodule RenderingDemo do
   @behaviour Ratatouille.App
 
   alias Ratatouille.Runtime.Subscription

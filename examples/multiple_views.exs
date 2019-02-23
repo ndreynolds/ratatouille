@@ -1,8 +1,10 @@
-defmodule MultipleViewsDemo do
-  @moduledoc """
-  An example of how to implement navigation between multiple views.
-  """
+# An example of how to implement navigation between multiple views.
+#
+# Run this example with:
+#
+#   mix run examples/multiple_views.exs
 
+defmodule MultipleViewsDemo do
   @behaviour Ratatouille.App
 
   import Ratatouille.Constants, only: [color: 1]

@@ -7,7 +7,7 @@ Ratatouille is a declarative terminal UI kit for Elixir for building rich
 text-based terminal applications similar to how you write HTML.
 
 It builds on top of the [termbox][termbox] API (using the Elixir bindings from
-[ex_termbox][ex_termbox].
+[ex_termbox][ex_termbox]).
 
 For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/ratatouille).
 
@@ -48,7 +48,7 @@ declarative. If you've already used it on the web, it should feel very familiar.
 
 As with a GenServer definition, Ratatouille apps only implement a behaviour by
 defining callbacks and don't know how to start or run themselves. It's the
-application runtime handles all of those (sometimes tricky) details.
+application runtime that handles all of those (sometimes tricky) details.
 
 ### Building an Application
 
@@ -126,7 +126,8 @@ GenServer, the state (our model) will later be passed to callbacks when things
 happen in order to allow the app to update it.
 
 The model can be any Erlang term. For larger apps, it's helpful to use maps or
-structs. Here, we just have an integer counter, so we return `0`:
+structs to organize different pieces of the state. Here, we just have an integer
+counter, so we return `0`:
 
 ```elixir
 defmodule Counter do
@@ -147,7 +148,7 @@ mouse, etc.). We can also send ourselves messages via subscriptions and commands
 
 Here, we'd like to increment the counter when we get a `?+` key press and
 decrement it when get a `?-`. Event messages are based on the underlying termbox
-events and characters are given as code points (i.e., `?a` is `97`).
+events and characters are given as code points (e.g., `?a` is `97`).
 
 ```elixir
 defmodule Counter do
@@ -168,7 +169,7 @@ end
 It's a good idea to provide a fallback clause in case we don't know how to
 handle a message. This way the app won't crash if the user presses a key that
 the app doesn't handle. But if things stop working as you expect, try removing
-the fallback see if important messages are going unmatched.
+the fallback to see if important messages are going unmatched.
 
 #### `render/1`
 
@@ -187,7 +188,7 @@ defmodule Counter do
 
   def render(model) do
     view do
-      label(content: "Counter is #{model} (+/- to increment/decrement, q to quit)")
+      label(content: "Counter is #{model} (+/-)")
     end
   end
 
@@ -251,8 +252,9 @@ and '-', and be able to quit using 'q'.
 ## Under the Hood
 
 The application runtime abstracts away a lot of the details concerning how the
-terminal is actually updated and events are received. If you're interested in
-how it actually works, see this guide:
+terminal window is updated and how events are received. If you're interested in
+how these things actually work, or if the runtime doesn't support your use case,
+see this guide:
 
 <https://hexdocs.pm/ratatouille/doc/under-the-hood.html>
 
@@ -265,14 +267,15 @@ run is a bit more complicated. Depending on the type of app you're building, it
 might not be reasonable to assume that users have any Elixir or Erlang tools
 installed. Terminal apps are usually distributed as binary executables so that
 they can just be run as such without additional dependencies. Fortunately, this
-is possible with Distillery.
+is possible using OTP releases that bundle ERTS.
 
 ### Defining an OTP Application
 
-In order to use Distillery, we first define an OTP application that starts the
-application runtime. `Ratatouille.Runtime.Supervisor` takes care of starting all
-the necessary runtime components, so we start this supervisor under the OTP
-application supervisor.
+In order to create an OTP release, we first need to define an OTP application
+that runs the terminal application. `Ratatouille.Runtime.Supervisor` takes care
+of starting all the necessary runtime components, so we start this supervisor
+under the OTP application supervisor and pass it a Ratatouille app definition
+(along with any other runtime configuration).
 
 For example, the OTP application for toby looks like this:
 
@@ -295,11 +298,17 @@ defmodule Toby do
 end
 ```
 
-### Distillery Releases
+### Executable Releases with Distillery
 
-Follow the Distillery guide to generate a release configuration.
+We'll use Distillery to create the OTP release, as it can even create
+distributable, self-contained executables. Releases built on a given
+architecture can generally be run on machines of the same architecture.
 
-In order to make the release "batteries included", it's important that you have
+Follow the Distillery guide to generate a release configuration:
+
+<https://hexdocs.pm/distillery/introduction/installation.html>
+
+In order to make a "batteries-included" release, it's important that you have
 `include_erts` set to `true`:
 
 ``` elixir
@@ -310,9 +319,7 @@ environment :prod do
 end
 ```
 
-Now it's possible to create a distributable, self-contained executable with
-Distillery. Releases built on a given architecture can generally be run on
-machines of the same architecture.
+Now it's possible to generate the release:
 
 ```bash
 MIX_ENV=prod mix release --executable --transient
