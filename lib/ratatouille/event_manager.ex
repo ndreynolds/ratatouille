@@ -21,6 +21,12 @@ defmodule Ratatouille.EventManager do
     to: ExTermbox.EventManager
 
   @doc """
+  Stops the event manager server.
+  """
+  defdelegate stop(pid \\ __MODULE__),
+    to: ExTermbox.EventManager
+
+  @doc """
   Provides a child specification to use when starting the event manager under a
   supervisor.
   """

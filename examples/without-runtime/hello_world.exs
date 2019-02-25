@@ -36,5 +36,6 @@ hello_world_view =
 # receive a 'q' key press, we'll close the application.
 receive do
   {:event, %{ch: ?q}} ->
+    :ok = EventManager.stop()
     :ok = Window.close()
 end

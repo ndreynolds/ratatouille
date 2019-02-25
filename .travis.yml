@@ -13,6 +13,5 @@ script:
   - mix local.hex --force
   - mix deps.get
   - mix test
-  # TODO: Resolve issues with the MacOS CI env
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mix test --only integration; fi
+  - mix test --only integration
   - mix hex.audit

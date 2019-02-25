@@ -9,34 +9,12 @@ defmodule Ratatouille.ExamplesTest do
   use ExUnit.Case, async: false
 
   alias ExTermbox.Event
-  alias Ratatouille.{EventManager, Window}
+  alias Ratatouille.EventManager
 
   import Ratatouille.Constants, only: [key: 1]
 
   @examples_root Path.join(Path.dirname(__ENV__.file), "../../examples")
   @examples Path.wildcard("#{@examples_root}/**/*.exs")
-
-  @ctrl_d key(:ctrl_d)
-
-  setup do
-    on_exit(fn ->
-      # Clean up anything that wasn't properly shut down.
-
-      event_manager = Process.whereis(EventManager)
-
-      if is_pid(event_manager) do
-        :ok = GenServer.stop(event_manager, :normal)
-      end
-
-      window = Process.whereis(Window)
-
-      if is_pid(window) do
-        :ok = GenServer.stop(window, :normal)
-      end
-    end)
-
-    :ok
-  end
 
   test "at least one example was found" do
     assert [_ | _] = @examples
@@ -62,8 +40,8 @@ defmodule Ratatouille.ExamplesTest do
       event_manager = Process.whereis(EventManager)
       assert Process.alive?(event_manager)
 
-      # Try all the ways of quitting used
-      simulate_event(event_manager, %Event{type: 1, key: @ctrl_d})
+      # Try all the ways of quitting used in the examples
+      simulate_event(event_manager, %Event{type: 1, key: key(:ctrl_d)})
       simulate_event(event_manager, %Event{type: 1, ch: ?q})
 
       assert_receive({:DOWN, ^ref, :process, ^pid, :normal}, 2_000)

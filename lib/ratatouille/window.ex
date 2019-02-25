@@ -102,8 +102,8 @@ defmodule Ratatouille.Window do
     Process.flag(:trap_exit, true)
 
     :ok = bindings.init()
-    bindings.select_input_mode(input_mode)
-    bindings.select_output_mode(output_mode)
+    {:ok, _mode} = bindings.select_input_mode(input_mode)
+    {:ok, _mode} = bindings.select_output_mode(output_mode)
 
     {:ok, %{bindings: bindings}}
   end
@@ -129,8 +129,8 @@ defmodule Ratatouille.Window do
 
   defp fetch_attr(bindings, attr) do
     case attr do
-      :width -> {:ok, bindings.width()}
-      :height -> {:ok, bindings.height()}
+      :width -> bindings.width()
+      :height -> bindings.height()
       :box -> {:ok, canvas(bindings).outer_box}
       _ -> {:error, :unknown_attribute}
     end
@@ -140,14 +140,14 @@ defmodule Ratatouille.Window do
     with empty_canvas <- canvas(bindings),
          {:ok, filled_canvas} <- Renderer.render(empty_canvas, view),
          :ok <- Canvas.render_to_termbox(bindings, filled_canvas) do
-      bindings.present()
+      :ok = bindings.present()
     end
   end
 
   defp canvas(bindings) do
-    Canvas.from_dimensions(
-      bindings.width(),
-      bindings.height()
-    )
+    with {:ok, width} <- bindings.width(),
+         {:ok, height} <- bindings.height() do
+      Canvas.from_dimensions(width, height)
+    end
   end
 end

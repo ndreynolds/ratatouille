@@ -7,15 +7,16 @@ defmodule Ratatouille.RuntimeTest do
     use Ratatouille.Stub
 
     deftracked init, do: :ok
-    deftracked poll_event(_), do: :ok
-    deftracked select_input_mode(_), do: :ok
-    deftracked select_output_mode(_), do: :ok
+    deftracked poll_event(_), do: {:ok, :fake_resource}
+    deftracked cancel_poll_event, do: :ok
+    deftracked select_input_mode(_), do: {:ok, 1}
+    deftracked select_output_mode(_), do: {:ok, 1}
     deftracked shutdown, do: :ok
     deftracked clear, do: :ok
     deftracked present, do: :ok
     deftracked put_cell(_), do: :ok
-    deftracked height, do: 42
-    deftracked width, do: 81
+    deftracked height, do: {:ok, 42}
+    deftracked width, do: {:ok, 81}
   end
 
   defmodule AppStub do

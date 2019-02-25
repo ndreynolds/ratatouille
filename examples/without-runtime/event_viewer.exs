@@ -22,6 +22,7 @@ defmodule EventViewer do
   def loop do
     receive do
       {:event, %{ch: ?q}} ->
+        :ok = EventManager.stop()
         :ok = Window.close()
 
       {:event, %{} = event} ->

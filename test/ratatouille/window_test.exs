@@ -19,11 +19,11 @@ defmodule Ratatouille.WindowTest do
     deftracked clear, do: :ok
     deftracked present, do: :ok
     deftracked shutdown, do: :ok
-    deftracked select_input_mode(mode), do: :ok
-    deftracked select_output_mode(mode), do: :ok
+    deftracked select_input_mode(mode), do: {:ok, 1}
+    deftracked select_output_mode(mode), do: {:ok, 1}
 
-    def width, do: 42
-    def height, do: 81
+    def width, do: {:ok, 42}
+    def height, do: {:ok, 81}
   end
 
   setup do

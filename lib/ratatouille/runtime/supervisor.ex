@@ -36,13 +36,13 @@ defmodule Ratatouille.Runtime.Supervisor do
 
     children = [
       %{
-        id: EventManager,
-        start: {EventManager, :start_link, []},
+        id: Window,
+        start: {Window, :start_link, []},
         restart: :transient
       },
       %{
-        id: Window,
-        start: {Window, :start_link, []},
+        id: EventManager,
+        start: {EventManager, :start_link, []},
         restart: :transient
       },
       %{

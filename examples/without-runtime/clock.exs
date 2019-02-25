@@ -18,6 +18,7 @@ defmodule Clock do
 
     receive do
       {:event, %{ch: ?q}} ->
+        :ok = EventManager.stop()
         :ok = Window.close()
     after
       1_000 ->

@@ -208,7 +208,7 @@ defmodule Ratatouille.Runtime do
       # - Need to capture failures and report them via the update/2 callback.
       #   - Could be as simple as {:ok, result} | {:error, error}
       # - Should provide a timeout mechanism with sensible defaults. This should
-      #   help prevent h
+      #   help prevent zombie commands from piling up.
       {:ok, _pid} =
         Task.start(fn ->
           result = cmd.function.()
