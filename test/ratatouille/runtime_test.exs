@@ -7,8 +7,8 @@ defmodule Ratatouille.RuntimeTest do
     use Ratatouille.Stub
 
     deftracked init, do: :ok
-    deftracked poll_event(_), do: {:ok, :fake_resource}
-    deftracked cancel_poll_event, do: :ok
+    deftracked start_polling(_), do: {:ok, :fake_resource}
+    deftracked stop_polling, do: :ok
     deftracked select_input_mode(_), do: {:ok, 1}
     deftracked select_output_mode(_), do: {:ok, 1}
     deftracked shutdown, do: :ok
