@@ -30,10 +30,7 @@ defmodule Ratatouille.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # FIXME: Switch back to hex version after next ex_termbox release
-      # {:ex_termbox, "~> 0.3"},
-      {:ex_termbox,
-       git: "https://github.com/ndreynolds/ex_termbox", submodules: true},
+      {:ex_termbox, "~> 1.0"},
       {:asciichart, "~> 1.0"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:dialyze, "~> 0.2.0", only: :dev},
