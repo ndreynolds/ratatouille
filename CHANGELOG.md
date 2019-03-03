@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 
+## [0.4.2] - 2019-03-03
+
+### Fixed
+* Possible crash in the termbox NIFs when polling for events (updates ex_termbox
+  to 1.0.0).
+
+
 ## [0.4.1] - 2019-02-23
 
 ### Fixed
