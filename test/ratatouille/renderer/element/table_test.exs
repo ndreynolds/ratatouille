@@ -1,10 +1,16 @@
 defmodule Ratatouille.Renderer.Element.TableTest do
   use ExUnit.Case, async: true
 
+  alias ExTermbox.{Cell, Position}
+
   alias Ratatouille.Renderer.Canvas
   alias Ratatouille.Renderer.Element.Table
 
   import Ratatouille.View
+  import Ratatouille.Constants, only: [color: 1]
+
+  @red color(:red)
+  @blue color(:blue)
 
   @simple (table do
              table_row do
@@ -40,6 +46,13 @@ defmodule Ratatouille.Renderer.Element.TableTest do
                 end
               end)
 
+  @styled (table do
+             table_row(color: @red) do
+               table_cell(content: "a")
+               table_cell(content: "b", color: @blue)
+             end
+           end)
+
   describe "render/2" do
     test "returns the table" do
       assert [
@@ -65,6 +78,28 @@ defmodule Ratatouille.Renderer.Element.TableTest do
              ] = render_canvas(@truncated, {20, 4})
 
       assert String.length(line) == 20
+    end
+
+    test "styling and styling inheritance" do
+      assert %Canvas{cells: cells} =
+               Table.render(
+                 Canvas.from_dimensions(5, 1),
+                 @styled,
+                 nil
+               )
+
+      assert %{
+               %Position{x: 0, y: 0} => %Cell{
+                 ch: ?a,
+                 fg: @red,
+                 position: %Position{x: 0, y: 0}
+               },
+               %Position{x: 3, y: 0} => %Cell{
+                 ch: ?b,
+                 fg: @blue,
+                 position: %Position{x: 3, y: 0}
+               }
+             } = cells
     end
   end
 

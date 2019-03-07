@@ -115,7 +115,13 @@ defmodule Ratatouille.Renderer.Element do
       description: "Element representing a table cell",
       child_tags: [],
       attributes: [
-        content: "Binary containing the text content to be displayed"
+        content:
+          {:required, "Binary containing the text content to be displayed"},
+        color: {:optional, "Constant representing color to use for foreground"},
+        background:
+          {:optional, "Constant representing color to use for background"},
+        attributes:
+          {:optional, "Constant representing style attributes to apply"}
       ]
     ],
     table_row: [

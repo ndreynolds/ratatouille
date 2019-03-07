@@ -22,25 +22,37 @@ defmodule Ratatouille.Renderer.Element.Table do
     rows
     |> Enum.take(max_rows)
     |> Enum.reduce(canvas, fn row, canvas ->
-      {new_canvas, _offset} = render_table_row(canvas, col_sizes, row)
+      {new_canvas, _offset} = render_table_row(canvas, row, col_sizes)
       Canvas.consume(new_canvas, 0, 1)
     end)
   end
 
-  defp render_table_row(%Canvas{} = canvas, col_sizes, row) do
-    cells = for cell <- row.children, do: cell.attributes[:content] || ""
-
-    cells
+  defp render_table_row(%Canvas{} = canvas, row, col_sizes) do
+    row.children
     |> Enum.zip(col_sizes)
-    |> Enum.reduce({canvas, 0}, &render_table_cell(&1, &2, row.attributes))
+    |> Enum.reduce({canvas, 0}, fn {cell, col_size}, {acc_canvas, offset} ->
+      new_cell = %Element{
+        cell
+        | attributes: Map.merge(row.attributes, cell.attributes)
+      }
+
+      render_table_cell(acc_canvas, new_cell, col_size, offset)
+    end)
   end
 
-  defp render_table_cell({text, col_size}, {canvas, offset}, attrs) do
+  defp render_table_cell(%Canvas{} = canvas, cell, col_size, offset)
+       when col_size > 0 do
+    text = cell.attributes[:content] || ""
     pos = Position.translate_x(canvas.render_box.top_left, offset)
     padded_text = String.pad_trailing(text, col_size, " ")
-    canvas = Text.render(canvas, pos, padded_text, attrs)
 
-    {canvas, offset + col_size}
+    new_canvas = Text.render(canvas, pos, padded_text, cell.attributes)
+
+    {new_canvas, offset + col_size}
+  end
+
+  defp render_table_cell(canvas, _cell, _col_size, offset) do
+    {canvas, offset}
   end
 
   defp column_sizes(%Box{} = box, rows) do
