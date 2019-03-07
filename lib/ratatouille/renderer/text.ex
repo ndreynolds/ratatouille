@@ -20,17 +20,19 @@ defmodule Ratatouille.Renderer.Text do
     |> Utils.render_cells(canvas)
   end
 
-  def render_group(canvas, text_elements) do
-    %Canvas{
-      Enum.reduce(text_elements, canvas, &render_group_member/2)
-      | render_box: canvas.render_box
-    }
-    |> Canvas.consume_rows(1)
+  def render_group(canvas, text_elements, attrs \\ %{}) do
+    rendered_canvas =
+      Enum.reduce(text_elements, canvas, fn el, canvas ->
+        element = %Element{el | attributes: Map.merge(attrs, el.attributes)}
+        render_group_member(canvas, element)
+      end)
+
+    %Canvas{rendered_canvas | render_box: canvas.render_box}
   end
 
   defp render_group_member(
-         %Element{tag: :text, attributes: attrs, children: []},
-         canvas
+         canvas,
+         %Element{tag: :text, attributes: attrs, children: []}
        ) do
     text = attrs[:content] || ""
 

@@ -61,7 +61,12 @@ defmodule Ratatouille.Renderer.Element do
       child_tags: [:text],
       attributes: [
         content:
-          {:optional, "Binary containing the text content to be displayed"}
+          {:optional, "Binary containing the text content to be displayed"},
+        color: {:optional, "Constant representing color to use for foreground"},
+        background:
+          {:optional, "Constant representing color to use for background"},
+        attributes:
+          {:optional, "Constant representing style attributes to apply"}
       ]
     ],
     overlay: [

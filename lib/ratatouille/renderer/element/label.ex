@@ -6,15 +6,21 @@ defmodule Ratatouille.Renderer.Element.Label do
 
   def render(
         %Canvas{} = canvas,
-        %Element{attributes: %{content: text}},
+        %Element{attributes: %{content: text} = attrs},
         _render_fn
       ) do
     canvas
-    |> Text.render(canvas.render_box.top_left, text)
+    |> Text.render(canvas.render_box.top_left, text, attrs)
     |> Canvas.consume_rows(1)
   end
 
-  def render(%Canvas{} = canvas, %Element{children: children}, _render_fn) do
-    Text.render_group(canvas, children)
+  def render(
+        %Canvas{} = canvas,
+        %Element{attributes: attrs, children: children},
+        _render_fn
+      ) do
+    canvas
+    |> Text.render_group(children, attrs)
+    |> Canvas.consume_rows(1)
   end
 end
