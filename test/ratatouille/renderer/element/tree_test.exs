@@ -1,4 +1,4 @@
-defmodule Ratatouille.Renderer.TreeTest do
+defmodule Ratatouille.Renderer.Element.TreeTest do
   use ExUnit.Case, async: true
 
   alias Ratatouille.Renderer.Canvas

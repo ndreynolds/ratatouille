@@ -1,4 +1,4 @@
-defmodule Ratatouille.Renderer.SparklineTest do
+defmodule Ratatouille.Renderer.Element.SparklineTest do
   use ExUnit.Case, async: true
 
   alias Ratatouille.Renderer.Canvas

@@ -1,4 +1,4 @@
-defmodule Ratatouille.Renderer.PanelTest do
+defmodule Ratatouille.Renderer.Element.PanelTest do
   use ExUnit.Case, async: true
 
   alias Ratatouille.Renderer
