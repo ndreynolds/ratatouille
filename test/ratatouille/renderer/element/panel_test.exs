@@ -5,10 +5,16 @@ defmodule Ratatouille.Renderer.Element.PanelTest do
   alias Ratatouille.Renderer.{Canvas, Element.Panel}
 
   import Ratatouille.View
+  import Ratatouille.Constants, only: [color: 1]
 
   @panel_with_title (panel title: "The Title" do
                        label(content: "Body content")
                      end)
+
+  @panel_with_highlighted_title (panel title: "Highlighted Title",
+                                       color: color(:red) do
+                                   label(content: "Body contentt")
+                                 end)
 
   @panel_with_explicit_height panel(height: 5)
 
@@ -50,6 +56,23 @@ defmodule Ratatouille.Renderer.Element.PanelTest do
       assert Canvas.render_to_strings(canvas) ===
                [
                  "┌─The Title────┐",
+                 "│              │",
+                 "│ Body content │",
+                 "└──────────────┘"
+               ]
+    end
+
+    test "renders border and highlighted title" do
+      canvas =
+        Panel.render(
+          Canvas.from_dimensions(16, 4),
+          @panel_with_highlighted_title,
+          &Renderer.render_tree/2
+        )
+
+      assert Canvas.render_to_strings(canvas) ===
+               [
+                 "┌─Highlighted Ti",
                  "│              │",
                  "│ Body content │",
                  "└──────────────┘"
