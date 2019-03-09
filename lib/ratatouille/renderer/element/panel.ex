@@ -55,9 +55,11 @@ defmodule Ratatouille.Renderer.Element.Panel do
 
   defp render_title(canvas, nil), do: canvas
 
-  defp render_title(%Canvas{render_box: box} = canvas, %{title: title}=attr) when is_binary(title) do
+  defp render_title(%Canvas{render_box: box} = canvas, %{title: title} = attr)
+       when is_binary(title) do
     Text.render(canvas, title_position(box), title, attr)
   end
+
   defp render_title(canvas, _), do: canvas
 
   defp title_position(box),

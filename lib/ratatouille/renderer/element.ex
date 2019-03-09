@@ -88,7 +88,7 @@ defmodule Ratatouille.Renderer.Element do
         height:
           {:optional,
            "Height of the table in rows or `:fill` to fill the parent container's box"},
-        title: {:optional, "Binary containing the title for the panel"},
+        title: {:optional, "Binary containing the title for the panel"}
       ]
     ],
     row: [

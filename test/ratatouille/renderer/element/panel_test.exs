@@ -11,9 +11,10 @@ defmodule Ratatouille.Renderer.Element.PanelTest do
                        label(content: "Body content")
                      end)
 
-  @panel_with_highlighted_title (panel title: "Highlighted Title", color: color(:red) do
-                       label(content: "Body contentt")
-    end)
+  @panel_with_highlighted_title (panel title: "Highlighted Title",
+                                       color: color(:red) do
+                                   label(content: "Body contentt")
+                                 end)
 
   @panel_with_explicit_height panel(height: 5)
 
