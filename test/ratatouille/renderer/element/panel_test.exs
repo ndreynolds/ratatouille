@@ -11,7 +11,7 @@ defmodule Ratatouille.Renderer.Element.PanelTest do
                        label(content: "Body content")
                      end)
 
-  @panel_with_highlighted_title (panel title: {"Highlighted Title", [color: color(:red)] } do
+  @panel_with_highlighted_title (panel title: "Highlighted Title", color: color(:red) do
                        label(content: "Body contentt")
     end)
 
