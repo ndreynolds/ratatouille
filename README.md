@@ -256,7 +256,7 @@ terminal window is updated and how events are received. If you're interested in
 how these things actually work, or if the runtime doesn't support your use case,
 see this guide:
 
-<https://hexdocs.pm/ratatouille/doc/under-the-hood.html>
+<https://hexdocs.pm/ratatouille/under-the-hood.html>
 
 ## Packaging and Distributing
 
