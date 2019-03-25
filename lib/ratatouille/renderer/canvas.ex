@@ -100,6 +100,8 @@ defmodule Ratatouille.Renderer.Canvas do
   def consume_columns(canvas, n), do: consume(canvas, n, 0)
 
   @doc """
+  Merges a list of cells into the canvas, provided that the cells are located
+  within the canvas's rendering box. Returns a new canvas with the merged cells.
   """
   @spec merge_cells(Canvas.t(), list(Cell.t())) :: Canvas.t()
   def merge_cells(
