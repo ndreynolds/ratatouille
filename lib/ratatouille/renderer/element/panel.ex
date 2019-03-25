@@ -5,7 +5,8 @@ defmodule Ratatouille.Renderer.Element.Panel do
   alias ExTermbox.Position
   alias Ratatouille.Renderer.{Border, Box, Canvas, Element, Text}
 
-  @padding 2
+  @default_padding 1
+  @border_width 1
   @margin_y 1
   @title_offset_x 2
 
@@ -27,10 +28,11 @@ defmodule Ratatouille.Renderer.Element.Panel do
       ) do
     fill_empty? = !is_nil(attrs[:height])
     constrained_canvas = constrain_canvas(canvas, attrs[:height])
+    padding = attrs[:padding] || @default_padding
 
     rendered_canvas =
       constrained_canvas
-      |> Canvas.padded(@padding)
+      |> Canvas.padded(padding + @border_width)
       |> render_fn.(children)
       |> wrapper_canvas(constrained_canvas, fill_empty?)
       |> render_features(attrs)

@@ -85,6 +85,9 @@ defmodule Ratatouille.Renderer.Element do
       attributes: [
         color: {:optional, "Color of title"},
         background: {:optional, "Background of title"},
+        padding:
+          {:optional,
+           "Integer providing inner padding to use when rendering child elements"},
         height:
           {:optional,
            "Height of the table in rows or `:fill` to fill the parent container's box"},
