@@ -99,6 +99,22 @@ defmodule Ratatouille.Renderer.Canvas do
   @spec consume_columns(Canvas.t(), integer()) :: Canvas.t()
   def consume_columns(canvas, n), do: consume(canvas, n, 0)
 
+  @doc """
+  """
+  @spec merge_cells(Canvas.t(), list(Cell.t())) :: Canvas.t()
+  def merge_cells(
+        %Canvas{render_box: box, cells: canvas_cells} = canvas,
+        cells
+      ) do
+    new_cells =
+      for c <- cells,
+          Box.contains?(box, c.position),
+          do: {c.position, c},
+          into: %{}
+
+    %Canvas{canvas | cells: Map.merge(canvas_cells, new_cells)}
+  end
+
   @spec translate(Canvas.t(), integer(), integer()) :: Canvas.t()
   def translate(%Canvas{render_box: box} = canvas, dx, dy) do
     %Canvas{canvas | render_box: Box.translate(box, dx, dy)}

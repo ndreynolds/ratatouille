@@ -1,6 +1,10 @@
 defmodule Ratatouille.Renderer.UtilsTest do
   use ExUnit.Case, async: true
 
-  describe "render_cells/2" do
+  import Ratatouille.Renderer.Utils
+
+  describe "atoi/1" do
+    assert atoi("a") == ?a
+    assert atoi("b") == ?b
   end
 end

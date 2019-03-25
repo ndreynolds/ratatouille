@@ -3,21 +3,9 @@ defmodule Ratatouille.Renderer.Utils do
   Utilities for rendering cells.
   """
 
-  alias ExTermbox.{Cell, Position}
-  alias Ratatouille.Renderer.{Box, Canvas}
+  use Bitwise
 
-  def render_cells(
-        cells,
-        %Canvas{render_box: box, cells: canvas_cells} = canvas
-      ) do
-    new_cells =
-      for c <- cells,
-          Box.contains?(box, c.position),
-          do: {c.position, c},
-          into: %{}
-
-    %Canvas{canvas | cells: Map.merge(canvas_cells, new_cells)}
-  end
+  alias ExTermbox.{Cell, Constants, Position}
 
   def cell_generator(position, dir, template \\ Cell.empty()) do
     fn {ch, offset} ->
@@ -31,6 +19,12 @@ defmodule Ratatouille.Renderer.Utils do
           ch: atoi(ch)
       }
     end
+  end
+
+  def cell_foreground(attrs) do
+    base = attrs[:color] || Constants.color(:default)
+    flags = attrs[:attributes] || []
+    Enum.reduce(flags, base, fn flag, acc -> acc ||| flag end)
   end
 
   def atoi(str) do

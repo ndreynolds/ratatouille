@@ -5,6 +5,7 @@ defmodule Ratatouille.Renderer.Element do
 
   alias Ratatouille.Renderer.Element.{
     Bar,
+    Canvas,
     Chart,
     Column,
     Label,
@@ -31,6 +32,29 @@ defmodule Ratatouille.Renderer.Element do
       renderer: Bar,
       child_tags: [:label],
       attributes: []
+    ],
+    canvas: [
+      description: "A free-form canvas for drawing arbitrary shapes",
+      renderer: Canvas,
+      child_tags: [:canvas_cell],
+      attributes: [
+        height: {:required, "Integer representing the canvas height"},
+        width: {:required, "Integer representing the canvas width"}
+      ]
+    ],
+    canvas_cell: [
+      description: "A canvas cell which represents one square of the canvas",
+      child_tags: [],
+      attributes: [
+        x: {:required, "Integer representing the cell's column (zero-indexed)"},
+        y: {:required, "Integer representing the cell's row (zero-indexed)"},
+        color: {:optional, "Constant representing color to use for foreground"},
+        char: {:optional, "Single character to render within this cell"},
+        background:
+          {:optional, "Constant representing color to use for background"},
+        attributes:
+          {:optional, "Constant representing style attributes to apply"}
+      ]
     ],
     chart: [
       description: "Element for plotting a series as a multi-line chart",
@@ -81,7 +105,16 @@ defmodule Ratatouille.Renderer.Element do
       description:
         "Container with a border and title used to demarcate content",
       renderer: Panel,
-      child_tags: [:table, :row, :label, :panel, :chart, :sparkline, :tree],
+      child_tags: [
+        :table,
+        :row,
+        :label,
+        :panel,
+        :canvas,
+        :chart,
+        :sparkline,
+        :tree
+      ],
       attributes: [
         color: {:optional, "Color of title"},
         background: {:optional, "Background of title"},

@@ -6,18 +6,18 @@ defmodule Ratatouille.Renderer.Text do
   alias ExTermbox.{Cell, Constants, Position}
   alias Ratatouille.Renderer.{Canvas, Element, Utils}
 
-  use Bitwise
-
   def render(canvas, %Position{} = position, text, attrs \\ %{})
       when is_binary(text) do
     template = template_cell(attrs)
     cell_gen = Utils.cell_generator(position, :horizontal, template)
 
-    text
-    |> String.graphemes()
-    |> Enum.with_index()
-    |> Enum.map(cell_gen)
-    |> Utils.render_cells(canvas)
+    cells =
+      text
+      |> String.graphemes()
+      |> Enum.with_index()
+      |> Enum.map(cell_gen)
+
+    Canvas.merge_cells(canvas, cells)
   end
 
   def render_group(canvas, text_elements, attrs \\ %{}) do
@@ -44,15 +44,9 @@ defmodule Ratatouille.Renderer.Text do
   defp template_cell(attrs) do
     %Cell{
       bg: attrs[:background] || Constants.color(:default),
-      fg: foreground(attrs),
+      fg: Utils.cell_foreground(attrs),
       ch: nil,
       position: nil
     }
-  end
-
-  defp foreground(attrs) do
-    base = attrs[:color] || Constants.color(:default)
-    flags = attrs[:attributes] || []
-    Enum.reduce(flags, base, fn flag, acc -> acc ||| flag end)
   end
 end
