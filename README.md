@@ -248,6 +248,7 @@ and '-', and be able to quit using 'q'.
 | [`multiple_views.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/multiple_views.exs) | How to render different views/tabs based on a selection |
 | [`subscriptions.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/subscriptions.exs) | How to subscribe to multiple intervals |
 | [`commands.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/commands.exs) | How to run commands asynchronously and receive the results |
+| [`snake.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/snake.exs) | How to make a simple game |
 
 ## Under the Hood
 
