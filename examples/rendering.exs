@@ -10,14 +10,10 @@ defmodule RenderingDemo do
 
   alias Ratatouille.Runtime.Subscription
 
-  import Ratatouille.Constants, only: [color: 1, attribute: 1, key: 1]
+  import Ratatouille.Constants, only: [key: 1]
   import Ratatouille.View
 
   @spacebar key(:space)
-  @red color(:red)
-  @blue color(:blue)
-  @bold attribute(:bold)
-  @underline attribute(:underline)
 
   def init(_context) do
     %{
@@ -88,14 +84,14 @@ defmodule RenderingDemo do
             panel title: "Text & Labels" do
               label do
                 text(content: "Normal ")
-                text(content: "Red", color: @red)
+                text(content: "Red", color: :red)
               end
 
               label do
                 text(
                   content: "Blue, bold underlined",
-                  color: @blue,
-                  attributes: [@bold, @underline]
+                  color: :blue,
+                  attributes: [:bold, :underline]
                 )
               end
 

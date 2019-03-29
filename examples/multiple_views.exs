@@ -7,7 +7,6 @@
 defmodule MultipleViewsDemo do
   @behaviour Ratatouille.App
 
-  import Ratatouille.Constants, only: [color: 1]
   import Ratatouille.View
 
   def init(_context) do
@@ -45,8 +44,8 @@ defmodule MultipleViewsDemo do
         for item <- 1..3 do
           if item == selected do
             text(
-              background: color(:white),
-              color: color(:black),
+              background: :white,
+              color: :black,
               content: " View #{item} "
             )
           else
