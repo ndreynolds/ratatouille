@@ -15,7 +15,7 @@ defmodule EventViewer do
     {:ok, _pid} = EventManager.start_link()
     :ok = EventManager.subscribe(self())
 
-    Window.update(layout())
+    :ok = Window.update(layout())
     loop()
   end
 
@@ -26,7 +26,7 @@ defmodule EventViewer do
         :ok = Window.close()
 
       {:event, %{} = event} ->
-        Window.update(event_view(event))
+        :ok = Window.update(event_view(event))
         loop()
     end
   end
@@ -59,7 +59,7 @@ defmodule EventViewer do
         table_row do
           table_cell(content: "Mod")
           table_cell(content: inspect(mod))
-          table_cell()
+          table_cell(content: "")
         end
 
         table_row do
@@ -77,25 +77,25 @@ defmodule EventViewer do
         table_row do
           table_cell(content: "Width")
           table_cell(content: inspect(w))
-          table_cell()
+          table_cell(content: "")
         end
 
         table_row do
           table_cell(content: "Height")
           table_cell(content: inspect(h))
-          table_cell()
+          table_cell(content: "")
         end
 
         table_row do
           table_cell(content: "X")
           table_cell(content: inspect(x))
-          table_cell()
+          table_cell(content: "")
         end
 
         table_row do
           table_cell(content: "Y")
           table_cell(content: inspect(y))
-          table_cell()
+          table_cell(content: "")
         end
       end
     ])
