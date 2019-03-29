@@ -4,7 +4,7 @@ defmodule Ratatouille.Renderer.Line do
   """
 
   alias ExTermbox.Position
-  alias Ratatouille.Renderer.{Canvas, Utils}
+  alias Ratatouille.Renderer.{Canvas, Cells}
 
   def render_horizontal(canvas, %Position{} = position, ch, len),
     do: render(canvas, :horizontal, position, ch, len)
@@ -14,11 +14,13 @@ defmodule Ratatouille.Renderer.Line do
 
   def render(canvas, orientation, %Position{} = position, ch, len)
       when orientation in [:horizontal, :vertical] do
+    cell_generator = Cells.generator(position, orientation)
+
     cells =
       [ch]
       |> Stream.cycle()
       |> Enum.zip(0..(len - 1))
-      |> Enum.map(Utils.cell_generator(position, orientation))
+      |> Enum.map(cell_generator)
 
     Canvas.merge_cells(canvas, cells)
   end

@@ -387,7 +387,7 @@ If you see lots of things drawn on your terminal screen, you're good to go. Use
   * [x] Rendering engine with basic elements
   * [ ] More configurable charts (axis label, color, multiple lines, etc.)
   * [ ] Uniform support for text styling (incl. inheritance)
-  * [ ] Automatic translation to termbox styling constants
+  * [x] Automatic translation to termbox styling constants
     * For example, `color: :red` instead of `color: Constants.color(:red)`.
   * [ ] Rendering optimizations (view diffing, more efficient updates, etc.)
 * Events

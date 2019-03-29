@@ -3,19 +3,19 @@ defmodule Ratatouille.Renderer.Text do
   Primitives for rendering text
   """
 
-  alias ExTermbox.{Cell, Constants, Position}
-  alias Ratatouille.Renderer.{Canvas, Element, Utils}
+  alias ExTermbox.{Cell, Position}
+  alias Ratatouille.Renderer.{Canvas, Cells, Element}
 
   def render(canvas, %Position{} = position, text, attrs \\ %{})
       when is_binary(text) do
     template = template_cell(attrs)
-    cell_gen = Utils.cell_generator(position, :horizontal, template)
+    cell_generator = Cells.generator(position, :horizontal, template)
 
     cells =
       text
       |> String.graphemes()
       |> Enum.with_index()
-      |> Enum.map(cell_gen)
+      |> Enum.map(cell_generator)
 
     Canvas.merge_cells(canvas, cells)
   end
@@ -43,8 +43,8 @@ defmodule Ratatouille.Renderer.Text do
 
   defp template_cell(attrs) do
     %Cell{
-      bg: attrs[:background] || Constants.color(:default),
-      fg: Utils.cell_foreground(attrs),
+      bg: Cells.background(attrs),
+      fg: Cells.foreground(attrs),
       ch: nil,
       position: nil
     }

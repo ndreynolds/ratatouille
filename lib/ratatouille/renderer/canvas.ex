@@ -9,7 +9,7 @@ defmodule Ratatouille.Renderer.Canvas do
   """
 
   alias ExTermbox.{Cell, Position}
-  alias Ratatouille.Renderer.{Box, Utils}
+  alias Ratatouille.Renderer.Box
 
   alias __MODULE__, as: Canvas
 
@@ -52,7 +52,7 @@ defmodule Ratatouille.Renderer.Canvas do
     %Canvas{canvas | render_box: render_box}
   end
 
-  @whitespace Utils.atoi(" ")
+  @whitespace ?\s
 
   def fill_background(%Canvas{render_box: box, cells: cells} = canvas) do
     positions = Box.positions(box)

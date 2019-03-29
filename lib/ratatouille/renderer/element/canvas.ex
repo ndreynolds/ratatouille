@@ -4,8 +4,7 @@ defmodule Ratatouille.Renderer.Element.Canvas do
 
   alias ExTermbox.{Cell, Position}
 
-  alias Ratatouille.Constants
-  alias Ratatouille.Renderer.{Canvas, Element, Utils}
+  alias Ratatouille.Renderer.{Canvas, Cells, Element}
 
   @impl true
   def render(
@@ -22,8 +21,8 @@ defmodule Ratatouille.Renderer.Element.Canvas do
           x < width,
           y < height do
         %Cell{
-          bg: attrs[:background] || Constants.color(:default),
-          fg: Utils.cell_foreground(attrs),
+          bg: Cells.background(attrs),
+          fg: Cells.foreground(attrs),
           ch: to_char(attrs[:char]),
           position: %Position{
             x: attrs[:x] + canvas.render_box.top_left.x,
@@ -38,6 +37,6 @@ defmodule Ratatouille.Renderer.Element.Canvas do
   end
 
   defp to_char(nil), do: nil
-  defp to_char(x) when is_integer(x), do: x
-  defp to_char(x) when is_binary(x), do: Utils.atoi(x)
+  defp to_char(ch) when is_integer(ch), do: ch
+  defp to_char(<<ch::utf8>>), do: ch
 end
