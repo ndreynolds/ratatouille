@@ -166,6 +166,12 @@ defmodule Ratatouille.View do
       end
 
     if length(spec[:child_tags]) > 0 do
+      allowed_children =
+        Enum.map(spec[:child_tags], fn child ->
+          " * #{Atom.to_string(child)}"
+        end)
+        |> Enum.join("\n")
+
       @doc """
       Defines an element with the `:#{name}` tag.
 
@@ -237,10 +243,15 @@ defmodule Ratatouille.View do
 
           #{name}([key: value], [elem1, elem2])
 
+      ## Allowed Child Elements:
+
+        #{allowed_children}
+
       """
       defmacro unquote(name)(attributes, children) do
         macro_element(unquote(name), attributes, children)
       end
+
     else
       @doc """
       Defines an element with the `:#{name}` tag.
