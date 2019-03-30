@@ -109,7 +109,7 @@ defmodule Ratatouille.View do
   * An element must define all of its required attributes and may not define any
     unknown attributes.
 
-  The last two rules are based on the element's definition in
+  The last two rules are based on the element's specification in
   `Ratatouille.Renderer.Element`.
   """
 
@@ -166,14 +166,18 @@ defmodule Ratatouille.View do
       end
 
     if length(spec[:child_tags]) > 0 do
-      allowed_children =
-        Enum.map(spec[:child_tags], fn child ->
-          " * #{Atom.to_string(child)}"
-        end)
+      allowed_children_content =
+        for child <- spec[:child_tags] do
+          "* #{child}"
+        end
         |> Enum.join("\n")
 
       @doc """
       Defines an element with the `:#{name}` tag.
+
+      ## Allowed Child Elements
+
+      #{allowed_children_content}
 
       ## Examples
 
@@ -205,6 +209,10 @@ defmodule Ratatouille.View do
       ## Attributes
 
       #{attributes_content}
+
+      ## Allowed Child Elements
+
+      #{allowed_children_content}
 
       ## Examples
 
@@ -239,13 +247,13 @@ defmodule Ratatouille.View do
 
       #{attributes_content}
 
+      ## Allowed Child Elements
+
+      #{allowed_children_content}
+
       ## Examples
 
           #{name}([key: value], [elem1, elem2])
-
-      ## Allowed Child Elements:
-
-        #{allowed_children}
 
       """
       defmacro unquote(name)(attributes, children) do

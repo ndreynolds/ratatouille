@@ -220,9 +220,58 @@ and '-', and be able to quit using 'q'.
 
 ## Views
 
-| Element | Description       |
-| ------- | ----------------- |
+Ratatouille's views are trees of elements similar to HTML in structure. For
+example, here's how to define a two-column layout:
+
+```elixir
+view do
+  row do
+    column size: 6 do
+      panel title: "Left Column" do
+        label(content: "Text on the left")
+      end
+    end
+
+    column size: 6 do
+      panel title: "Right Column" do
+        label(content: "Text on the right")
+      end
+    end
+  end
+end
+```
+
+### The DSL
+
+As you might have noticed, Ratatouille provides a small DSL on top of Elixir for
+defining views. These are functions and macros which accept attributes and/or
+child elements in different formats. For example, a `column` element can be
+defined in all of the following ways:
+
+```elixir
+column()
+
+column(size: 12)
+
+column do
+  # ... child elements ...
+end
+
+column size: 12 do
+  # ... child elements ...
+end
+```
+
+All of these evaluate to a `%Ratatouille.Renderer.Element{tag: :column}` struct.
+The macros provide syntactic sugar, but under the hood it's all structs.
+
+Here's a list of all the elements provided by `Ratatouille.View`:
+
+| Element | Description |
+| ------- | ----------- |
 | [`bar`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#bar/0) | Block-level element for creating title, status or menu bars |
+| [`canvas`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#canvas/0) | A free-form canvas for drawing arbitrary shapes |
+| [`canvas_cell`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#canvas_cell/0) | A canvas cell which represents one square of the canvas |
 | [`chart`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#chart/0) | Element for plotting a series as a multi-line chart |
 | [`column`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#column/0) | Container occupying a vertical segment of the grid |
 | [`label`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#label/0) | Block-level element for displaying text |
@@ -238,7 +287,87 @@ and '-', and be able to quit using 'q'.
 | [`tree_node`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#tree_node/0) | Container representing a tree node |
 | [`view`](https://hexdocs.pm/ratatouille/Ratatouille.View.html#view/0) | Top-level container |
 
-## Examples
+### Adding Logic
+
+Because it's just Elixir code, you can freely mix in Elixir syntax and abstract
+views using functions:
+
+```elixir
+label(content: a_variable)
+
+view do
+  case current_tab do
+    :one -> render_tab_one()
+    :two -> render_tab_two()
+  end
+end
+```
+
+```elixir
+if window.width > 80 do
+  row do
+    column(size: 6)
+    column(size: 6)
+  end
+else
+  row do
+    column(size: 12)
+  end
+end
+```
+
+### Styling
+
+Attributes are used to style text and other content:
+
+```elixir
+# Labels are block-level, so this makes text within the whole block red.
+label(content: "Red text", color: :red)
+
+# Nested inline text elements can be used to style differently within a label.
+label do
+  text(content: "R", color: :red)
+  text(content: "G", color: :green)
+  text(content: "B", color: :blue)
+end
+
+# `color` sets the foreground, while `background` sets the background.
+label(content: "Black on white", color: :black, background: :white)
+
+# `attributes` accepts a list of text attributes, here `:bold` and `:underline`.
+label(content: "Bold and underlined text", attributes: [:bold, :underline])
+```
+
+Styling is still being developed, so it's not currently possible to style every
+aspect of every element, but this will improve with time.
+
+### Views are Strict
+
+Most web browsers will happily try to make sense of any HTML you give them. For
+example, you can put a `td` directly under a `div` and the content will likely
+still be rendered.
+
+Ratatouille takes a different, more strict approach and first validates that the
+view tree is well-structured. If it's not valid, an error is raised explaining
+the problem. This is intended to provide quick feedback when something's wrong.
+Restricting the set of valid views also helps to simplify the rendering
+implementation.
+
+It's helpful to keep the following things in mind when defining views:
+
+* Each tag has a list of allowed child tags. For example, a `column` can only be
+  nested under a `row`.
+* Each tag has a list of attributes. Some attributes are required, and these
+  must be set. Optional attributes have some default behavior when unset. It's
+  not allowed to set an attribute that's not in the list.
+* A `view` element must be the root element of any view tree you'd like to
+  render.
+
+See the list of elements above for documentation on each element.
+
+## Example Applications
+
+The following example show off different aspects of the framework:
 
 | Name | Description |
 | ---- | ----------- |
@@ -249,6 +378,9 @@ and '-', and be able to quit using 'q'.
 | [`subscriptions.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/subscriptions.exs) | How to subscribe to multiple intervals |
 | [`commands.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/commands.exs) | How to run commands asynchronously and receive the results |
 | [`snake.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/snake.exs) | How to make a simple game |
+
+With the repository cloned locally, run an example with `mix run examples/<example>.exs`.
+Examples can be quit with `q` or `CTRL-c` (unless indicated otherwise).
 
 ## Under the Hood
 
