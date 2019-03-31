@@ -28,7 +28,11 @@ For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/
       * [render/1](#render1)
       * [Running it](#running-it)
   * [Views](#views)
-  * [Examples](#examples)
+    * [The DSL](#the-dsl)
+    * [Adding Logic](#adding-logic)
+    * [Styling](#styling)
+    * [Views are Strict](#views-are-strict)
+  * [Example Applications](#example-applications)
   * [Under the Hood](#under-the-hood)
   * [Packaging and Distributing](#packaging-and-distributing)
     * [Defining an OTP Application](#defining-an-otp-application)
@@ -53,7 +57,7 @@ application runtime that handles all of those (sometimes tricky) details.
 ### Building an Application
 
 Let's build a simple application that displays an integer counter which can be
-incremented when the user presses "+" and decremented when the user presses "-".
+incremented when the user presses `+` and decremented when the user presses `-`.
 
 First a quick clarification, since we're using the word "application" a lot. For
 our purposes, an application is a terminal application, and not necessarily an
@@ -215,8 +219,8 @@ bundled example:
 $ mix run examples/counter.exs
 ```
 
-You should see the counter we defined, be able to make changes to it with '+'
-and '-', and be able to quit using 'q'.
+You should see the counter we defined, be able to make changes to it with `+`
+and `-`, and be able to quit using `q`.
 
 ## Views
 
@@ -379,8 +383,9 @@ The following example show off different aspects of the framework:
 | [`commands.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/commands.exs) | How to run commands asynchronously and receive the results |
 | [`snake.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/snake.exs) | How to make a simple game |
 
-With the repository cloned locally, run an example with `mix run examples/<example>.exs`.
-Examples can be quit with `q` or `CTRL-c` (unless indicated otherwise).
+With the repository cloned locally, run an example with
+`mix run examples/<example>.exs`. Examples can be quit with `q` or `CTRL-c`
+(unless indicated otherwise).
 
 ## Under the Hood
 
