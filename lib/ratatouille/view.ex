@@ -259,7 +259,6 @@ defmodule Ratatouille.View do
       defmacro unquote(name)(attributes, children) do
         macro_element(unquote(name), attributes, children)
       end
-
     else
       @doc """
       Defines an element with the `:#{name}` tag.

@@ -196,7 +196,12 @@ defmodule Ratatouille.Renderer.Element do
       description: "Container representing a tree node",
       child_tags: [:tree_node],
       attributes: [
-        content: {:required, "Binary label for the node"}
+        content: {:required, "Binary label for the node"},
+        color: {:optional, "Constant representing color to use for foreground"},
+        background:
+          {:optional, "Constant representing color to use for background"},
+        attributes:
+          {:optional, "Constant representing style attributes to apply"}
       ]
     ],
     view: [

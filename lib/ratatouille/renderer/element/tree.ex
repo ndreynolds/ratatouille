@@ -2,6 +2,8 @@ defmodule Ratatouille.Renderer.Element.Tree do
   @moduledoc false
   @behaviour Ratatouille.Renderer
 
+  alias ExTermbox.Position
+
   alias Ratatouille.Renderer.{Canvas, Element, Text}
 
   @impl true
@@ -30,8 +32,12 @@ defmodule Ratatouille.Renderer.Element.Tree do
     node_prefix = parent_prefix <> line(root, last_child)
     child_prefix = parent_prefix <> indent(root, last_child)
 
+    node_prefix_offset =
+      Position.translate_x(box.top_left, String.length(node_prefix))
+
     canvas
-    |> Text.render(box.top_left, node_prefix <> text)
+    |> Text.render(box.top_left, node_prefix)
+    |> Text.render(node_prefix_offset, text, attrs)
     |> Canvas.consume_rows(1)
     |> render_nodes(children, child_prefix, false)
     |> render_nodes(siblings, parent_prefix, root)
