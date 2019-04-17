@@ -46,13 +46,16 @@ For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/
 
 ## Getting Started
 
-Ratatouille implements the Elm Architecture as a way to structure application
-logic. This fits quite naturally in Elixir and is part of what makes Ratatouille
-declarative. If you've already used it on the web, it should feel very familiar.
+Ratatouille implements [the Elm Architecture][tea] as a way to structure
+application logic. This fits quite naturally in Elixir and is part of what makes
+Ratatouille declarative. If you've already used it on the web, it should feel
+very familiar.
 
 As with a GenServer definition, Ratatouille apps only implement a behaviour by
 defining callbacks and don't know how to start or run themselves. It's the
 application runtime that handles all of those (sometimes tricky) details.
+
+[tea]: https://guide.elm-lang.org/architecture/
 
 ### Building an Application
 
