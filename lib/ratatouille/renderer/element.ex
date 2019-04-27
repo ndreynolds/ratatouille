@@ -15,13 +15,25 @@ defmodule Ratatouille.Renderer.Element do
     Sparkline,
     Table,
     Tree,
-    View
+    View,
+    Viewport
   }
 
   @type t :: %Element{tag: atom()}
 
   @enforce_keys [:tag]
   defstruct tag: nil, attributes: %{}, children: []
+
+  @content_tags [
+    :panel,
+    :table,
+    :row,
+    :label,
+    :chart,
+    :sparkline,
+    :tree,
+    :viewport
+  ]
 
   ### Element Specs
 
@@ -72,7 +84,7 @@ defmodule Ratatouille.Renderer.Element do
     column: [
       description: "Container occupying a vertical segment of the grid",
       renderer: Column,
-      child_tags: [:panel, :table, :row, :label, :chart, :sparkline, :tree],
+      child_tags: @content_tags,
       attributes: [
         size:
           {:required,
@@ -96,7 +108,7 @@ defmodule Ratatouille.Renderer.Element do
     overlay: [
       description: "Container overlaid on top of the view",
       renderer: Overlay,
-      child_tags: [:panel, :row],
+      child_tags: @content_tags,
       attributes: [
         padding: {:optional, "Integer number of units of padding"}
       ]
@@ -105,16 +117,7 @@ defmodule Ratatouille.Renderer.Element do
       description:
         "Container with a border and title used to demarcate content",
       renderer: Panel,
-      child_tags: [
-        :table,
-        :row,
-        :label,
-        :panel,
-        :canvas,
-        :chart,
-        :sparkline,
-        :tree
-      ],
+      child_tags: @content_tags,
       attributes: [
         color: {:optional, "Color of title"},
         background: {:optional, "Background of title"},
@@ -207,11 +210,24 @@ defmodule Ratatouille.Renderer.Element do
     view: [
       description: "Top-level container",
       renderer: View,
-      child_tags: [:label, :row, :panel, :overlay],
+      child_tags: [:overlay | @content_tags],
       attributes: [
         top_bar: {:optional, "A `:bar` element to occupy the view's first row"},
         bottom_bar:
           {:optional, "A `:bar` element to occupy the view's last row"}
+      ]
+    ],
+    viewport: [
+      description: "Container for offsetting content (e.g., for scrolling)",
+      renderer: Viewport,
+      child_tags: @content_tags,
+      attributes: [
+        offset_x:
+          {:optional,
+           "Integer representing the number of columns to offset the child content by. Defaults to 0."},
+        offset_y:
+          {:optional,
+           "Integer representing the number of rows to offset the child content by. Defaults to 0."}
       ]
     ]
   ]
