@@ -25,12 +25,13 @@ defmodule Ratatouille.Renderer.Element do
   defstruct tag: nil, attributes: %{}, children: []
 
   @content_tags [
-    :panel,
-    :table,
-    :row,
-    :label,
+    :canvas,
     :chart,
+    :label,
+    :panel,
+    :row,
     :sparkline,
+    :table,
     :tree,
     :viewport
   ]
