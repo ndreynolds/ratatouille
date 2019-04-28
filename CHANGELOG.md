@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 
+## [0.5.0] - 2019-04-28
+
+### Fixed
+* Possible rendering error with multi-byte UTF-8 characters.
+
+### Added
+* New `viewport` element for offsetting the render origin of child
+  content (e.g., to implement scrolling)
+* New `canvas` and `canvas_cell` elements for drawing arbitrary shapes
+  (see snake example).
+* Support for rendering multi-line content (with automatic line
+  wrapping) given to the `label` element.
+* Support for styling tree node content.
+* Support for styling panel title content (thanks to @iboard) and
+  configuring panel's padding.
+* Support for passing colors and text attributes directly as
+  atoms, so the integer constants no longer need to be looked up.
+* Improved documentation of element hierarchy restrictions (thanks to
+  @trescenzi)
+
+
 ## [0.4.2] - 2019-03-03
 
 ### Fixed
