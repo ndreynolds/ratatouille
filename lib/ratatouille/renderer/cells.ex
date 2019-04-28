@@ -52,5 +52,6 @@ defmodule Ratatouille.Renderer.Cells do
   end
 
   defp to_char(ch) when is_integer(ch), do: ch
-  defp to_char(<<ch::utf8>>), do: ch
+  # TODO: Figure out how to handle trailing codepoints (see graphemes)
+  defp to_char(<<ch::utf8, _rest::binary>>), do: ch
 end
