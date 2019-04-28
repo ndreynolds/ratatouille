@@ -385,6 +385,7 @@ The following example show off different aspects of the framework:
 | [`subscriptions.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/subscriptions.exs) | How to subscribe to multiple intervals |
 | [`commands.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/commands.exs) | How to run commands asynchronously and receive the results |
 | [`snake.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/snake.exs) | How to make a simple game |
+| [`documentation_browser.exs`](https://github.com/ndreynolds/ratatouille/tree/master/examples/documentation_browser.exs) | How to render and scroll multiline content |
 
 With the repository cloned locally, run an example with
 `mix run examples/<example>.exs`. Examples can be quit with `q` or `CTRL-c`
