@@ -12,43 +12,50 @@ defmodule Ratatouille.Renderer.Element.LabelTest do
   @red color(:red)
   @blue color(:blue)
 
-  @simple label(content: "Hello, World!", color: @blue)
-
-  @nested (label(color: @red) do
-             text(content: "A")
-             text(content: "B")
-             text(content: "C", color: @blue)
-           end)
-
   describe "render/3" do
     test "renders simple content" do
-      canvas =
-        Label.render(
-          Canvas.from_dimensions(15, 1),
-          @simple,
-          nil
-        )
+      assert render_to_strings(
+               label(content: "Hello, World!"),
+               {15, 1}
+             ) === ["Hello, World!"]
+    end
 
-      assert Canvas.render_to_strings(canvas) === ["Hello, World!"]
+    test "renders multi-line content" do
+      assert render_to_strings(
+               label(content: "Hello\nWorld!"),
+               {15, 1}
+             ) === [
+               "Hello ",
+               "World!"
+             ]
+    end
+
+    test "supports line wrapping" do
+      assert render_to_strings(
+               label(content: "Hello, World!", wrap: true),
+               {8, 2}
+             ) === [
+               "Hello, ",
+               "World! "
+             ]
     end
 
     test "renders nested text nodes" do
-      canvas =
-        Label.render(
-          Canvas.from_dimensions(15, 1),
-          @nested,
-          nil
-        )
-
-      assert Canvas.render_to_strings(canvas) === ["ABC"]
+      assert render_to_strings(
+               label do
+                 text(content: "A")
+                 text(content: "B")
+                 text(content: "C")
+               end,
+               {15, 1}
+             ) === ["ABC"]
     end
 
     test "styling attributes on label" do
       %Canvas{cells: cells} =
-        Label.render(
-          Canvas.from_dimensions(15, 1),
-          @simple,
-          nil
+        render_canvas(
+          label(content: "Hello", color: :blue),
+          {15, 1}
         )
 
       assert %{
@@ -67,10 +74,13 @@ defmodule Ratatouille.Renderer.Element.LabelTest do
 
     test "child nodes inherit styling attributes" do
       %Canvas{cells: cells} =
-        Label.render(
-          Canvas.from_dimensions(15, 1),
-          @nested,
-          nil
+        render_canvas(
+          label(color: :red) do
+            text(content: "A")
+            text(content: "B")
+            text(content: "C", color: :blue)
+          end,
+          {15, 1}
         )
 
       assert %{
@@ -91,5 +101,18 @@ defmodule Ratatouille.Renderer.Element.LabelTest do
                }
              } = cells
     end
+  end
+
+  def render_canvas(label, {width, height}) do
+    canvas = Canvas.from_dimensions(width, height)
+
+    canvas
+    |> Label.render(label, nil)
+  end
+
+  def render_to_strings(label, dims) do
+    label
+    |> render_canvas(dims)
+    |> Canvas.render_to_strings()
   end
 end

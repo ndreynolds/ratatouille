@@ -102,7 +102,10 @@ defmodule Ratatouille.Renderer.Element do
         background:
           {:optional, "Constant representing color to use for background"},
         attributes:
-          {:optional, "Constant representing style attributes to apply"}
+          {:optional, "Constant representing style attributes to apply"},
+        wrap:
+          {:optional,
+           "Boolean indicating whether or not to wrap lines to fit available space"}
       ]
     ],
     overlay: [
@@ -121,6 +124,7 @@ defmodule Ratatouille.Renderer.Element do
       attributes: [
         color: {:optional, "Color of title"},
         background: {:optional, "Background of title"},
+        attributes: {:optional, "Attributes for the title"},
         padding:
           {:optional,
            "Integer providing inner padding to use when rendering child elements"},
