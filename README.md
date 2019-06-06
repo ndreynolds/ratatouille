@@ -487,7 +487,7 @@ Add Ratatouille as a dependency in your project's `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ratatouille, "~> 0.4.0"}
+    {:ratatouille, "~> 0.5.0"}
   ]
 end
 ```
