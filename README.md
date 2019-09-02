@@ -46,9 +46,9 @@ For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/
 
 ## Getting Started
 
-Ratatouille implements [the Elm Architecture][tea] as a way to structure
+Ratatouille implements [The Elm Architecture][tea] (TEA) as a way to structure
 application logic. This fits quite naturally in Elixir and is part of what makes
-Ratatouille declarative. If you've already used it on the web, it should feel
+Ratatouille declarative. If you've already used TEA on the web, this should feel
 very familiar.
 
 As with a GenServer definition, Ratatouille apps only implement a behaviour by
@@ -111,7 +111,7 @@ this is a Ratatouille app.
 defmodule Counter do
   @behaviour Ratatouille.App
 
-  ...
+  # ...
 end
 ```
 
@@ -134,15 +134,15 @@ happen in order to allow the app to update it.
 
 The model can be any Erlang term. For larger apps, it's helpful to use maps or
 structs to organize different pieces of the state. Here, we just have an integer
-counter, so we return `0`:
+counter, so we return `0` as our initial model:
 
 ```elixir
 defmodule Counter do
-  ...
+  # ...
 
   def init(_context), do: 0
 
-  ...
+  # ...
 end
 ```
 
@@ -159,7 +159,7 @@ events and characters are given as code points (e.g., `?a` is `97`).
 
 ```elixir
 defmodule Counter do
-  ...
+  # ...
 
   def update(model, msg) do
     case msg do
@@ -169,7 +169,7 @@ defmodule Counter do
     end
   end
 
-  ...
+  # ...
 end
 ```
 
@@ -183,15 +183,15 @@ the fallback to see if important messages are going unmatched.
 The `render/1` callback defines a view to display the model. The runtime will
 call it as needed when it needs to update the terminal window.
 
-Similar to HTML, a view is defined as a tree of elements (nodes). Elements have
-attributes (e.g., `text: bold`) and children (nested content). While helper
-functions can return arbitrary element trees, the `render/1` callback must
-return a view tree starting with a root `view` element---it's sort of like the
-`<body>` tag in HTML.
+Like an HTML document, a view is defined as a tree of elements (nodes).
+Elements have attributes (e.g., `text: bold`) and children (nested content).
+While helper functions can return arbitrary element trees, the `render/1`
+callback must return a view tree starting with a root `view` element---it's
+sort of like the `<body>` tag in HTML.
 
 ```elixir
 defmodule Counter do
-  ...
+  # ...
 
   def render(model) do
     view do
@@ -199,7 +199,7 @@ defmodule Counter do
     end
   end
 
-  ...
+  # ...
 end
 ```
 
@@ -362,8 +362,8 @@ implementation.
 
 It's helpful to keep the following things in mind when defining views:
 
-* Each tag has a list of allowed child tags. For example, a `column` can only be
-  nested under a `row`.
+* Each tag has a list of allowed child tags. For example, a `row` may only have
+  elements with the `column` tag as direct descendants.
 * Each tag has a list of attributes. Some attributes are required, and these
   must be set. Optional attributes have some default behavior when unset. It's
   not allowed to set an attribute that's not in the list.
@@ -374,7 +374,7 @@ See the list of elements above for documentation on each element.
 
 ## Example Applications
 
-The following example show off different aspects of the framework:
+The following examples show off different aspects of the framework:
 
 | Name | Description |
 | ---- | ----------- |
@@ -393,7 +393,7 @@ With the repository cloned locally, run an example with
 
 ## Under the Hood
 
-The application runtime abstracts away a lot of the details concerning how the
+The application runtime abstracts away many of the details concerning how the
 terminal window is updated and how events are received. If you're interested in
 how these things actually work, or if the runtime doesn't support your use case,
 see this guide:
@@ -404,12 +404,13 @@ see this guide:
 
 *Warning: This part is still rough around the edges.*
 
-While it's easy to run apps with `mix run`, packaging them for others to easily
-run is a bit more complicated. Depending on the type of app you're building, it
-might not be reasonable to assume that users have any Elixir or Erlang tools
-installed. Terminal apps are usually distributed as binary executables so that
-they can just be run as such without additional dependencies. Fortunately, this
-is possible using OTP releases that bundle ERTS.
+While it's easy to run apps while developing with `mix run`, packaging them for
+others to easily run is a bit more complicated. Depending on the type of app
+you're building, it might not be reasonable to assume that users have any
+Elixir or Erlang tools installed. Terminal apps are usually distributed as
+binary executables so that they can just be run as such without additional
+dependencies. Fortunately, this is possible using OTP releases that bundle
+ERTS.
 
 ### Defining an OTP Application
 
@@ -455,9 +456,9 @@ In order to make a "batteries-included" release, it's important that you have
 
 ``` elixir
 environment :prod do
-  ...
+  # ...
   set(include_erts: true)
-  ...
+  # ...
 end
 ```
 
@@ -533,7 +534,7 @@ If you see lots of things drawn on your terminal screen, you're good to go. Use
   * [ ] Rendering optimizations (view diffing, more efficient updates, etc.)
 * Events
   * [ ] Translate termbox events to a cleaner format
-    * Dealing with the integer constants is incovenient. These could be
+    * Dealing with the integer constants is inconvenient. These could be
       converted to atoms by the event manager.
 * Terminal Backend
   * [x] ex_termbox NIFs
