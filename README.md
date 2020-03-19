@@ -37,6 +37,7 @@ For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/
   * [Packaging and Distributing](#packaging-and-distributing)
     * [Defining an OTP Application](#defining-an-otp-application)
     * [Executable Releases with Distillery](#executable-releases-with-distillery)
+  * [Projects using Ratatouille](#projects-using-ratatouille)
   * [Installation](#installation)
     * [From Hex](#from-hex)
     * [From Source](#from-source)
@@ -478,6 +479,16 @@ _build/prod/rel/toby/bin/toby.run foreground
 You can also move this executable somewhere else (e.g., to a directory in your
 $PATH). A current caveat is that it must be able to unpack itself, as Distillery
 executables are self-extracting archives.
+
+## Projects using Ratatouille
+
+For inspiration or ideas on how to structure your application, check out this list of
+projects built with Ratatouille:
+
+* [`tefter/cli`](https://github.com/tefter/cli) - the command-line client for Tefter
+* [`toby`](https://github.com/ndreynolds/toby) - a terminal-based Erlang observer
+
+If you have a project you'd like to include here, just open a PR to add it to the list.
 
 ## Installation
 
