@@ -4,7 +4,7 @@ defmodule Ratatouille.Mixfile do
   def project do
     [
       app: :ratatouille,
-      version: "0.5.0",
+      version: "0.5.1",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -34,7 +34,7 @@ defmodule Ratatouille.Mixfile do
       {:asciichart, "~> 1.0"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:dialyze, "~> 0.2.0", only: :dev},
-      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.3.0", only: [:dev, :test], runtime: false}
     ]
   end
 
