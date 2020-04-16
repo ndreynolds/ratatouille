@@ -14,11 +14,23 @@ defmodule Ratatouille.Renderer.Text do
     cells =
       text
       |> String.graphemes()
-      |> Enum.with_index()
+      |> with_positions()
       |> Enum.map(cell_generator)
 
     Canvas.merge_cells(canvas, cells)
   end
+
+  defp with_positions(graphemes) do
+    {positioned, _} =
+      graphemes
+      |> Enum.reduce({[], 0}, fn grapheme, {acc, pos} ->
+        {[{grapheme, pos} | acc], pos + char_width(grapheme)}
+      end)
+
+    positioned
+  end
+
+  def char_width(char), do: Ucwidth.width(char)
 
   def render_group(canvas, text_elements, attrs \\ %{}) do
     rendered_canvas =

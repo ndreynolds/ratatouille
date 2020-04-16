@@ -32,6 +32,7 @@ defmodule Ratatouille.Mixfile do
     [
       {:ex_termbox, "~> 1.0"},
       {:asciichart, "~> 1.0"},
+      {:ucwidth, "~> 0.2"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:dialyze, "~> 0.2.0", only: :dev},
       {:credo, "~> 1.3.0", only: [:dev, :test], runtime: false}
