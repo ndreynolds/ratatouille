@@ -13,6 +13,10 @@ defmodule Ratatouille.Renderer.AttributesTest do
                Constants.color(:red)
     end
 
+    test "with extended color" do
+      assert Attributes.to_terminal_color(17) == 17
+    end
+
     test "when invalid" do
       assert_raise KeyError, fn ->
         Attributes.to_terminal_color(1000)
