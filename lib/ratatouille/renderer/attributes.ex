@@ -6,10 +6,11 @@ defmodule Ratatouille.Renderer.Attributes do
   alias Ratatouille.Constants
 
   @valid_color_codes Constants.colors() |> Map.values()
+  @valid_color_codes_extended 0x11..0xe8
   @valid_attribute_codes Constants.attributes() |> Map.values()
 
   def to_terminal_color(code)
-      when is_integer(code) and code in @valid_color_codes do
+  when is_integer(code) and code in @valid_color_codes or code in @valid_color_codes_extended do
     code
   end
 
