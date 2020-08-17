@@ -85,7 +85,7 @@ defmodule DocumentationBrowser do
     view(top_bar: menu_bar) do
       row do
         column(size: 3) do
-          panel(title: "Modules") do
+          panel(title: "Modules", height: :fill) do
             viewport(offset_y: model.module_cursor) do
               for {module, idx} <- Enum.with_index(model.modules) do
                 if idx == model.module_cursor do
