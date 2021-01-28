@@ -105,13 +105,23 @@ defmodule Ratatouille.Window do
     {:ok, _mode} = bindings.select_input_mode(input_mode)
     {:ok, _mode} = bindings.select_output_mode(output_mode)
 
-    {:ok, %{bindings: bindings}}
+    {:ok, %{bindings: bindings, screen_buffer: %{}}}
   end
 
   @impl true
-  def handle_call({:update, view}, _from, %{bindings: bindings} = state) do
-    :ok = bindings.clear()
-    {:reply, render_view(bindings, view), state}
+  def handle_call(
+        {:update, view},
+        _from,
+        %{bindings: bindings, screen_buffer: screen_buffer} = state
+      ) do
+    {:ok, updated_buffer} = render_view(bindings, view, screen_buffer)
+    {:reply, :ok, %{state | screen_buffer: updated_buffer}}
+  end
+
+  @impl true
+  def handle_call(:clear, _from, %{bindings: bindings} = state) do
+    :ok = clear(bindings)
+    {:reply, :ok, %{state | screen_buffer: %{}}}
   end
 
   @impl true
@@ -136,11 +146,19 @@ defmodule Ratatouille.Window do
     end
   end
 
-  defp render_view(bindings, view) do
+  defp clear(bindings) do
+    :ok = bindings.clear()
+    :ok = bindings.present()
+    :ok
+  end
+
+  defp render_view(bindings, view, screen_buffer) do
     with empty_canvas <- canvas(bindings),
          {:ok, filled_canvas} <- Renderer.render(empty_canvas, view),
-         :ok <- Canvas.render_to_termbox(bindings, filled_canvas) do
+         {:ok, updated_buffer} <-
+           Canvas.render_to_termbox(bindings, filled_canvas, screen_buffer) do
       :ok = bindings.present()
+      {:ok, updated_buffer}
     end
   end
 

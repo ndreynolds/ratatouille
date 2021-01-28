@@ -151,14 +151,25 @@ defmodule Ratatouille.Renderer.Canvas do
   def render_to_string(%Canvas{} = canvas),
     do: canvas |> render_to_strings() |> Enum.join("\n")
 
-  @spec render_to_termbox(module(), Canvas.t()) :: :ok
-  def render_to_termbox(bindings, %Canvas{cells: cells}) do
-    # TODO: only attempt to render cells in the canvas box
-    for {_pos, cell} <- cells do
-      :ok = bindings.put_cell(cell)
-    end
+  @spec render_to_termbox(module(), Canvas.t(), ScreenBuffer) :: {:ok, ScreenBuffer}
+  def render_to_termbox(bindings, %Canvas{cells: cells}, buffer) do
+    {:ok,
+     cells
+     |> Enum.reduce(
+       buffer,
+       fn {pos, cell}, buffer -> cached_render(bindings, pos, cell, buffer) end
+     )}
+  end
 
-    :ok
+  defp cached_render(bindings, pos, cell, buffer) do
+    case Map.get(buffer, pos, nil) do
+      ^cell ->
+        buffer
+
+      _ ->
+        :ok = bindings.put_cell(cell)
+        Map.put(buffer, :pos, cell)
+    end
   end
 
   defp cell_to_string(%Cell{ch: ch}), do: to_string([ch])
