@@ -1,7 +1,11 @@
 # Ratatouille
 
-[![Hex.pm](https://img.shields.io/hexpm/v/ratatouille.svg)](https://hex.pm/packages/ratatouille)
-[![Hexdocs.pm](https://img.shields.io/badge/api-hexdocs-brightgreen.svg)](https://hexdocs.pm/ratatouille)
+[![Build Status](https://travis-ci.org/ndreynolds/ratatouille.svg?branch=master)](https://travis-ci.org/ndreynolds/ratatouille)
+[![Module Version](https://img.shields.io/hexpm/v/ratatouille.svg)](https://hex.pm/packages/ratatouille)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/ratatouille/)
+[![Total Download](https://img.shields.io/hexpm/dt/ratatouille.svg)](https://hex.pm/packages/ratatouille)
+[![License](https://img.shields.io/hexpm/l/ratatouille.svg)](https://github.com/ndreynolds/ratatouille/blob/master/LICENSE.md)
+[![Last Updated](https://img.shields.io/github/last-commit/ndreynolds/ratatouille.svg)](https://github.com/ndreynolds/ratatouille/commits/master)
 
 Ratatouille is a declarative terminal UI kit for Elixir for building rich
 text-based terminal applications similar to how you write HTML.
@@ -11,12 +15,11 @@ It builds on top of the [termbox][termbox] API (using the Elixir bindings from
 
 For the API Reference, see: [https://hexdocs.pm/ratatouille](https://hexdocs.pm/ratatouille).
 
-![Toby][toby_screenshot]
+![Toby](./assets/toby.png)
 *[Toby](https://github.com/ndreynolds/toby), a terminal-based Erlang observer built with Ratatouille*
 
 [termbox]: https://github.com/nsf/termbox
 [ex_termbox]: https://github.com/ndreynolds/ex_termbox
-[toby_screenshot]: https://github.com/ndreynolds/ratatouille/raw/master/doc/toby.png
 
 **Table of Contents**
 
@@ -576,3 +579,9 @@ The integration suite can be run like so:
 ```
 mix test --only integration
 ```
+
+## Copyright and License
+
+Copyright (c) 2018 Nick Reynolds
+
+This software is released under the [MIT License](./LICENSE.md).
