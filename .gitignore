@@ -7,7 +7,7 @@
 # The directory Mix downloads your dependencies sources to.
 /deps/
 
-# Where 3rd-party dependencies like ExDoc output generated docs.
+# Where third-party dependencies like ExDoc output generated docs.
 /doc/
 
 # Ignore .fetch files in case you like to edit your project deps locally.
@@ -18,6 +18,12 @@ erl_crash.dump
 
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
+
+# Ignore package tarball (built via "mix hex.build").
+ratatouille-*.tar
+
+# Temporary files, for example, from tests.
+/tmp/
 
 # Ignore shared object files created by Makefile
 /priv/*.so*
