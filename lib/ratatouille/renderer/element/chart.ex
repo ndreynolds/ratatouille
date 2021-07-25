@@ -27,7 +27,7 @@ defmodule Ratatouille.Renderer.Element.Chart do
   end
 
   defp render_chart(%Canvas{render_box: box} = canvas, chart) do
-    lines = String.split(chart, "\n")
+    lines = chart |> String.trim |> String.split("\n")
 
     lines
     |> Enum.with_index()
