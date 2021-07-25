@@ -11,6 +11,7 @@ defmodule Ratatouille.Renderer.Element do
     Label,
     Overlay,
     Panel,
+    ProgressBar,
     Row,
     Sparkline,
     Table,
@@ -33,7 +34,8 @@ defmodule Ratatouille.Renderer.Element do
     :sparkline,
     :table,
     :tree,
-    :viewport
+    :viewport,
+    :progress_bar
   ]
 
   ### Element Specs
@@ -133,6 +135,20 @@ defmodule Ratatouille.Renderer.Element do
           {:optional,
            "Height of the table in rows or `:fill` to fill the parent container's box"},
         title: {:optional, "Binary containing the title for the panel"}
+      ]
+    ],
+    progress_bar: [
+      description: "Inline element for displaying a progress bar",
+      renderer: ProgressBar,
+      child_tags: [],
+      attributes: [
+        percentage: {:required, "The actual percentage"},
+        text_position:
+          {:optional,
+           "Where to put the text showing the percentage, `:none`, `:left` or `:right`. Defaults to `:right`"},
+        on_color: {:optional, "The main color of the bar"},
+        off_color: {:optional, "The background color of the bar"},
+        text_color: {:optional, "The color of the percentage text"}
       ]
     ],
     row: [
