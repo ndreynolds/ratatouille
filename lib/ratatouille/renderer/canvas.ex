@@ -70,8 +70,8 @@ defmodule Ratatouille.Renderer.Canvas do
   left, bottom, right) by `size`. Pass a negative size to remove padding.
   """
   @spec padded(Canvas.t(), integer()) :: Canvas.t()
-  def padded(%Canvas{render_box: box} = canvas, size) do
-    %Canvas{canvas | render_box: Box.padded(box, size)}
+  def padded(%Canvas{render_box: box} = canvas, [top: top, left: left, bottom: bottom, right: right]) do
+    %Canvas{canvas | render_box: Box.padded(box, top: top, left: left, bottom: bottom, right: right)}
   end
 
   @doc """
