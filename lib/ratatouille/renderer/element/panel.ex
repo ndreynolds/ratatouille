@@ -51,7 +51,7 @@ defmodule Ratatouille.Renderer.Element.Panel do
 
   defp render_features(canvas, attrs) do
     canvas
-    |> Border.render()
+    |> Border.render(attrs[:border])
     |> render_title(attrs)
   end
 
