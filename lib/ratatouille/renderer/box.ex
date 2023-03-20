@@ -69,10 +69,10 @@ defmodule Ratatouille.Renderer.Box do
     }
   end
 
-  def padded(%Box{top_left: top_left, bottom_right: bottom_right}, size) do
+  def padded(%Box{top_left: top_left, bottom_right: bottom_right}, [top: top, left: left, bottom: bottom, right: right]) do
     %Box{
-      top_left: top_left |> Position.translate(size, size),
-      bottom_right: bottom_right |> Position.translate(-size, -size)
+      top_left: top_left |> Position.translate(left, top),
+      bottom_right: bottom_right |> Position.translate(-right, -bottom)
     }
   end
 

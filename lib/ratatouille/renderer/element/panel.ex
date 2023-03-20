@@ -28,11 +28,17 @@ defmodule Ratatouille.Renderer.Element.Panel do
       ) do
     fill_empty? = !is_nil(attrs[:height])
     constrained_canvas = constrain_canvas(canvas, attrs[:height])
-    padding = attrs[:padding] || @default_padding
+
+    padding = (attrs[:padding] || @default_padding) + @border_width
+
+    top = if attrs[:top], do: attrs[:top] + @border_width, else: padding
+    left = if attrs[:left], do: attrs[:left] + @border_width, else: padding
+    bottom = if attrs[:bottom], do: attrs[:bottom] + @border_width, else: padding
+    right = if attrs[:right], do: attrs[:right] + @border_width, else: padding
 
     rendered_canvas =
       constrained_canvas
-      |> Canvas.padded(padding + @border_width)
+      |> Canvas.padded(top: top, left: left, bottom: bottom, right: right)
       |> render_fn.(children)
       |> wrapper_canvas(constrained_canvas, fill_empty?)
       |> render_features(attrs)

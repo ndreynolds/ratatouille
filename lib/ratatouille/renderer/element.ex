@@ -116,7 +116,11 @@ defmodule Ratatouille.Renderer.Element do
       renderer: Overlay,
       child_tags: @content_tags,
       attributes: [
-        padding: {:optional, "Integer number of units of padding"}
+        padding: {:optional, "Integer number of units of padding"},
+        top: {:optional, "Integer number of units of top padding"},
+        left: {:optional, "Integer number of units of left padding"},
+        bottom: {:optional, "Integer number of units of bottom padding"},
+        right: {:optional, "Integer number of units of right padding"}
       ]
     ],
     panel: [
@@ -128,9 +132,11 @@ defmodule Ratatouille.Renderer.Element do
         color: {:optional, "Color of title"},
         background: {:optional, "Background of title"},
         attributes: {:optional, "Attributes for the title"},
-        padding:
-          {:optional,
-           "Integer providing inner padding to use when rendering child elements"},
+        padding: {:optional, "Integer providing inner padding to use when rendering child elements"},
+        top: {:optional, "Integer number of units of top padding"},
+        left: {:optional, "Integer number of units of left padding"},
+        bottom: {:optional, "Integer number of units of bottom padding"},
+        right: {:optional, "Integer number of units of right padding"},
         height:
           {:optional,
            "Height of the table in rows or `:fill` to fill the parent container's box"},
